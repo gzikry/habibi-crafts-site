@@ -10,6 +10,16 @@ Arabic-inspired print-on-demand goods (mugs, onesies, signs), powered by Printfu
 - Stripe checkout placeholder in the product flow (no live payment processing yet)
 - Analytics loader with empty Plausible and Google Analytics IDs; tracking stays disabled until configured
 
+## Planned product categories
+- Mugs & Kitchen
+- Tees & Hoodies
+- Baby Habibis (onesies and bibs)
+- Bridal Party
+- Groomsmen
+- Bachelor & Bachelorette parties
+- Totes & Gifts
+- Signs & Home
+
 ## Planned integrations
 - Stripe Checkout or Payment Links for secure payments (server-side secret handling required)
 - Printful API for catalog, product sync, mockups, fulfillment, and shipping

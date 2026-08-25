@@ -97,6 +97,17 @@
   .marquee b { color: var(--clay); font-weight: 600; }
   @keyframes scroll { to { transform: translateX(-50%); } }
 
+  /* Category placeholders */
+  .category-section { max-width: 1180px; margin: auto; padding: clamp(62px,9vh,96px) 28px 0; }
+  .category-section h2 { font-size: clamp(32px,3.6vw,46px); margin-top: 10px; }
+  .category-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; margin-top: 34px; }
+  .category { min-height: 170px; background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; display: flex; flex-direction: column; justify-content: space-between; transition: transform .2s, box-shadow .2s, border-color .2s; }
+  .category:hover { transform: translateY(-4px); box-shadow: var(--shadow); border-color: rgba(192,90,60,.32); }
+  .category-icon { width: 46px; height: 46px; border-radius: 14px; display: grid; place-items: center; background: rgba(192,90,60,.1); font-size: 22px; }
+  .category h3 { font-size: 20px; margin-top: 20px; }
+  .category p { color: var(--muted); font-size: 12px; margin-top: 2px; }
+  .category .coming { align-self: flex-start; margin-top: 12px; font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: var(--clay); font-weight: 700; }
+
   /* Products */
   section.products { max-width: 1180px; margin: auto; padding: clamp(64px,10vh,110px) 28px; }
   .sec-head { display: flex; justify-content: space-between; align-items: end; margin-bottom: 40px; gap: 20px; flex-wrap: wrap; }
@@ -168,9 +179,13 @@
   @media (max-width: 860px){
     .hero, .pd, .props { grid-template-columns: 1fr; }
     .grid { grid-template-columns: 1fr; }
+    .category-grid { grid-template-columns: repeat(2,1fr); }
     .nav-links a:not(.cta-mini):not(:nth-child(-n+2)) { display: none; }
     .pd-imgs { position: static; }
     .chip-b { right: 6px; } .chip-a { left: 6px; }
+  }
+  @media (max-width: 520px){
+    .category-grid { grid-template-columns: 1fr; }
   }
 </style>
 </head>
@@ -180,7 +195,7 @@
   <a class="logo" href="#" onclick="show('home')"><img src="assets/logo.png" alt="Habibi Crafts Co"></a>
   <div class="nav-links">
     <a href="#" onclick="show('home')">Shop</a>
-    <a href="#">Mugs · Baby · Signs</a>
+    <a href="#categories">Shop categories</a>
     <a href="#">Our story</a>
     <a class="cta-mini" href="#" onclick="show('product')">Shop bestseller →</a>
   </div>
@@ -212,6 +227,37 @@
       <span>Habibi Crafts Co <b>·</b> Estd 2024 <b>·</b> Yalla Habibi <b>·</b> Free shipping over $40 <b>·</b> Printed on demand <b>·</b>&nbsp;</span>
     </div>
   </div>
+
+  <section class="category-section" id="categories">
+    <div class="kicker">The collection</div>
+    <h2>Something for every habibi.</h2>
+    <div class="category-grid">
+      <a class="category" href="#bestsellers" aria-label="Shop mugs and kitchen products">
+        <div class="category-icon" aria-hidden="true">☕</div><div><h3>Mugs &amp; Kitchen</h3><p>Coffee cups, dallahs, wraps, and kitchen gifts.</p><span class="coming">Collection coming soon</span></div>
+      </a>
+      <a class="category" href="#bestsellers" aria-label="Shop apparel">
+        <div class="category-icon" aria-hidden="true">✦</div><div><h3>Tees &amp; Hoodies</h3><p>Warm phrases and illustrated everyday apparel.</p><span class="coming">Collection coming soon</span></div>
+      </a>
+      <a class="category" href="#bestsellers" aria-label="Shop baby products">
+        <div class="category-icon" aria-hidden="true">♡</div><div><h3>Baby Habibis</h3><p>Onesies, bibs, and tiny gifts for little ones.</p><span class="coming">Collection coming soon</span></div>
+      </a>
+      <a class="category" href="#bestsellers" aria-label="Shop bridal party products">
+        <div class="category-icon" aria-hidden="true">✿</div><div><h3>Bridal Party</h3><p>Bride Tribe, Bridesmaid, and Maid of Honor sets.</p><span class="coming">Collection coming soon</span></div>
+      </a>
+      <a class="category" href="#bestsellers" aria-label="Shop groomsmen products">
+        <div class="category-icon" aria-hidden="true">◈</div><div><h3>Groomsmen</h3><p>Groom Crew, Groomsman, and Best Man sets.</p><span class="coming">Collection coming soon</span></div>
+      </a>
+      <a class="category" href="#bestsellers" aria-label="Shop bachelor and bachelorette products">
+        <div class="category-icon" aria-hidden="true">☾</div><div><h3>Bachelor &amp; Bachelorette Parties</h3><p>Bachelor and bachelorette group merchandise.</p><span class="coming">Collection coming soon</span></div>
+      </a>
+      <a class="category" href="#bestsellers" aria-label="Shop totes and gifts">
+        <div class="category-icon" aria-hidden="true">▱</div><div><h3>Totes &amp; Gifts</h3><p>Carry-all totes and thoughtful everyday keepsakes.</p><span class="coming">Collection coming soon</span></div>
+      </a>
+      <a class="category" href="#bestsellers" aria-label="Shop signs and home products">
+        <div class="category-icon" aria-hidden="true">⌂</div><div><h3>Signs &amp; Home</h3><p>Welcome signs, wall art, and home accents.</p><span class="coming">Collection coming soon</span></div>
+      </a>
+    </div>
+  </section>
 
   <section class="products" id="bestsellers">
     <div class="sec-head">
