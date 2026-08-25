@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Habibi Crafts Co — Warm, Modern</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #faf6ef;
+    --surface: #ffffff;
+    --sand: #f0e7d8;
+    --clay: #c05a3c;
+    --maroon: #83301f;
+    --ink: #241b14;
+    --muted: #6f6255;
+    --line: rgba(36,27,20,.09);
+    --radius: 22px;
+    --shadow: 0 24px 60px -24px rgba(80,45,25,.25);
+  }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--ink); line-height: 1.65; -webkit-font-smoothing: antialiased; }
+  h1,h2,h3 { font-family: 'Fraunces', serif; font-weight: 500; letter-spacing: -.02em; }
+  .wrap { max-width: 1180px; margin: auto; padding: 0 28px; }
+
+  /* Nav */
+  header { position: sticky; top: 12px; z-index: 50; padding: 0 28px; }
+  .nav { max-width: 1124px; margin: auto; display: flex; align-items: center; justify-content: space-between;
+         background: rgba(255,255,255,.72); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+         border: 1px solid var(--line); border-radius: 18px; padding: 10px 16px 10px 10px; box-shadow: 0 8px 30px -18px rgba(80,45,25,.3); }
+  .logo img { height: 44px; display: block; border-radius: 12px; }
+  .nav-links { display: flex; gap: 4px; align-items: center; }
+  .nav-links a { text-decoration: none; color: var(--muted); font-size: 14px; font-weight: 500; padding: 9px 15px; border-radius: 999px; transition: all .18s; }
+  .nav-links a:hover { color: var(--ink); background: rgba(192,90,60,.08); }
+  .nav-links a.cta-mini { background: var(--ink); color: #fff; margin-left: 8px; }
+  .nav-links a.cta-mini:hover { background: var(--maroon); }
+
+  .strip { text-align: center; padding: 11px; font-size: 12px; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); border-bottom: 1px solid var(--line); }
+
+  /* Hero */
+  .hero { display: grid; grid-template-columns: 1.05fr .95fr; gap: clamp(32px,5vw,72px); align-items: center; padding: clamp(56px,9vh,110px) 28px clamp(56px,8vh,96px); max-width: 1180px; margin: auto; }
+  .pill { display: inline-flex; align-items: center; gap: 8px; background: #fff; border: 1px solid var(--line); border-radius: 999px; padding: 7px 16px; font-size: 13px; font-weight: 500; color: var(--muted); box-shadow: 0 2px 10px -6px rgba(80,45,25,.3); }
+  .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--clay); box-shadow: 0 0 0 3px rgba(192,90,60,.18); }
+  .hero h1 { font-size: clamp(44px, 5.6vw, 76px); line-height: 1.03; margin: 22px 0 20px; font-weight: 500; }
+  .hero h1 em { font-style: italic; color: var(--clay); }
+  .hero .lede { font-size: 17px; color: var(--muted); max-width: 46ch; }
+  .cta-row { display: flex; gap: 12px; margin-top: 34px; flex-wrap: wrap; align-items: center; }
+  .btn { display: inline-flex; align-items: center; gap: 10px; background: var(--ink); color: #fff; padding: 15px 30px; border-radius: 999px; text-decoration: none; font-weight: 600; font-size: 15px; transition: transform .18s cubic-bezier(.2,.8,.3,1), background .18s, box-shadow .18s; border: none; cursor: pointer; box-shadow: 0 14px 30px -14px rgba(36,27,20,.55); }
+  .btn:hover { background: var(--maroon); transform: translateY(-2px); box-shadow: 0 20px 38px -14px rgba(131,48,31,.5); }
+  .btn.ghost { background: transparent; color: var(--ink); border: 1px solid rgba(36,27,20,.22); box-shadow: none; }
+  .btn.ghost:hover { background: #fff; border-color: var(--ink); transform: translateY(-2px); }
+  .btn .arr { transition: transform .18s; }
+  .btn:hover .arr { transform: translateX(4px); }
+
+  .hero-art { position: relative; }
+  .hero-card { background: linear-gradient(150deg, #fff, var(--sand)); border: 1px solid var(--line); border-radius: calc(var(--radius) + 10px); padding: clamp(26px,3vw,44px); box-shadow: var(--shadow); }
+  .hero-card img { width: 100%; border-radius: var(--radius); display: block; mix-blend-mode: multiply; }
+  .float-chip { position: absolute; background: rgba(255,255,255,.85); backdrop-filter: blur(10px); border: 1px solid var(--line); border-radius: 14px; padding: 10px 16px; font-size: 13px; font-weight: 600; box-shadow: 0 10px 30px -12px rgba(80,45,25,.35); animation: bob 5s ease-in-out infinite; }
+  .chip-a { top: 22px; left: -18px; } .chip-b { bottom: 30px; right: -14px; animation-delay: 2.5s; }
+  @keyframes bob { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+
+  /* Marquee */
+  .marquee { overflow: hidden; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); background: #fff; padding: 14px 0; }
+  .marquee-track { display: flex; gap: 48px; white-space: nowrap; width: max-content; animation: scroll 28s linear infinite; }
+  .marquee span { font-size: 12px; letter-spacing: .3em; text-transform: uppercase; color: var(--muted); display:flex; align-items:center; gap:48px; }
+  .marquee b { color: var(--clay); font-weight: 600; }
+  @keyframes scroll { to { transform: translateX(-50%); } }
+
+  /* Products */
+  section.products { max-width: 1180px; margin: auto; padding: clamp(64px,10vh,110px) 28px; }
+  .sec-head { display: flex; justify-content: space-between; align-items: end; margin-bottom: 40px; gap: 20px; flex-wrap: wrap; }
+  .kicker { font-size: 12px; letter-spacing: .25em; text-transform: uppercase; color: var(--clay); font-weight: 700; }
+  section.products h2 { font-size: clamp(32px,3.6vw,46px); margin-top: 10px; }
+  .view-all { color: var(--ink); font-weight: 600; font-size: 14px; text-decoration: none; border-bottom: 1.5px solid var(--clay); padding-bottom: 3px; transition: opacity .15s; }
+  .view-all:hover { opacity: .65; }
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; cursor: pointer; transition: transform .25s cubic-bezier(.2,.8,.3,1), box-shadow .25s; }
+  .card:hover { transform: translateY(-6px); box-shadow: var(--shadow); }
+  .card .ph { aspect-ratio: 1; background: linear-gradient(160deg,#fbf7f0,var(--sand)); display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative; }
+  .card .ph img { width: 74%; mix-blend-mode: multiply; transition: transform .35s cubic-bezier(.2,.8,.3,1); }
+  .card:hover .ph img { transform: scale(1.06) rotate(-1deg); }
+  .tag { position: absolute; top: 14px; left: 14px; background: rgba(255,255,255,.85); backdrop-filter: blur(8px); border-radius: 999px; padding: 5px 13px; font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--maroon); }
+  .card .info { padding: 18px 20px 22px; display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+  .card h3 { font-size: 21px; }
+  .price { color: var(--muted); font-weight: 600; white-space: nowrap; }
+
+  /* Value props */
+  .props { max-width: 1180px; margin: auto; padding: 0 28px clamp(64px,10vh,110px); display: grid; grid-template-columns: repeat(3,1fr); gap: 22px; }
+  .prop { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 28px; }
+  .prop .ico { width: 42px; height: 42px; border-radius: 12px; background: rgba(192,90,60,.1); display: flex; align-items: center; justify-content: center; font-size: 19px; margin-bottom: 16px; }
+  .prop h3 { font-size: 19px; margin-bottom: 6px; }
+  .prop p { color: var(--muted); font-size: 14px; }
+
+  footer { background: var(--ink); color: rgba(250,246,239,.75); padding: 44px 28px; }
+  .foot { max-width: 1180px; margin: auto; display: flex; justify-content: space-between; align-items: center; gap: 20px; flex-wrap: wrap; }
+  .foot img { height: 40px; border-radius: 10px; filter: invert(1) brightness(1.6); mix-blend-mode: screen; }
+  .foot small { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; }
+
+  /* Product page */
+  .pd { max-width: 1140px; margin: auto; padding: clamp(44px,7vh,76px) 28px; display: grid; grid-template-columns: 1fr 1fr; gap: clamp(36px,5vw,70px); align-items: start; }
+  .crumbs { font-size: 13px; color: var(--muted); margin-bottom: 18px; }
+  .crumbs a { color: inherit; text-decoration: none; } .crumbs a:hover { color: var(--clay); }
+  .pd-imgs { position: sticky; top: 96px; }
+  .pd-imgs .main { background: linear-gradient(150deg,#fff,var(--sand)); border: 1px solid var(--line); border-radius: var(--radius); padding: clamp(22px,3vw,40px); box-shadow: var(--shadow); }
+  .pd-imgs .main img { width: 100%; border-radius: 14px; mix-blend-mode: multiply; display: block; }
+  .thumbs { display: flex; gap: 12px; margin-top: 16px; }
+  .thumb { width: 78px; height: 78px; background: #fff; border-radius: 14px; border: 1.5px solid var(--line); cursor: pointer; display: flex; align-items: center; justify-content: center; overflow: hidden; transition: border-color .15s, transform .15s; }
+  .thumb:hover { transform: translateY(-2px); }
+  .thumb.active { border-color: var(--clay); box-shadow: 0 0 0 3px rgba(192,90,60,.15); }
+  .thumb img { width: 78%; mix-blend-mode: multiply; }
+  .pd-meta h1 { font-size: clamp(34px,3.8vw,48px); line-height: 1.08; margin: 8px 0 12px; }
+  .stars { color: var(--clay); font-size: 15px; letter-spacing: 2px; }
+  .stars small { color: var(--muted); letter-spacing: 0; margin-left: 6px; }
+  .pd .price { font-family: 'Fraunces',serif; font-size: 28px; margin: 14px 0 4px; }
+  .desc { color: var(--muted); margin: 14px 0 26px; }
+  .opt-label { font-size: 12px; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); font-weight: 700; margin-bottom: 12px; }
+  .swatches { display: flex; gap: 12px; margin-bottom: 28px; }
+  .swatch { width: 38px; height: 38px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; outline: 1px solid var(--line); outline-offset: 3px; transition: outline-color .15s, border-color .15s; }
+  .swatch.active { border-color: var(--clay); outline-color: rgba(192,90,60,.4); }
+  .qty-row { display: flex; gap: 12px; align-items: stretch; margin-top: 6px; }
+  .qty { display: inline-flex; align-items: center; border: 1px solid rgba(36,27,20,.22); border-radius: 999px; overflow: hidden; }
+  .qty button { background: none; border: none; font-size: 17px; padding: 0 16px; cursor: pointer; color: var(--muted); }
+  .qty button:hover { color: var(--ink); }
+  .qty span { min-width: 30px; text-align: center; font-weight: 700; }
+  .buy-btn { flex: 1; justify-content: center; }
+  .trust { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; margin-top: 32px; padding-top: 28px; border-top: 1px solid var(--line); font-size: 12.5px; color: var(--muted); }
+  .trust b { display: block; color: var(--ink); font-size: 13.5px; margin-bottom: 2px; }
+
+  footer.pd-footer { margin-top: 40px; }
+  #toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--ink); color: #fff; padding: 14px 30px; border-radius: 999px; font-size: 14px; font-weight: 600; opacity: 0; pointer-events: none; transition: all .3s cubic-bezier(.2,.8,.3,1); box-shadow: 0 16px 40px -10px rgba(0,0,0,.4); z-index: 99; }
+  #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  @media (max-width: 860px){
+    .hero, .pd, .props { grid-template-columns: 1fr; }
+    .grid { grid-template-columns: 1fr; }
+    .nav-links a:not(.cta-mini):not(:nth-child(-n+2)) { display: none; }
+    .pd-imgs { position: static; }
+    .chip-b { right: 6px; } .chip-a { left: 6px; }
+  }
+</style>
+</head>
+<body>
+
+<header><div class="nav">
+  <a class="logo" href="#" onclick="show('home')"><img src="../assets/logo.png" alt="Habibi Crafts Co"></a>
+  <div class="nav-links">
+    <a href="#" onclick="show('home')">Shop</a>
+    <a href="#">Mugs · Baby · Signs</a>
+    <a href="#">Our story</a>
+    <a class="cta-mini" href="#" onclick="show('product')">Shop bestseller →</a>
+  </div>
+</div></header>
+
+<div id="page-home">
+  <div class="strip">Free US shipping over $40 &nbsp;·&nbsp; Printed on demand, made to last</div>
+
+  <div class="hero">
+    <div>
+      <span class="pill"><span class="dot"></span> New drop — Yalla Habibi Mug</span>
+      <h1>Little words of love,<br><em>made by hand.</em></h1>
+      <p class="lede">Mugs, onesies and signs carrying the phrases we grew up with. Designed in California, printed on demand, shipped with care.</p>
+      <div class="cta-row">
+        <button class="btn" onclick="show('product')">Shop the mug <span class="arr">→</span></button>
+        <button class="btn ghost" onclick="document.getElementById('bestsellers').scrollIntoView()">Browse all</button>
+      </div>
+    </div>
+    <div class="hero-art">
+      <div class="hero-card"><img src="../assets/mug-1.png" alt="Yalla Habibi mug design"></div>
+      <div class="float-chip chip-a">⭐ 4.9 — 128 reviews</div>
+      <div class="float-chip chip-b">🚚 Ships in 3–5 days</div>
+    </div>
+  </div>
+
+  <div class="marquee">
+    <div class="marquee-track">
+      <span>Habibi Crafts Co <b>·</b> Estd 2024 <b>·</b> Yalla Habibi <b>·</b> Free shipping over $40 <b>·</b> Printed on demand <b>·</b>&nbsp;</span>
+      <span>Habibi Crafts Co <b>·</b> Estd 2024 <b>·</b> Yalla Habibi <b>·</b> Free shipping over $40 <b>·</b> Printed on demand <b>·</b>&nbsp;</span>
+    </div>
+  </div>
+
+  <section class="products" id="bestsellers">
+    <div class="sec-head">
+      <div>
+        <div class="kicker">Bestsellers</div>
+        <h2>Loved by habibis everywhere.</h2>
+      </div>
+      <a class="view-all" href="#" onclick="show('product')">View all products →</a>
+    </div>
+    <div class="grid">
+      <div class="card" onclick="show('product')"><div class="ph"><span class="tag">Bestseller</span><img src="../assets/mug-1.png" alt=""></div><div class="info"><h3>Yalla Habibi Mug</h3><div class="price">$18</div></div></div>
+      <div class="card" onclick="show('product')"><div class="ph"><span class="tag">New</span><img src="../assets/ha-1.png" alt=""></div><div class="info"><h3>Ha Print Onesie</h3><div class="price">$22</div></div></div>
+      <div class="card" onclick="show('product')"><div class="ph"><span class="tag">Staff pick</span><img src="../assets/habibi-1.png" alt=""></div><div class="info"><h3>Habibi Wall Sign</h3><div class="price">$28</div></div></div>
+    </div>
+  </section>
+
+  <section class="props">
+    <div class="prop"><div class="ico">🌱</div><h3>Printed on demand</h3><p>No warehouses, no waste. Your order is printed the moment you place it.</p></div>
+    <div class="prop"><div class="ico">✍️</div><h3>Designed in-house</h3><p>Every phrase and typeface is drawn by us — straight from our Canva boards to your home.</p></div>
+    <div class="prop"><div class="ico">💛</div><h3>Love it guarantee</h3><p>Damaged or wrong? We reprint free within 30 days. No questions, yalla.</p></div>
+  </section>
+</div>
+
+<div id="page-product" style="display:none">
+  <div class="pd">
+    <div class="pd-imgs">
+      <div class="main"><img id="pd-main" src="../assets/mug-1.png" alt="Yalla Habibi Mug"></div>
+      <div class="thumbs">
+        <div class="thumb active" onclick="pick(this,'../assets/mug-1.png')"><img src="../assets/mug-1.png"></div>
+        <div class="thumb" onclick="pick(this,'../assets/habibi-1.png')"><img src="../assets/habibi-1.png"></div>
+        <div class="thumb" onclick="pick(this,'../assets/ha-1.png')"><img src="../assets/ha-1.png"></div>
+      </div>
+    </div>
+    <div class="pd-meta">
+      <div class="crumbs"><a href="#" onclick="show('home')">Shop</a> / Mugs / Yalla Habibi</div>
+      <span class="pill" style="font-size:12px">Ceramic · Dishwasher safe</span>
+      <h1>Yalla Habibi Mug</h1>
+      <div class="stars">★★★★★<small>128 reviews</small></div>
+      <div class="price">$18.00</div>
+      <p class="desc">Five rows of encouragement, one solid middle row for maximum hype. This 11oz ceramic mug says what every friend needs to hear: let's go, habibi.</p>
+      <div class="opt-label">Color</div>
+      <div class="swatches">
+        <div class="swatch active" style="background:#fffdf8" title="Cream" onclick="sw(this)"></div>
+        <div class="swatch" style="background:#c05a3c" title="Terracotta" onclick="sw(this)"></div>
+        <div class="swatch" style="background:#2b2119" title="Charcoal" onclick="sw(this)"></div>
+      </div>
+      <div class="qty-row">
+        <span class="qty"><button onclick="q(-1)">−</button><span id="qv">1</span><button onclick="q(1)">+</button></span>
+        <button class="btn buy-btn" onclick="toast()">Add to cart — $<span id="tp">18</span>.00</button>
+      </div>
+      <div class="trust">
+        <div><b>Printed on demand</b>No waste, no bulk</div>
+        <div><b>Ships in 3–5 days</b>From US print partner</div>
+        <div><b>Love it guarantee</b>30-day returns</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer class="pd-footer"><div class="foot">
+  <img src="../assets/logo.png" alt="">
+  <small>Habibi Crafts Co · Estd 2024 · Made with love</small>
+</div></footer>
+
+<div id="toast">Added to cart ✓ Yalla!</div>
+<script>
+function show(p){ document.getElementById('page-home').style.display = p==='home'?'block':'none';
+ document.getElementById('page-product').style.display = p==='product'?'block':'none'; window.scrollTo(0,0); return false;}
+function pick(el,src){ document.querySelectorAll('.thumb').forEach(t=>t.classList.remove('active')); el.classList.add('active');
+ document.getElementById('pd-main').src=src;}
+function sw(el){ document.querySelectorAll('.swatch').forEach(s=>s.classList.remove('active')); el.classList.add('active');}
+let n=1; function q(d){ n=Math.max(1,n+d); qv.textContent=n; tp.textContent=n*18;}
+function toast(){ const t=document.getElementById('toast'); t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2000);}
+</script>
+</body>
+</html>
