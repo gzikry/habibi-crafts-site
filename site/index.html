@@ -3,8 +3,38 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Habibi Crafts Co — Warm, Modern</title>
+<meta name="theme-color" content="#faf6ef">
+<meta name="description" content="Arabic-inspired mugs, onesies, signs, and gifts from Habibi Crafts Co. Warm phrases, modern design, printed on demand.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://gzikry.github.io/habibi-crafts-site/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Habibi Crafts Co">
+<meta property="og:title" content="Habibi Crafts Co — Arabic-inspired gifts">
+<meta property="og:description" content="Mugs, onesies, signs, and gifts carrying the phrases we grew up with. Designed in California, printed on demand.">
+<meta property="og:url" content="https://gzikry.github.io/habibi-crafts-site/">
+<meta property="og:image" content="https://gzikry.github.io/habibi-crafts-site/assets/logo.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Habibi Crafts Co — Arabic-inspired gifts">
+<meta name="twitter:description" content="Warm phrases and modern Arabic-inspired gifts, printed on demand.">
+<meta name="twitter:image" content="https://gzikry.github.io/habibi-crafts-site/assets/logo.png">
+<link rel="icon" type="image/png" href="assets/logo.png">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Store","name":"Habibi Crafts Co","url":"https://gzikry.github.io/habibi-crafts-site/","description":"Arabic-inspired print-on-demand gifts including mugs, onesies, signs, apparel, and party merchandise.","logo":"https://gzikry.github.io/habibi-crafts-site/assets/logo.png","sameAs":[]}
+</script>
+<script>
+  // Add IDs here when ready. Empty values keep analytics disabled.
+  window.HABIBI_ANALYTICS = { plausibleDomain: '', googleMeasurementId: '' };
+  (function(c){
+    if (c.plausibleDomain) {
+      var s=document.createElement('script'); s.defer=true; s.dataset.domain=c.plausibleDomain; s.src='https://plausible.io/js/script.js'; document.head.appendChild(s);
+    }
+    if (c.googleMeasurementId) {
+      var g=document.createElement('script'); g.async=true; g.src='https://www.googletagmanager.com/gtag/js?id='+encodeURIComponent(c.googleMeasurementId); document.head.appendChild(g);
+      window.dataLayer=window.dataLayer||[]; function gtag(){dataLayer.push(arguments);} window.gtag=gtag; gtag('js',new Date()); gtag('config',c.googleMeasurementId,{anonymize_ip:true});
+    }
+  })(window.HABIBI_ANALYTICS);
+</script>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
@@ -124,6 +154,10 @@
   .qty button:hover { color: var(--ink); }
   .qty span { min-width: 30px; text-align: center; font-weight: 700; }
   .buy-btn { flex: 1; justify-content: center; }
+  .payment-placeholder { display: flex; gap: 12px; align-items: center; margin-top: 18px; padding: 14px 16px; border: 1px dashed rgba(36,27,20,.2); border-radius: 14px; background: rgba(255,255,255,.55); color: var(--muted); font-size: 12px; }
+  .payment-placeholder b { display: block; color: var(--ink); font-size: 13px; margin-bottom: 2px; }
+  .payment-placeholder span { display: block; }
+  .payment-icon { width: 30px; height: 30px; border-radius: 9px; display: grid; place-items: center; background: rgba(192,90,60,.12); color: var(--clay); font-size: 16px; }
   .trust { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; margin-top: 32px; padding-top: 28px; border-top: 1px solid var(--line); font-size: 12.5px; color: var(--muted); }
   .trust b { display: block; color: var(--ink); font-size: 13.5px; margin-bottom: 2px; }
 
@@ -143,7 +177,7 @@
 <body>
 
 <header><div class="nav">
-  <a class="logo" href="#" onclick="show('home')"><img src="../assets/logo.png" alt="Habibi Crafts Co"></a>
+  <a class="logo" href="#" onclick="show('home')"><img src="assets/logo.png" alt="Habibi Crafts Co"></a>
   <div class="nav-links">
     <a href="#" onclick="show('home')">Shop</a>
     <a href="#">Mugs · Baby · Signs</a>
@@ -166,7 +200,7 @@
       </div>
     </div>
     <div class="hero-art">
-      <div class="hero-card"><img src="../assets/mug-1.png" alt="Yalla Habibi mug design"></div>
+      <div class="hero-card"><img src="assets/mug-1.png" alt="Yalla Habibi mug design"></div>
       <div class="float-chip chip-a">⭐ 4.9 — 128 reviews</div>
       <div class="float-chip chip-b">🚚 Ships in 3–5 days</div>
     </div>
@@ -188,9 +222,9 @@
       <a class="view-all" href="#" onclick="show('product')">View all products →</a>
     </div>
     <div class="grid">
-      <div class="card" onclick="show('product')"><div class="ph"><span class="tag">Bestseller</span><img src="../assets/mug-1.png" alt=""></div><div class="info"><h3>Yalla Habibi Mug</h3><div class="price">$18</div></div></div>
-      <div class="card" onclick="show('product')"><div class="ph"><span class="tag">New</span><img src="../assets/ha-1.png" alt=""></div><div class="info"><h3>Ha Print Onesie</h3><div class="price">$22</div></div></div>
-      <div class="card" onclick="show('product')"><div class="ph"><span class="tag">Staff pick</span><img src="../assets/habibi-1.png" alt=""></div><div class="info"><h3>Habibi Wall Sign</h3><div class="price">$28</div></div></div>
+      <div class="card" onclick="show('product')"><div class="ph"><span class="tag">Bestseller</span><img src="assets/mug-1.png" alt=""></div><div class="info"><h3>Yalla Habibi Mug</h3><div class="price">$18</div></div></div>
+      <div class="card" onclick="show('product')"><div class="ph"><span class="tag">New</span><img src="assets/ha-1.png" alt=""></div><div class="info"><h3>Ha Print Onesie</h3><div class="price">$22</div></div></div>
+      <div class="card" onclick="show('product')"><div class="ph"><span class="tag">Staff pick</span><img src="assets/habibi-1.png" alt=""></div><div class="info"><h3>Habibi Wall Sign</h3><div class="price">$28</div></div></div>
     </div>
   </section>
 
@@ -204,11 +238,11 @@
 <div id="page-product" style="display:none">
   <div class="pd">
     <div class="pd-imgs">
-      <div class="main"><img id="pd-main" src="../assets/mug-1.png" alt="Yalla Habibi Mug"></div>
+      <div class="main"><img id="pd-main" src="assets/mug-1.png" alt="Yalla Habibi Mug"></div>
       <div class="thumbs">
-        <div class="thumb active" onclick="pick(this,'../assets/mug-1.png')"><img src="../assets/mug-1.png"></div>
-        <div class="thumb" onclick="pick(this,'../assets/habibi-1.png')"><img src="../assets/habibi-1.png"></div>
-        <div class="thumb" onclick="pick(this,'../assets/ha-1.png')"><img src="../assets/ha-1.png"></div>
+        <div class="thumb active" onclick="pick(this,'assets/mug-1.png')"><img src="assets/mug-1.png"></div>
+        <div class="thumb" onclick="pick(this,'assets/habibi-1.png')"><img src="assets/habibi-1.png"></div>
+        <div class="thumb" onclick="pick(this,'assets/ha-1.png')"><img src="assets/ha-1.png"></div>
       </div>
     </div>
     <div class="pd-meta">
@@ -225,8 +259,12 @@
         <div class="swatch" style="background:#2b2119" title="Charcoal" onclick="sw(this)"></div>
       </div>
       <div class="qty-row">
-        <span class="qty"><button onclick="q(-1)">−</button><span id="qv">1</span><button onclick="q(1)">+</button></span>
+        <span class="qty" aria-label="Quantity"><button aria-label="Decrease quantity" onclick="q(-1)">−</button><span id="qv">1</span><button aria-label="Increase quantity" onclick="q(1)">+</button></span>
         <button class="btn buy-btn" onclick="toast()">Add to cart — $<span id="tp">18</span>.00</button>
+      </div>
+      <div class="payment-placeholder" role="note">
+        <div class="payment-icon">▣</div>
+        <div><b>Secure checkout coming soon</b><span>Stripe payments will be connected here before launch.</span></div>
       </div>
       <div class="trust">
         <div><b>Printed on demand</b>No waste, no bulk</div>
@@ -238,7 +276,7 @@
 </div>
 
 <footer class="pd-footer"><div class="foot">
-  <img src="../assets/logo.png" alt="">
+  <img src="assets/logo.png" alt="">
   <small>Habibi Crafts Co · Estd 2024 · Made with love</small>
 </div></footer>
 
