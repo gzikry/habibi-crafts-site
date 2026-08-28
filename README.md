@@ -4,11 +4,14 @@ Arabic-inspired print-on-demand goods (mugs, onesies, signs), powered by Printfu
 
 **Status:** storefront foundation live; checkout, Printful, analytics, and custom domain wiring pending.
 
+**Draft branch:** work lives on local `draft/first-pages`. Do not push, merge to `main`, or deploy until George approves. GitHub Pages publishes from `main`.
+
 ## Current storefront foundation
 - SEO title, description, canonical URL, Open Graph/Twitter cards, favicon, and Store JSON-LD
 - `site/robots.txt` and `site/sitemap.xml` for crawler discovery
 - Stripe checkout placeholder in the product flow (no live payment processing yet)
 - Analytics loader with empty Plausible and Google Analytics IDs; tracking stays disabled until configured
+- Real multi-page static site under `site/` (no build step, no JS page-switcher)
 
 ## Planned product categories
 - Mugs & Kitchen
@@ -27,7 +30,7 @@ Arabic-inspired print-on-demand goods (mugs, onesies, signs), powered by Printfu
 - Google Search Console verification and sitemap submission after launch
 
 ## Analytics wiring
-Set the IDs in `site/index.html` only when ready:
+Set the IDs in `site/analytics.js` only when ready:
 ```js
 window.HABIBI_ANALYTICS = {
   plausibleDomain: 'your-domain.example',
@@ -46,7 +49,14 @@ Do not place Stripe secret keys or Printful tokens in this static site. Those be
 assets/       Source brand + product art exported from Canva
 site/         Published storefront artifact
   assets/     Published copies of the web images
-  index.html  Homepage + product page (single file, JS page-switching)
+  index.html  Home
+  shop.html   Shop listing
+  about.html  Our story
+  product-yalla-habibi-mug.html
+  product-ha-onesie.html
+  product-habibi-wall-sign.html
+  styles.css  Shared stylesheet
+  analytics.js  Analytics loader (IDs empty until configured)
   robots.txt  Crawler directives
   sitemap.xml Search-engine sitemap
 sketches/     Earlier design variants kept for reference
@@ -58,10 +68,12 @@ open site/index.html        # macOS
 # or serve it:
 python3 -m http.server -d site 8080
 ```
+Then visit http://127.0.0.1:8080/
 
 ## Roadmap
 - [x] Design direction approved (warm artisanal × modern)
-- [ ] Split into real multi-page site / add cart
+- [x] Split into real multi-page site
+- [ ] Add cart
 - [ ] Sync products from Printful
 - [ ] Buy domain + wire DNS
 - [ ] Deploy

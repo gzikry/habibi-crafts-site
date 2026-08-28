@@ -19,248 +19,71 @@
 <meta name="twitter:image" content="https://gzikry.github.io/habibi-crafts-site/assets/logo.png">
 <link rel="icon" type="image/png" href="assets/logo.png">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"Store","name":"Habibi Crafts Co","url":"https://gzikry.github.io/habibi-crafts-site/","description":"Arabic-inspired print-on-demand gifts including mugs, onesies, signs, apparel, and party merchandise.","logo":"https://gzikry.github.io/habibi-crafts-site/assets/logo.png","sameAs":[]}
 </script>
-<script>
-  // Add IDs here when ready. Empty values keep analytics disabled.
-  window.HABIBI_ANALYTICS = { plausibleDomain: '', googleMeasurementId: '' };
-  (function(c){
-    if (c.plausibleDomain) {
-      var s=document.createElement('script'); s.defer=true; s.dataset.domain=c.plausibleDomain; s.src='https://plausible.io/js/script.js'; document.head.appendChild(s);
-    }
-    if (c.googleMeasurementId) {
-      var g=document.createElement('script'); g.async=true; g.src='https://www.googletagmanager.com/gtag/js?id='+encodeURIComponent(c.googleMeasurementId); document.head.appendChild(g);
-      window.dataLayer=window.dataLayer||[]; function gtag(){dataLayer.push(arguments);} window.gtag=gtag; gtag('js',new Date()); gtag('config',c.googleMeasurementId,{anonymize_ip:true});
-    }
-  })(window.HABIBI_ANALYTICS);
-</script>
-<style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  :root {
-    --bg: #faf6ef;
-    --surface: #ffffff;
-    --sand: #f0e7d8;
-    --clay: #c05a3c;
-    --maroon: #83301f;
-    --ink: #241b14;
-    --muted: #6f6255;
-    --line: rgba(36,27,20,.09);
-    --radius: 22px;
-    --shadow: 0 24px 60px -24px rgba(80,45,25,.25);
-  }
-  html { scroll-behavior: smooth; }
-  body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--ink); line-height: 1.65; -webkit-font-smoothing: antialiased; }
-  h1,h2,h3 { font-family: 'Fraunces', serif; font-weight: 500; letter-spacing: -.02em; }
-  .wrap { max-width: 1180px; margin: auto; padding: 0 28px; }
-
-  /* Nav */
-  header { position: sticky; top: 12px; z-index: 50; padding: 0 28px; }
-  .nav { max-width: 1124px; margin: auto; display: flex; align-items: center; justify-content: space-between;
-         background: rgba(255,255,255,.72); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
-         border: 1px solid var(--line); border-radius: 18px; padding: 10px 16px 10px 10px; box-shadow: 0 8px 30px -18px rgba(80,45,25,.3); }
-  .logo img { height: 44px; display: block; border-radius: 12px; }
-  .nav-links { display: flex; gap: 4px; align-items: center; }
-  .nav-links a { text-decoration: none; color: var(--muted); font-size: 14px; font-weight: 500; padding: 9px 15px; border-radius: 999px; transition: all .18s; }
-  .nav-links a:hover { color: var(--ink); background: rgba(192,90,60,.08); }
-  .nav-links a.cta-mini { background: var(--ink); color: #fff; margin-left: 8px; }
-  .nav-links a.cta-mini:hover { background: var(--maroon); }
-
-  .strip { text-align: center; padding: 11px; font-size: 12px; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); border-bottom: 1px solid var(--line); }
-
-  /* Hero */
-  .hero { display: grid; grid-template-columns: 1.05fr .95fr; gap: clamp(32px,5vw,72px); align-items: center; padding: clamp(56px,9vh,110px) 28px clamp(56px,8vh,96px); max-width: 1180px; margin: auto; }
-  .pill { display: inline-flex; align-items: center; gap: 8px; background: #fff; border: 1px solid var(--line); border-radius: 999px; padding: 7px 16px; font-size: 13px; font-weight: 500; color: var(--muted); box-shadow: 0 2px 10px -6px rgba(80,45,25,.3); }
-  .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--clay); box-shadow: 0 0 0 3px rgba(192,90,60,.18); }
-  .hero h1 { font-size: clamp(44px, 5.6vw, 76px); line-height: 1.03; margin: 22px 0 20px; font-weight: 500; }
-  .hero h1 em { font-style: italic; color: var(--clay); }
-  .hero .lede { font-size: 17px; color: var(--muted); max-width: 46ch; }
-  .cta-row { display: flex; gap: 12px; margin-top: 34px; flex-wrap: wrap; align-items: center; }
-  .btn { display: inline-flex; align-items: center; gap: 10px; background: var(--ink); color: #fff; padding: 15px 30px; border-radius: 999px; text-decoration: none; font-weight: 600; font-size: 15px; transition: transform .18s cubic-bezier(.2,.8,.3,1), background .18s, box-shadow .18s; border: none; cursor: pointer; box-shadow: 0 14px 30px -14px rgba(36,27,20,.55); }
-  .btn:hover { background: var(--maroon); transform: translateY(-2px); box-shadow: 0 20px 38px -14px rgba(131,48,31,.5); }
-  .btn.ghost { background: transparent; color: var(--ink); border: 1px solid rgba(36,27,20,.22); box-shadow: none; }
-  .btn.ghost:hover { background: #fff; border-color: var(--ink); transform: translateY(-2px); }
-  .btn .arr { transition: transform .18s; }
-  .btn:hover .arr { transform: translateX(4px); }
-
-  .hero-art { position: relative; }
-  .hero-card { background: linear-gradient(150deg, #fff, var(--sand)); border: 1px solid var(--line); border-radius: calc(var(--radius) + 10px); padding: clamp(26px,3vw,44px); box-shadow: var(--shadow); }
-  .hero-card img { width: 100%; border-radius: var(--radius); display: block; mix-blend-mode: multiply; }
-  .float-chip { position: absolute; background: rgba(255,255,255,.85); backdrop-filter: blur(10px); border: 1px solid var(--line); border-radius: 14px; padding: 10px 16px; font-size: 13px; font-weight: 600; box-shadow: 0 10px 30px -12px rgba(80,45,25,.35); animation: bob 5s ease-in-out infinite; }
-  .chip-a { top: 22px; left: -18px; } .chip-b { bottom: 30px; right: -14px; animation-delay: 2.5s; }
-  @keyframes bob { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
-
-  /* Marquee */
-  .marquee { overflow: hidden; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); background: #fff; padding: 14px 0; }
-  .marquee-track { display: flex; gap: 48px; white-space: nowrap; width: max-content; animation: scroll 28s linear infinite; }
-  .marquee span { font-size: 12px; letter-spacing: .3em; text-transform: uppercase; color: var(--muted); display:flex; align-items:center; gap:48px; }
-  .marquee b { color: var(--clay); font-weight: 600; }
-  @keyframes scroll { to { transform: translateX(-50%); } }
-
-  /* Category placeholders */
-  .category-section { max-width: 1180px; margin: auto; padding: clamp(62px,9vh,96px) 28px 0; }
-  .category-section h2 { font-size: clamp(32px,3.6vw,46px); margin-top: 10px; }
-  .category-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; margin-top: 34px; }
-  .category { min-height: 170px; background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; display: flex; flex-direction: column; justify-content: space-between; transition: transform .2s, box-shadow .2s, border-color .2s; }
-  .category:hover { transform: translateY(-4px); box-shadow: var(--shadow); border-color: rgba(192,90,60,.32); }
-  .category-icon { width: 46px; height: 46px; border-radius: 14px; display: grid; place-items: center; background: rgba(192,90,60,.1); font-size: 22px; }
-  .category h3 { font-size: 20px; margin-top: 20px; }
-  .category p { color: var(--muted); font-size: 12px; margin-top: 2px; }
-  .category .coming { align-self: flex-start; margin-top: 12px; font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: var(--clay); font-weight: 700; }
-
-  /* Products */
-  section.products { max-width: 1180px; margin: auto; padding: clamp(64px,10vh,110px) 28px; }
-  .sec-head { display: flex; justify-content: space-between; align-items: end; margin-bottom: 40px; gap: 20px; flex-wrap: wrap; }
-  .kicker { font-size: 12px; letter-spacing: .25em; text-transform: uppercase; color: var(--clay); font-weight: 700; }
-  section.products h2 { font-size: clamp(32px,3.6vw,46px); margin-top: 10px; }
-  .view-all { color: var(--ink); font-weight: 600; font-size: 14px; text-decoration: none; border-bottom: 1.5px solid var(--clay); padding-bottom: 3px; transition: opacity .15s; }
-  .view-all:hover { opacity: .65; }
-  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
-  .card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; cursor: pointer; transition: transform .25s cubic-bezier(.2,.8,.3,1), box-shadow .25s; }
-  .card:hover { transform: translateY(-6px); box-shadow: var(--shadow); }
-  .card .ph { aspect-ratio: 1; background: linear-gradient(160deg,#fbf7f0,var(--sand)); display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative; }
-  .card .ph img { width: 74%; mix-blend-mode: multiply; transition: transform .35s cubic-bezier(.2,.8,.3,1); }
-  .card:hover .ph img { transform: scale(1.06) rotate(-1deg); }
-  .tag { position: absolute; top: 14px; left: 14px; background: rgba(255,255,255,.85); backdrop-filter: blur(8px); border-radius: 999px; padding: 5px 13px; font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--maroon); }
-  .card .info { padding: 18px 20px 22px; display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
-  .card h3 { font-size: 21px; }
-  .price { color: var(--muted); font-weight: 600; white-space: nowrap; }
-
-  /* Value props */
-  .props { max-width: 1180px; margin: auto; padding: 0 28px clamp(64px,10vh,110px); display: grid; grid-template-columns: repeat(3,1fr); gap: 22px; }
-  .prop { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 28px; }
-  .prop .ico { width: 42px; height: 42px; border-radius: 12px; background: rgba(192,90,60,.1); display: flex; align-items: center; justify-content: center; font-size: 19px; margin-bottom: 16px; }
-  .prop h3 { font-size: 19px; margin-bottom: 6px; }
-  .prop p { color: var(--muted); font-size: 14px; }
-
-  .story { max-width: 1180px; margin: auto; padding: 0 28px clamp(64px,10vh,110px); }
-  .story-card { display: grid; grid-template-columns: .75fr 1.25fr; gap: 34px; align-items: center; background: var(--maroon); color: var(--bg); border-radius: calc(var(--radius) + 8px); padding: clamp(28px,5vw,58px); }
-  .story-card h2 { font-size: clamp(30px,4vw,48px); line-height: 1.08; }
-  .story-card p { color: rgba(250,246,239,.82); max-width: 52ch; font-size: 15px; }
-  .story-card .kicker { color: #f3c38a; }
-
-  footer { background: var(--ink); color: rgba(250,246,239,.75); padding: 44px 28px; }
-  .foot { max-width: 1180px; margin: auto; display: flex; justify-content: space-between; align-items: center; gap: 20px; flex-wrap: wrap; }
-  .foot img { height: 40px; border-radius: 10px; filter: invert(1) brightness(1.6); mix-blend-mode: screen; }
-  .foot small { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; }
-
-  /* Product page */
-  .pd { max-width: 1140px; margin: auto; padding: clamp(44px,7vh,76px) 28px; display: grid; grid-template-columns: 1fr 1fr; gap: clamp(36px,5vw,70px); align-items: start; }
-  .crumbs { font-size: 13px; color: var(--muted); margin-bottom: 18px; }
-  .crumbs a { color: inherit; text-decoration: none; } .crumbs a:hover { color: var(--clay); }
-  .pd-imgs { position: sticky; top: 96px; }
-  .pd-imgs .main { background: linear-gradient(150deg,#fff,var(--sand)); border: 1px solid var(--line); border-radius: var(--radius); padding: clamp(22px,3vw,40px); box-shadow: var(--shadow); }
-  .pd-imgs .main img { width: 100%; border-radius: 14px; mix-blend-mode: multiply; display: block; }
-  .thumbs { display: flex; gap: 12px; margin-top: 16px; }
-  .thumb { width: 78px; height: 78px; background: #fff; border-radius: 14px; border: 1.5px solid var(--line); cursor: pointer; display: flex; align-items: center; justify-content: center; overflow: hidden; transition: border-color .15s, transform .15s; }
-  .thumb:hover { transform: translateY(-2px); }
-  .thumb.active { border-color: var(--clay); box-shadow: 0 0 0 3px rgba(192,90,60,.15); }
-  .thumb img { width: 78%; mix-blend-mode: multiply; }
-  .pd-meta h1 { font-size: clamp(34px,3.8vw,48px); line-height: 1.08; margin: 8px 0 12px; }
-  .stars { color: var(--clay); font-size: 15px; letter-spacing: 2px; }
-  .stars small { color: var(--muted); letter-spacing: 0; margin-left: 6px; }
-  .pd .price { font-family: 'Fraunces',serif; font-size: 28px; margin: 14px 0 4px; }
-  .desc { color: var(--muted); margin: 14px 0 26px; }
-  .opt-label { font-size: 12px; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); font-weight: 700; margin-bottom: 12px; }
-  .swatches { display: flex; gap: 12px; margin-bottom: 28px; }
-  .swatch { width: 38px; height: 38px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; outline: 1px solid var(--line); outline-offset: 3px; transition: outline-color .15s, border-color .15s; }
-  .swatch.active { border-color: var(--clay); outline-color: rgba(192,90,60,.4); }
-  .qty-row { display: flex; gap: 12px; align-items: stretch; margin-top: 6px; }
-  .qty { display: inline-flex; align-items: center; border: 1px solid rgba(36,27,20,.22); border-radius: 999px; overflow: hidden; }
-  .qty button { background: none; border: none; font-size: 17px; padding: 0 16px; cursor: pointer; color: var(--muted); }
-  .qty button:hover { color: var(--ink); }
-  .qty span { min-width: 30px; text-align: center; font-weight: 700; }
-  .buy-btn { flex: 1; justify-content: center; }
-  .payment-placeholder { display: flex; gap: 12px; align-items: center; margin-top: 18px; padding: 14px 16px; border: 1px dashed rgba(36,27,20,.2); border-radius: 14px; background: rgba(255,255,255,.55); color: var(--muted); font-size: 12px; }
-  .payment-placeholder b { display: block; color: var(--ink); font-size: 13px; margin-bottom: 2px; }
-  .payment-placeholder span { display: block; }
-  .payment-icon { width: 30px; height: 30px; border-radius: 9px; display: grid; place-items: center; background: rgba(192,90,60,.12); color: var(--clay); font-size: 16px; }
-  .trust { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; margin-top: 32px; padding-top: 28px; border-top: 1px solid var(--line); font-size: 12.5px; color: var(--muted); }
-  .trust b { display: block; color: var(--ink); font-size: 13.5px; margin-bottom: 2px; }
-
-  footer.pd-footer { margin-top: 40px; }
-  #toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--ink); color: #fff; padding: 14px 30px; border-radius: 999px; font-size: 14px; font-weight: 600; opacity: 0; pointer-events: none; transition: all .3s cubic-bezier(.2,.8,.3,1); box-shadow: 0 16px 40px -10px rgba(0,0,0,.4); z-index: 99; }
-  #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-
-  @media (max-width: 860px){
-    .hero, .pd, .props, .story-card { grid-template-columns: 1fr; }
-    .grid { grid-template-columns: 1fr; }
-    .category-grid { grid-template-columns: repeat(2,1fr); }
-    .nav-links a:not(.cta-mini):not(:nth-child(-n+2)) { display: none; }
-    .pd-imgs { position: static; }
-    .chip-b { right: 6px; } .chip-a { left: 6px; }
-  }
-  @media (max-width: 520px){
-    .category-grid { grid-template-columns: 1fr; }
-  }
-</style>
+<script src="analytics.js"></script>
 </head>
 <body>
 
 <header><div class="nav">
-  <a class="logo" href="#" onclick="show('home')"><img src="assets/logo.png" alt="Habibi Crafts Co"></a>
+  <a class="logo" href="index.html"><img src="assets/logo.png" alt="Habibi Crafts Co"></a>
   <div class="nav-links">
-    <a href="#" onclick="show('home')">Shop</a>
+    <a href="shop.html">Shop</a>
     <a href="#categories">Shop categories</a>
-    <a href="#story" onclick="show('home')">Our story</a>
-    <a class="cta-mini" href="#" onclick="show('product')">Shop bestseller →</a>
+    <a href="about.html">Our story</a>
+    <a class="cta-mini" href="product-yalla-habibi-mug.html">Shop bestseller →</a>
   </div>
 </div></header>
 
-<div id="page-home">
   <div class="strip">Arabic phrases &nbsp;·&nbsp; Everyday gifts &nbsp;·&nbsp; Made after you order</div>
 
   <div class="hero">
     <div>
-      <span class="pill"><span class="dot"></span> First piece — Yalla Habibi Mug</span>
-      <h1>Things we say at home,<br><em>made to take with you.</em></h1>
-      <p class="lede">A small shop of mugs, baby gifts, signs, and party pieces built around the Arabic phrases that make a house feel like home.</p>
+      <div class="eyebrow">From our family vocabulary</div>
+      <h1>The things we say at home,<br><em>now on the things we use.</em></h1>
+      <p class="lede">Mugs, baby gifts, signs, and party pieces made from the Arabic phrases that follow us from the kitchen table into everyday life.</p>
       <div class="cta-row">
-        <button class="btn" onclick="show('product')">Shop the mug <span class="arr">→</span></button>
-        <button class="btn ghost" onclick="document.getElementById('bestsellers').scrollIntoView()">Browse all</button>
+        <a class="btn" href="product-yalla-habibi-mug.html">Shop the mug <span class="arr">→</span></a>
+        <a class="btn ghost" href="shop.html">Browse all</a>
       </div>
     </div>
     <div class="hero-art">
       <div class="hero-card"><img src="assets/mug-1.png" alt="Yalla Habibi mug design"></div>
-      <div class="float-chip chip-a">A little encouragement</div>
-      <div class="float-chip chip-b">Made after you order</div>
+      <div class="hero-note">For the friend who needs one more yalla before leaving.</div>
     </div>
   </div>
 
-  <div class="marquee">
-    <div class="marquee-track">
-      <span>Habibi Crafts Co <b>·</b> Estd 2024 <b>·</b> Yalla Habibi <b>·</b> Made after you order <b>·</b> Everyday gifts <b>·</b>&nbsp;</span>
-      <span>Habibi Crafts Co <b>·</b> Estd 2024 <b>·</b> Yalla Habibi <b>·</b> Made after you order <b>·</b> Everyday gifts <b>·</b>&nbsp;</span>
-    </div>
-  </div>
+  <div class="phrase-line">yalla &nbsp;·&nbsp; habibi &nbsp;·&nbsp; sahtein &nbsp;·&nbsp; khalas &nbsp;·&nbsp; ahlan wa sahlan</div>
 
   <section class="category-section" id="categories">
     <div class="kicker">What we're making</div>
     <h2>A few things on the workbench.</h2>
     <div class="category-grid">
-      <a class="category" href="#bestsellers" aria-label="Shop mugs and kitchen products">
-        <div class="category-icon" aria-hidden="true">☕</div><div><h3>Mugs &amp; Kitchen</h3><p>Coffee cups, dallahs, wraps, and kitchen gifts.</p><span class="coming">Next drop</span></div>
+      <a class="category" href="product-yalla-habibi-mug.html" aria-label="Shop mugs and kitchen products">
+        <div class="category-icon" aria-hidden="true">01</div><div><h3>Mugs &amp; Kitchen</h3><p>Coffee cups, dallahs, wraps, and kitchen gifts.</p></div><span class="shop-now">Shop</span>
       </a>
-      <a class="category" href="#bestsellers" aria-label="Shop apparel">
-        <div class="category-icon" aria-hidden="true">✦</div><div><h3>Tees &amp; Hoodies</h3><p>Warm phrases and illustrated everyday apparel.</p><span class="coming">Next drop</span></div>
+      <div class="category">
+        <div class="category-icon" aria-hidden="true">02</div><div><h3>Tees &amp; Hoodies</h3><p>Warm phrases and illustrated everyday apparel.</p></div><span class="coming">In progress</span>
+      </div>
+      <a class="category" href="product-ha-onesie.html" aria-label="Shop baby products">
+        <div class="category-icon" aria-hidden="true">03</div><div><h3>Baby Habibis</h3><p>Onesies, bibs, and tiny gifts for little ones.</p></div><span class="shop-now">Shop</span>
       </a>
-      <a class="category" href="#bestsellers" aria-label="Shop baby products">
-        <div class="category-icon" aria-hidden="true">♡</div><div><h3>Baby Habibis</h3><p>Onesies, bibs, and tiny gifts for little ones.</p><span class="coming">Next drop</span></div>
-      </a>
-      <a class="category" href="#bestsellers" aria-label="Shop bridal party products">
-        <div class="category-icon" aria-hidden="true">✿</div><div><h3>Bridal Party</h3><p>Bride Tribe, Bridesmaid, and Maid of Honor sets.</p><span class="coming">Next drop</span></div>
-      </a>
-      <a class="category" href="#bestsellers" aria-label="Shop groomsmen products">
-        <div class="category-icon" aria-hidden="true">◈</div><div><h3>Groomsmen</h3><p>Groom Crew, Groomsman, and Best Man sets.</p><span class="coming">Next drop</span></div>
-      </a>
-      <a class="category" href="#bestsellers" aria-label="Shop bachelor and bachelorette products">
-        <div class="category-icon" aria-hidden="true">☾</div><div><h3>Bachelor &amp; Bachelorette Parties</h3><p>Bachelor and bachelorette group merchandise.</p><span class="coming">Next drop</span></div>
-      </a>
-      <a class="category" href="#bestsellers" aria-label="Shop totes and gifts">
-        <div class="category-icon" aria-hidden="true">▱</div><div><h3>Totes &amp; Gifts</h3><p>Carry-all totes and thoughtful everyday keepsakes.</p><span class="coming">Next drop</span></div>
-      </a>
-      <a class="category" href="#bestsellers" aria-label="Shop signs and home products">
-        <div class="category-icon" aria-hidden="true">⌂</div><div><h3>Signs &amp; Home</h3><p>Welcome signs, wall art, and home accents.</p><span class="coming">Next drop</span></div>
+      <div class="category">
+        <div class="category-icon" aria-hidden="true">04</div><div><h3>Bridal Party</h3><p>Bride, Bridesmaid, and Maid of Honor sets.</p></div><span class="coming">In progress</span>
+      </div>
+      <div class="category">
+        <div class="category-icon" aria-hidden="true">05</div><div><h3>Groomsmen</h3><p>Groom, Groomsman, and Best Man sets.</p></div><span class="coming">In progress</span>
+      </div>
+      <div class="category">
+        <div class="category-icon" aria-hidden="true">06</div><div><h3>Bachelor &amp; Bachelorette</h3><p>Group shirts, hoodies, and totes for the weekend.</p></div><span class="coming">In progress</span>
+      </div>
+      <div class="category">
+        <div class="category-icon" aria-hidden="true">07</div><div><h3>Totes &amp; Gifts</h3><p>Carry-all totes and small everyday keepsakes.</p></div><span class="coming">In progress</span>
+      </div>
+      <a class="category" href="product-habibi-wall-sign.html" aria-label="Shop signs and home products">
+        <div class="category-icon" aria-hidden="true">08</div><div><h3>Signs &amp; Home</h3><p>Welcome signs and wall pieces for home.</p></div><span class="shop-now">Shop</span>
       </a>
     </div>
   </section>
@@ -271,83 +94,34 @@
         <div class="kicker">A few favorites</div>
         <h2>Start with something small.</h2>
       </div>
-      <a class="view-all" href="#" onclick="show('product')">View all products →</a>
+      <a class="view-all" href="shop.html">View all products →</a>
     </div>
     <div class="grid">
-      <div class="card" role="button" tabindex="0" onclick="show('product')" onkeydown="if(event.key==='Enter'||event.key===' ')show('product')"><div class="ph"><span class="tag">The first mug</span><img src="assets/mug-1.png" alt="Yalla Habibi mug"></div><div class="info"><h3>Yalla Habibi Mug</h3><div class="price">$18</div></div></div>
-      <div class="card" role="button" tabindex="0" onclick="show('product')" onkeydown="if(event.key==='Enter'||event.key===' ')show('product')"><div class="ph"><span class="tag">For little ones</span><img src="assets/ha-1.png" alt="Ha onesie design"></div><div class="info"><h3>Ha Print Onesie</h3><div class="price">$22</div></div></div>
-      <div class="card" role="button" tabindex="0" onclick="show('product')" onkeydown="if(event.key==='Enter'||event.key===' ')show('product')"><div class="ph"><span class="tag">For the wall</span><img src="assets/habibi-1.png" alt="Habibi wall sign design"></div><div class="info"><h3>Habibi Wall Sign</h3><div class="price">$28</div></div></div>
+      <a class="card" href="product-yalla-habibi-mug.html"><div class="ph"><span class="tag">The first mug</span><img src="assets/mug-1.png" alt="Yalla Habibi mug"></div><div class="info"><h3>Yalla Habibi Mug</h3><div class="price">$18</div></div></a>
+      <a class="card" href="product-ha-onesie.html"><div class="ph"><span class="tag">For little ones</span><img src="assets/ha-1.png" alt="Ha onesie design"></div><div class="info"><h3>Ha Print Onesie</h3><div class="price">$22</div></div></a>
+      <a class="card" href="product-habibi-wall-sign.html"><div class="ph"><span class="tag">For the wall</span><img src="assets/habibi-1.png" alt="Habibi wall sign design"></div><div class="info"><h3>Habibi Wall Sign</h3><div class="price">$28</div></div></a>
     </div>
   </section>
 
   <section class="props">
-    <div class="prop"><div class="ico">🌱</div><h3>Made after you order</h3><p>We make each piece when you buy it, instead of keeping a room full of finished stuff.</p></div>
-    <div class="prop"><div class="ico">✍️</div><h3>Started with real phrases</h3><p>The words come from family group chats, kitchen tables, and the way we actually talk.</p></div>
-    <div class="prop"><div class="ico">💛</div><h3>For giving or keeping</h3><p>Pick something for a friend, a new baby, a wedding party, or your own morning coffee.</p></div>
+    <div class="prop"><div class="ico">01 / MADE TO ORDER</div><h3>Made after you order</h3><p>Each piece starts when you buy it. We do not keep a room full of finished stock.</p></div>
+    <div class="prop"><div class="ico">02 / REAL PHRASES</div><h3>Borrowed from home</h3><p>The words come from family group chats, kitchen tables, and the way we actually talk.</p></div>
+    <div class="prop"><div class="ico">03 / USEFUL THINGS</div><h3>For giving or keeping</h3><p>A mug for a friend, a little something for a new baby, or a sign for your own wall.</p></div>
   </section>
 
   <section class="story" id="story">
     <div class="story-card">
       <div><div class="kicker">Why this exists</div><h2>Some phrases deserve a place on the shelf.</h2></div>
-      <p>Habibi Crafts Co started with the words that show up in everyday life: yalla when it's time to go, sahtein before a meal, and khalas when the conversation is over. We're putting those little pieces of home on useful things, one design at a time.</p>
+      <div>
+        <p>This shop started with the words that show up in everyday life: yalla when it is time to go, sahtein before a meal, and khalas when the conversation is over. We are putting those small pieces of home on useful things, one design at a time.</p>
+        <p style="margin-top:18px"><a href="about.html">Read our story →</a></p>
+      </div>
     </div>
   </section>
-</div>
-
-<div id="page-product" style="display:none">
-  <div class="pd">
-    <div class="pd-imgs">
-      <div class="main"><img id="pd-main" src="assets/mug-1.png" alt="Yalla Habibi Mug"></div>
-      <div class="thumbs">
-        <div class="thumb active" onclick="pick(this,'assets/mug-1.png')"><img src="assets/mug-1.png"></div>
-        <div class="thumb" onclick="pick(this,'assets/habibi-1.png')"><img src="assets/habibi-1.png"></div>
-        <div class="thumb" onclick="pick(this,'assets/ha-1.png')"><img src="assets/ha-1.png"></div>
-      </div>
-    </div>
-    <div class="pd-meta">
-      <div class="crumbs"><a href="#" onclick="show('home')">Shop</a> / Mugs / Yalla Habibi</div>
-      <span class="pill" style="font-size:12px">Ceramic · Dishwasher safe</span>
-      <h1>Yalla Habibi Mug</h1>
-      <div class="stars">A good morning mug</div>
-      <div class="price">$18.00</div>
-      <p class="desc">A ceramic mug for the first coffee, the second coffee, or the friend who needs a little push. The artwork says “Yalla Habibi,” which is usually exactly right.</p>
-      <div class="opt-label">Color</div>
-      <div class="swatches">
-        <div class="swatch active" style="background:#fffdf8" title="Cream" onclick="sw(this)"></div>
-        <div class="swatch" style="background:#c05a3c" title="Terracotta" onclick="sw(this)"></div>
-        <div class="swatch" style="background:#2b2119" title="Charcoal" onclick="sw(this)"></div>
-      </div>
-      <div class="qty-row">
-        <span class="qty" aria-label="Quantity"><button aria-label="Decrease quantity" onclick="q(-1)">−</button><span id="qv">1</span><button aria-label="Increase quantity" onclick="q(1)">+</button></span>
-        <button class="btn buy-btn" onclick="toast()">Add to cart — $<span id="tp">18</span>.00</button>
-      </div>
-      <div class="payment-placeholder" role="note">
-        <div class="payment-icon">▣</div>
-        <div><b>Secure checkout coming soon</b><span>Stripe payments will be connected here before launch.</span></div>
-      </div>
-      <div class="trust">
-        <div><b>Made after you order</b>We don't keep finished stock</div>
-        <div><b>Fulfillment after checkout</b>Shipping details will appear here</div>
-        <div><b>Questions?</b>We'll help you sort it out</div>
-      </div>
-    </div>
-  </div>
-</div>
 
 <footer class="pd-footer"><div class="foot">
   <img src="assets/logo.png" alt="">
-  <small>Habibi Crafts Co · Estd 2024 · Made with love</small>
+  <small>Habibi Crafts Co · Estd 2024 · Made in the time between orders</small>
 </div></footer>
-
-<div id="toast">Added to cart ✓ Yalla!</div>
-<script>
-function show(p){ document.getElementById('page-home').style.display = p==='home'?'block':'none';
- document.getElementById('page-product').style.display = p==='product'?'block':'none'; window.scrollTo(0,0); return false;}
-function pick(el,src){ document.querySelectorAll('.thumb').forEach(t=>t.classList.remove('active')); el.classList.add('active');
- document.getElementById('pd-main').src=src;}
-function sw(el){ document.querySelectorAll('.swatch').forEach(s=>s.classList.remove('active')); el.classList.add('active');}
-let n=1; function q(d){ n=Math.max(1,n+d); qv.textContent=n; tp.textContent=n*18;}
-function toast(){ const t=document.getElementById('toast'); t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2000);}
-</script>
 </body>
 </html>
