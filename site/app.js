@@ -12,6 +12,22 @@
     });
   }
 
+  var header=document.querySelector('.site-header');
+  if(header){
+    var lastScroll=0;
+    var ticking=false;
+    function updateHeader(){
+      var scrollY=window.pageYOffset||document.documentElement.scrollTop;
+      header.classList.toggle('scrolled',scrollY>10);
+      ticking=false;
+    }
+    window.addEventListener('scroll',function(){
+      lastScroll=window.pageYOffset||document.documentElement.scrollTop;
+      if(!ticking){requestAnimationFrame(updateHeader);ticking=true;}}
+    ,{passive:true});
+    updateHeader();
+  }
+
   var filters=document.querySelectorAll('[data-filter]');
   var cards=document.querySelectorAll('[data-category]');
   filters.forEach(function(button){
