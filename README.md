@@ -17,8 +17,8 @@ Static storefront for Arabic-inspired products fulfilled through Printful.
 - Shared design system in `site/styles.css`
 - Mobile menu, product filtering, and reduced-motion-aware reveal behavior in `site/app.js`
 - Checkout language is intentionally disabled until Stripe and Printful order routing are ready
-- Working launch prices shown: mugs $18, tees $32, totes $34, onesies $28, 12 × 16 prints $24
-- Catalog is 14 Printful sync products (type cards on the static storefront; checkout still off)
+- Working prices shown: Yalla Habibi mug $18, Ha print onesie $28, Habibi wall print $24
+- Checkout, Plausible, AdSense, and live ordering remain disabled
 
 ## SEO foundation
 

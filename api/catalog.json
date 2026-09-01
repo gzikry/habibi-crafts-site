@@ -2,131 +2,44 @@
   "currency": "USD",
   "shipping_policy": "charge_separately",
   "products": {
-    "ya-aini": {
-      "sync_product_id": 462528261,
-      "printful_product_id": 462528261,
+    "yalla-habibi-mug": {
+      "printful_product_id": 19,
       "variant_id": 1320,
       "type": "mug",
-      "name": "Ya Aini",
+      "name": "Yalla Habibi Mug",
       "price": 1800,
-      "attributes": { "capacity": "11 oz", "finish": "white glossy" }
+      "attributes": {
+        "capacity": "11 oz",
+        "material": "ceramic"
+      }
     },
-    "baladi": {
-      "sync_product_id": 462528274,
-      "printful_product_id": 462528274,
-      "variant_id": 1320,
-      "type": "mug",
-      "name": "Baladi",
-      "price": 1800,
-      "attributes": { "capacity": "11 oz", "finish": "white glossy" }
-    },
-    "ya-dunia": {
-      "sync_product_id": 462528282,
-      "printful_product_id": 462528282,
-      "variant_id": 1320,
-      "type": "mug",
-      "name": "Ya Dunia",
-      "price": 1800,
-      "attributes": { "capacity": "11 oz", "finish": "white glossy" }
-    },
-    "jiran": {
-      "sync_product_id": 462528284,
-      "printful_product_id": 462528284,
-      "variant_id": 1320,
-      "type": "mug",
-      "name": "Jiran",
-      "price": 1800,
-      "attributes": { "capacity": "11 oz", "finish": "white glossy" }
-    },
-    "maamoul": {
-      "sync_product_id": 462532463,
-      "printful_product_id": 462532463,
-      "variant_id": 1320,
-      "type": "mug",
-      "name": "Maamoul",
-      "price": 1800,
-      "attributes": { "capacity": "11 oz", "finish": "white glossy" }
-    },
-    "knafeh-club": {
-      "sync_product_id": 462540373,
-      "printful_product_id": 462540373,
-      "variant_id": 1320,
-      "type": "mug",
-      "name": "Knafeh Club",
-      "price": 1800,
-      "attributes": { "capacity": "11 oz", "finish": "white glossy" }
-    },
-    "khalas-habibi": {
-      "sync_product_id": 462532457,
-      "printful_product_id": 462532457,
-      "variant_ids": { "S": 14682, "M": 14683, "L": 14684, "XL": 14685 },
-      "type": "tee",
-      "name": "Khalas Habibi",
-      "price": 3200,
-      "attributes": { "fit": "unisex", "sizes": "S-XL" }
-    },
-    "ya-habayeb": {
-      "sync_product_id": 462540352,
-      "printful_product_id": 462540352,
-      "variant_ids": { "S": 14682, "M": 14683, "L": 14684, "XL": 14685 },
-      "type": "tee",
-      "name": "Ya Habayeb",
-      "price": 3200,
-      "attributes": { "fit": "unisex", "sizes": "S-XL" }
-    },
-    "halawa": {
-      "sync_product_id": 462532459,
-      "printful_product_id": 462532459,
-      "variant_id": 16289,
-      "type": "tote",
-      "name": "Halawa",
-      "price": 3400,
-      "attributes": { "material": "cotton", "size": "one size" }
-    },
-    "sit-el-kul": {
-      "sync_product_id": 462540360,
-      "printful_product_id": 462540360,
-      "variant_id": 16289,
-      "type": "tote",
-      "name": "Sit El Kul",
-      "price": 3400,
-      "attributes": { "material": "cotton", "size": "one size" }
-    },
-    "ya-teta": {
-      "sync_product_id": 462532461,
-      "printful_product_id": 462532461,
-      "variant_ids": { "3-6m": 9438, "6-12m": 9439, "12-18m": 9440 },
+    "ha-onesie": {
+      "printful_product_id": 192,
+      "variant_ids": {
+        "white": {
+          "3-6m": 1234,
+          "6-12m": 1235,
+          "12-18m": 1236
+        }
+      },
       "type": "onesie",
-      "name": "Ya Teta",
+      "name": "Ha Print Onesie",
       "price": 2800,
-      "attributes": { "color": "white", "sizes": "3-6m, 6-12m, 12-18m" }
+      "attributes": {
+        "material": "100% cotton",
+        "style": "unisex"
+      }
     },
-    "amoura": {
-      "sync_product_id": 462540363,
-      "printful_product_id": 462540363,
-      "variant_ids": { "3-6m": 9438, "6-12m": 9439, "12-18m": 9440 },
-      "type": "onesie",
-      "name": "Amoura",
-      "price": 2800,
-      "attributes": { "color": "white", "sizes": "3-6m, 6-12m, 12-18m" }
-    },
-    "beit-el-hobb": {
-      "sync_product_id": 462532462,
-      "printful_product_id": 462532462,
-      "variant_id": 1349,
+    "habibi-wall-sign": {
+      "printful_product_id": 1112,
+      "variant_id": 3456,
       "type": "poster",
-      "name": "Beit El Hobb",
+      "name": "Habibi Wall Sign",
       "price": 2400,
-      "attributes": { "size": "12x16", "paper": "matte" }
-    },
-    "dar-el-hawa": {
-      "sync_product_id": 462540368,
-      "printful_product_id": 462540368,
-      "variant_id": 1349,
-      "type": "poster",
-      "name": "Dar El Hawa",
-      "price": 2400,
-      "attributes": { "size": "12x16", "paper": "matte" }
+      "attributes": {
+        "size": "12x16",
+        "paper": "matte"
+      }
     }
   }
 }
