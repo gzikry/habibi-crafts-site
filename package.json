@@ -1,0 +1,12 @@
+{
+  "name": "habibi-crafts-api",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test api/__tests__/*.test.js",
+    "checkout:local": "node scripts/local-checkout.js",
+    "webhook:local": "node scripts/local-webhook.js",
+    "dev": "vercel dev"
+  }
+}

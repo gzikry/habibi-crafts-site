@@ -1,0 +1,45 @@
+{
+  "currency": "USD",
+  "shipping_policy": "charge_separately",
+  "products": {
+    "yalla-habibi-mug": {
+      "printful_product_id": 19,
+      "variant_id": 1320,
+      "type": "mug",
+      "name": "Yalla Habibi Mug",
+      "price": 1800,
+      "attributes": {
+        "capacity": "11 oz",
+        "material": "ceramic"
+      }
+    },
+    "ha-onesie": {
+      "printful_product_id": 192,
+      "variant_ids": {
+        "white": {
+          "3-6m": 1234,
+          "6-12m": 1235,
+          "12-18m": 1236
+        }
+      },
+      "type": "onesie",
+      "name": "Ha Print Onesie",
+      "price": 2800,
+      "attributes": {
+        "material": "100% cotton",
+        "style": "unisex"
+      }
+    },
+    "habibi-wall-sign": {
+      "printful_product_id": 1112,
+      "variant_id": 3456,
+      "type": "poster",
+      "name": "Habibi Wall Sign",
+      "price": 2400,
+      "attributes": {
+        "size": "12x16",
+        "paper": "matte"
+      }
+    }
+  }
+}
