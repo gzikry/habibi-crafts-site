@@ -1,0 +1,48 @@
+# Publish the static storefront at repository root for Porkbun GitHub Connect.
+name: Publish storefront for Porkbun
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'site/**'
+      - '.github/workflows/deploy-porkbun.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: porkbun-static-hosting
+  cancel-in-progress: true
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out storefront source
+        uses: actions/checkout@v4
+
+      - name: Prepare root-level hosting artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/porkbun-site"
+          cp -R site/. "$RUNNER_TEMP/porkbun-site/"
+          touch "$RUNNER_TEMP/porkbun-site/.nojekyll"
+
+      - name: Publish Porkbun branch
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          cd "$RUNNER_TEMP/porkbun-site"
+          git init
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add --all
+          git commit -m "Publish storefront from ${GITHUB_SHA}"
+          git branch -M porkbun
+          git remote add origin "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          git push --force origin porkbun
