@@ -1,11 +1,28 @@
-// Add IDs here when ready. Empty values keep analytics disabled.
-window.HABIBI_ANALYTICS = { plausibleDomain: '', googleMeasurementId: '' };
-(function(c){
-  if (c.plausibleDomain) {
-    var s=document.createElement('script'); s.defer=true; s.dataset.domain=c.plausibleDomain; s.src='https://plausible.io/js/script.js'; document.head.appendChild(s);
+// Integrations stay off until the matching account is ready.
+window.HABIBI_INTEGRATIONS = {
+  plausible: {
+    enabled: false,
+    domain: 'habibicraftsco.com',
+    scriptUrl: 'https://plausible.io/js/script.js'
+  },
+  adsense: {
+    enabled: false,
+    client: ''
   }
-  if (c.googleMeasurementId) {
-    var g=document.createElement('script'); g.async=true; g.src='https://www.googletagmanager.com/gtag/js?id='+encodeURIComponent(c.googleMeasurementId); document.head.appendChild(g);
-    window.dataLayer=window.dataLayer||[]; function gtag(){dataLayer.push(arguments);} window.gtag=gtag; gtag('js',new Date()); gtag('config',c.googleMeasurementId,{anonymize_ip:true});
+};
+(function(config){
+  if(config.plausible.enabled && config.plausible.domain){
+    var plausible=document.createElement('script');
+    plausible.defer=true;
+    plausible.dataset.domain=config.plausible.domain;
+    plausible.src=config.plausible.scriptUrl;
+    document.head.appendChild(plausible);
   }
-})(window.HABIBI_ANALYTICS);
+  if(config.adsense.enabled && /^ca-pub-\d+$/.test(config.adsense.client)){
+    var ads=document.createElement('script');
+    ads.async=true;
+    ads.crossOrigin='anonymous';
+    ads.src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client='+encodeURIComponent(config.adsense.client);
+    document.head.appendChild(ads);
+  }
+})(window.HABIBI_INTEGRATIONS);

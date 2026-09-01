@@ -1,82 +1,75 @@
 # Habibi Crafts Co — Storefront
 
-Arabic-inspired print-on-demand goods (mugs, onesies, signs), powered by Printful.
+Static storefront for Arabic-inspired products fulfilled through Printful.
 
-**Status:** storefront foundation live; checkout, Printful, analytics, and custom domain wiring pending.
+**Status:** Apple-inspired multi-page storefront deployed from `main`. Checkout, Plausible, AdSense, and live Printful ordering remain disabled.
 
-**Draft branch:** work lives on local `draft/first-pages`. Do not push, merge to `main`, or deploy until George approves. GitHub Pages publishes from `main`.
+## Public domain
 
-## Current storefront foundation
-- SEO title, description, canonical URL, Open Graph/Twitter cards, favicon, and Store JSON-LD
-- `site/robots.txt` and `site/sitemap.xml` for crawler discovery
-- Stripe checkout placeholder in the product flow (no live payment processing yet)
-- Analytics loader with empty Plausible and Google Analytics IDs; tracking stays disabled until configured
-- Real multi-page static site under `site/` (no build step, no JS page-switcher)
+- Custom domain: `https://habibicraftsco.com/`
+- GitHub repository: `gzikry/habibi-crafts-site`
+- GitHub Pages publishes the `site/` directory from `main` through `.github/workflows/deploy.yml`
+- DNS and TLS must be verified separately from a successful Pages deployment
 
-## Planned product categories
-- Mugs & Kitchen
-- Tees & Hoodies
-- Baby Habibis (onesies and bibs)
-- Bridal Party
-- Groomsmen
-- Bachelor & Bachelorette parties
-- Totes & Gifts
-- Signs & Home
+## Storefront
 
-## Planned integrations
-- Stripe Checkout or Payment Links for secure payments (server-side secret handling required)
-- Printful API for catalog, product sync, mockups, fulfillment, and shipping
-- Plausible and/or Google Analytics 4 after the domain and measurement IDs are confirmed
-- Google Search Console verification and sitemap submission after launch
+- Responsive home, shop, about, privacy, 404, and three product preview pages
+- Shared design system in `site/styles.css`
+- Mobile menu, product filtering, and reduced-motion-aware reveal behavior in `site/app.js`
+- Checkout language is intentionally disabled until Stripe and Printful order routing are ready
+- Working launch prices shown: mug $18, onesie $28, 12 × 16 wall print $24
 
-## Analytics wiring
-Set the IDs in `site/analytics.js` only when ready:
+## SEO foundation
+
+Each indexable page has a unique title, description, canonical URL, Open Graph/Twitter metadata, and page-specific JSON-LD. Product pages use `OutOfStock` until checkout opens. `site/robots.txt` points to `site/sitemap.xml`, which contains only intended public pages.
+
+After DNS and HTTPS are stable:
+
+1. Add `https://habibicraftsco.com` as a Google Search Console domain/URL-prefix property.
+2. Verify ownership using the DNS record Google provides.
+3. Submit `https://habibicraftsco.com/sitemap.xml`.
+4. Request indexing for the home page and shop page.
+5. Add Bing Webmaster Tools and submit the same sitemap.
+
+## Plausible and AdSense
+
+`site/analytics.js` contains inert configuration for both services.
+
+### Plausible
+
+After the site is added to Plausible, set:
+
 ```js
-window.HABIBI_ANALYTICS = {
-  plausibleDomain: 'your-domain.example',
-  googleMeasurementId: 'G-XXXXXXXXXX'
-};
-```
-Do not place Stripe secret keys or Printful tokens in this static site. Those belong in a server-side integration or protected GitHub Actions secret.
-
-## Stack (planned)
-- Static HTML/CSS/JS (no build step) — deployable anywhere (GitHub Pages, Vercel, Netlify, Cloudflare Pages)
-- Printful API for products, fulfillment & shipping
-- Design source of truth: Canva ("Habibi Crafts Co Logo", "Yalla Habibi Mug", "habibi", "Ha")
-
-## Structure
-```
-assets/       Source brand + product art exported from Canva
-site/         Published storefront artifact
-  assets/     Published copies of the web images
-  index.html  Home
-  shop.html   Shop listing
-  about.html  Our story
-  product-yalla-habibi-mug.html
-  product-ha-onesie.html
-  product-habibi-wall-sign.html
-  styles.css  Shared stylesheet
-  analytics.js  Analytics loader (IDs empty until configured)
-  robots.txt  Crawler directives
-  sitemap.xml Search-engine sitemap
-sketches/     Earlier design variants kept for reference
+plausible: {
+  enabled: true,
+  domain: 'habibicraftsco.com',
+  scriptUrl: 'https://plausible.io/js/script.js'
+}
 ```
 
-## Run locally
+Confirm the exact script URL from the Plausible dashboard before enabling it.
+
+### Google AdSense
+
+Do not enable AdSense until Google provides the real publisher ID and the privacy/consent requirements are decided. Then set:
+
+```js
+adsense: {
+  enabled: true,
+  client: '' // replace with the exact publisher ID from Google
+}
+```
+
+Add the exact `ads.txt` line from AdSense at that time. Never publish a placeholder publisher ID. Product pages and useful editorial content should remain the primary experience; ad placements must not block product discovery or mimic navigation.
+
+## Security boundary
+
+This repository is public. Never put Stripe secret keys, Printful tokens, or private credentials in `site/`, client JavaScript, or git. Payment and fulfillment need a server-side or protected serverless integration.
+
+## Local QA
+
 ```bash
-open site/index.html        # macOS
-# or serve it:
-python3 -m http.server -d site 8080
+python3 -m http.server 8080 -d site
 ```
-Then visit http://127.0.0.1:8080/
 
-## Roadmap
-- [x] Design direction approved (warm artisanal × modern)
-- [x] Split into real multi-page site
-- [ ] Add cart
-- [ ] Sync products from Printful
-- [ ] Buy domain + wire DNS
-- [ ] Deploy
-
----
-© Habibi Crafts Co · Estd 2024 · Yalla!
+Check `/`, `/shop.html`, all product pages, `/privacy.html`, `/robots.txt`, `/sitemap.xml`, `/assets/logo.png`, and an unknown path for the 404 page behavior.

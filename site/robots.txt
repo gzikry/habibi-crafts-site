@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://gzikry.github.io/habibi-crafts-site/sitemap.xml
+Sitemap: https://habibicraftsco.com/sitemap.xml
