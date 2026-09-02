@@ -1,54 +1,20 @@
-/* Public catalog matching the live storefront. Three pieces only. */
+/* Public catalog only. No API tokens. Sync IDs are Printful store product IDs. */
 window.HABIBI_CATALOG = {
   currency: "USD",
   products: [
-    {
-      slug: "yalla-habibi-mug",
-      name: "Yalla Habibi Mug",
-      category: "mugs",
-      kind: "Mugs & kitchen",
-      price: 18,
-      priceLabel: "$18",
-      image: "assets/mug-1.png",
-      imageW: 643,
-      imageH: 310,
-      alt: "Yalla Habibi typographic artwork",
-      spec: "11 oz · White ceramic",
-      note: "For the first coffee. And the friend who needs one more yalla.",
-      blurb: "White ceramic, 11 oz. Yalla Habibi is for the morning, and for the person still putting on their shoes.",
-      details: [["Size", "11 oz"], ["Finish", "White gloss"]]
-    },
-    {
-      slug: "ha-onesie",
-      name: "Ha Print Onesie",
-      category: "baby",
-      kind: "Baby Habibis",
-      price: 28,
-      priceLabel: "$28",
-      image: "assets/ha-1.png",
-      imageW: 447,
-      imageH: 447,
-      alt: "Ha print onesie artwork",
-      spec: "3–6m · 6–12m · 12–18m",
-      note: "A small letter for the newest person in the family.",
-      blurb: "Ha is a letter. It goes on a white onesie in 3–6 months, 6–12, and 12–18. Easy to wrap, easy to explain.",
-      details: [["Sizes", "3–6m, 6–12m, 12–18m"], ["Color", "White"]]
-    },
-    {
-      slug: "habibi-wall-sign",
-      name: "Habibi Wall Print",
-      category: "home",
-      kind: "Signs & home",
-      price: 24,
-      priceLabel: "$24",
-      image: "assets/habibi-1.png",
-      imageW: 447,
-      imageH: 447,
-      alt: "Habibi wall print artwork",
-      spec: "12 × 16 in · Matte paper",
-      note: "One word for the people who make a place feel like home.",
-      blurb: "12 × 16, matte paper. Habibi on the wall you see when you walk in. Frame not included.",
-      details: [["Size", "12 × 16 in"], ["Paper", "Matte"], ["Frame", "Not included"]]
-    }
+    { id: 462528261, slug: "ya-aini", name: "Ya Aini", category: "mugs", kind: "Mug", price: 18, priceLabel: "$18", spec: "11 oz · White glossy", note: "The one you say when someone walks in looking a little too tired, or a little too good.", blurb: "White glossy mug, 11 oz. Ya Aini is what you call a person, not a mood. Morning coffee, tea, or the cup you hand someone before they sit down.", details: [["Size", "11 oz"], ["Finish", "White glossy"], ["Material", "Ceramic"]] },
+    { id: 462528274, slug: "baladi", name: "Baladi", category: "mugs", kind: "Mug", price: 18, priceLabel: "$18", spec: "11 oz · White glossy", note: "Hometown. The plate, the street, the way the coffee tastes there.", blurb: "Same 11 oz white mug as the others. Baladi is the town you still measure other places against — and the food you want when you get back.", details: [["Size", "11 oz"], ["Finish", "White glossy"], ["Material", "Ceramic"]] },
+    { id: 462528282, slug: "ya-dunia", name: "Ya Dunia", category: "mugs", kind: "Mug", price: 18, priceLabel: "$18", spec: "11 oz · White glossy", note: "Said to the room at large. Usually with a sigh.", blurb: "Ya Dunia is not a pep talk. It’s what you mutter when the day is already doing too much. The mug is 11 oz, white glossy, nothing fancy.", details: [["Size", "11 oz"], ["Finish", "White glossy"], ["Material", "Ceramic"]] },
+    { id: 462528284, slug: "jiran", name: "Jiran", category: "mugs", kind: "Mug", price: 18, priceLabel: "$18", spec: "11 oz · White glossy", note: "Neighbors. They borrow sugar and know too much.", blurb: "For the people next door, or the ones who act like they are. 11 oz, white glossy. Leave it on the table when they come over unannounced.", details: [["Size", "11 oz"], ["Finish", "White glossy"], ["Material", "Ceramic"]] },
+    { id: 462532463, slug: "maamoul", name: "Maamoul", category: "mugs", kind: "Mug", price: 18, priceLabel: "$18", spec: "11 oz · White glossy", note: "The cookie that appears for the holidays and is gone by Thursday.", blurb: "Maamoul is the tray that empties first. This is the mug that sits next to it — 11 oz, white glossy, no recipe included.", details: [["Size", "11 oz"], ["Finish", "White glossy"], ["Material", "Ceramic"]] },
+    { id: 462540373, slug: "knafeh-club", name: "Knafeh Club", category: "mugs", kind: "Mug", price: 18, priceLabel: "$18", spec: "11 oz · White glossy", note: "Cheese or cream. You already picked a side.", blurb: "Membership is unofficial and arguments are allowed. White glossy 11 oz mug for the people who will drive across town for a good tray.", details: [["Size", "11 oz"], ["Finish", "White glossy"], ["Material", "Ceramic"]] },
+    { id: 462532457, slug: "khalas-habibi", name: "Khalas Habibi", category: "tees", kind: "Tee", price: 32, priceLabel: "$32", spec: "Unisex S–XL", note: "We're done talking. Affectionate. Final.", blurb: "Khalas Habibi means the conversation is over and you still like the person. Unisex tee, S through XL.", details: [["Sizes", "S, M, L, XL"], ["Fit", "Unisex"], ["Color", "Printed on a blank tee"]] },
+    { id: 462540352, slug: "ya-habayeb", name: "Ya Habayeb", category: "tees", kind: "Tee", price: 32, priceLabel: "$32", spec: "Unisex S–XL", note: "For the group. The table, the chat, the people you keep.", blurb: "Ya Habayeb is plural on purpose. Unisex, S–XL. The shirt you wear to someone else’s house.", details: [["Sizes", "S, M, L, XL"], ["Fit", "Unisex"], ["Color", "Printed on a blank tee"]] },
+    { id: 462532459, slug: "halawa", name: "Halawa", category: "totes", kind: "Tote", price: 34, priceLabel: "$34", spec: "Cotton · One size", note: "Sweetness. Also what you carry to someone else's house.", blurb: "Cotton tote, one size. Halawa is the compliment and the candy. Good for the market, the beach bag, or the pile of containers going back to teta.", details: [["Size", "One size"], ["Material", "Cotton"], ["Use", "Everyday tote"]] },
+    { id: 462540360, slug: "sit-el-kul", name: "Sit El Kul", category: "totes", kind: "Tote", price: 34, priceLabel: "$34", spec: "Cotton · One size", note: "The one who runs the room. She knows.", blurb: "Sit El Kul is the woman who already decided where everyone is sitting. Cotton tote, one size. Give it to her or keep it and pretend you run things.", details: [["Size", "One size"], ["Material", "Cotton"], ["Use", "Everyday tote"]] },
+    { id: 462532461, slug: "ya-teta", name: "Ya Teta", category: "baby", kind: "Onesie", price: 28, priceLabel: "$28", spec: "3–6m · 6–12m · 12–18m", note: "For the baby Teta is already spoiling.", blurb: "White onesie. Ya Teta is for the grandmother who asked for photos before the baby had a name. Sizes 3–6 months, 6–12, and 12–18.", details: [["Sizes", "3–6m, 6–12m, 12–18m"], ["Color", "White"], ["Fit", "Baby onesie"]] },
+    { id: 462540363, slug: "amoura", name: "Amoura", category: "baby", kind: "Onesie", price: 28, priceLabel: "$28", spec: "3–6m · 6–12m · 12–18m", note: "A small name for a small person.", blurb: "Amoura is what you call the baby when you’re already gone for them. White onesie, 3–6 months through 12–18 months.", details: [["Sizes", "3–6m, 6–12m, 12–18m"], ["Color", "White"], ["Fit", "Baby onesie"]] },
+    { id: 462532462, slug: "beit-el-hobb", name: "Beit El Hobb", category: "prints", kind: "Print", price: 24, priceLabel: "$24", spec: "12 × 16 in · Matte", note: "House of love. For the wall you see when you come in.", blurb: "12 × 16 matte print. Beit El Hobb is the house, not a slogan. Frame not included — bring your own.", details: [["Size", "12 × 16 in"], ["Paper", "Matte"], ["Frame", "Not included"]] },
+    { id: 462540368, slug: "dar-el-hawa", name: "Dar El Hawa", category: "prints", kind: "Print", price: 24, priceLabel: "$24", spec: "12 × 16 in · Matte", note: "The other house. Same idea, different street.", blurb: "Dar El Hawa sits next to Beit El Hobb if you want a pair, or alone in the hallway. 12 × 16, matte paper, no frame.", details: [["Size", "12 × 16 in"], ["Paper", "Matte"], ["Frame", "Not included"]] }
   ]
 };
