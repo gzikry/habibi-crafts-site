@@ -28,20 +28,6 @@
     updateHeader();
   }
 
-  var filters=document.querySelectorAll('[data-filter]');
-  var cards=document.querySelectorAll('[data-category]');
-  function applyFilter(value){
-    filters.forEach(function(item){item.setAttribute('aria-pressed',String(item.dataset.filter===value));});
-    cards.forEach(function(card){card.hidden=value!=='all'&&card.dataset.category!==value;});
-  }
-  filters.forEach(function(button){
-    button.addEventListener('click',function(){
-      applyFilter(button.dataset.filter);
-    });
-  });
-  var hash=(location.hash||'').replace('#','');
-  if(hash&&document.querySelector('[data-filter="'+hash+'"]')) applyFilter(hash);
-
   var reveals=document.querySelectorAll('.reveal');
   if(!('IntersectionObserver' in window)||window.matchMedia('(prefers-reduced-motion: reduce)').matches){
     reveals.forEach(function(el){el.classList.add('visible');});
