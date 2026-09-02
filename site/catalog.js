@@ -1,4 +1,4 @@
-/* Public catalog only. No API tokens. Sync IDs are Printful store product IDs. */
+/* Public catalog only. No API tokens. Sync IDs are store product IDs. */
 window.HABIBI_CATALOG = {
   currency: "USD",
   products: [

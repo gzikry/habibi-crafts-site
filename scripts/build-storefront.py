@@ -411,7 +411,7 @@ write(
   <article class="editorial shell">
     <h2>A name on the mug.</h2>
     <p>That’s the specialty. Tees, totes, onesies, and prints sit next to it. For a wedding party, a bachelor weekend, or the person who will actually use the thing.</p>
-    <p id="made-to-order">We design the pieces. Printful prints each one after you order. Not a handmade studio, and no closet of leftover stock.</p>
+    <p id="made-to-order">We design the pieces. Each one is printed after you order. Not a handmade studio, and no leftover stock.</p>
     <p>Thanks for supporting a small business. If it ends up at the table, that’s the point.</p>
   </article>""",
     ),
@@ -481,7 +481,7 @@ write(
         """  <article class="legal-shell">
     <div class="kicker">Site information</div>
     <h1>Privacy</h1>
-    <p class="legal-updated">Last updated September 1, 2026</p>
+    <p class="legal-updated">Last updated September 2, 2026</p>
     <h2>Current site status</h2>
     <p>Checkout, customer accounts, analytics, and advertising are currently disabled. This static storefront does not ask for payment details or create customer profiles.</p>
     <h2>Analytics</h2>
@@ -489,7 +489,7 @@ write(
     <h2>Advertising</h2>
     <p>Google AdSense is not active. If advertising is added later, we will update this notice and add any consent controls required for the regions we serve before ads load.</p>
     <h2>Orders</h2>
-    <p>Stripe checkout and Printful fulfillment are not connected to this public storefront yet.</p>
+    <p>Stripe checkout and order fulfillment are not connected to this public storefront yet.</p>
     <h2>Changes</h2>
     <p>This notice will be revised before checkout or advertising launches. The updated date at the top will change when that happens.</p>
   </article>""",
