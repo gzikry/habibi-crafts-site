@@ -13,11 +13,12 @@ Static storefront for Arabic-inspired products fulfilled through Printful.
 
 ## Storefront
 
-- Responsive home, shop, about, privacy, 404, and three product preview pages
+- Responsive home, shop, about, FAQ, privacy, 404, and 14 product preview pages
 - Shared design system in `site/styles.css`
 - Mobile menu, product filtering, and reduced-motion-aware reveal behavior in `site/app.js`
 - Checkout language is intentionally disabled until Stripe and Printful order routing are ready
-- Working launch prices shown: mug $18, onesie $28, 12 × 16 wall print $24
+- Working launch prices shown: mugs $18, tees $32, totes $34, onesies $28, 12 × 16 prints $24
+- Catalog is 14 Printful sync products (type cards on the static storefront; checkout still off)
 
 ## SEO foundation
 
