@@ -25,7 +25,7 @@ PRODUCTS = catalog["products"]
 BY_SLUG = {p["slug"]: p for p in PRODUCTS}
 
 GROUPS = [
-    ("mugs", "Mugs", "$18", "11 oz white glossy. Six phrases."),
+    ("mugs", "Mugs", "$18", "11 oz white glossy. Six designs."),
     ("tees", "Tees", "$32", "Unisex, S through XL."),
     ("totes", "Totes", "$34", "Cotton. One size."),
     ("baby", "Onesies", "$28", "White. 3–6m, 6–12m, 12–18m."),
@@ -105,7 +105,7 @@ def footer() -> str:
   <div class="footer-grid">
     <div>
       <div class="footer-brand">Habibi Crafts Co</div>
-      <p class="footer-copy">The words from the house, on mugs, tees, totes, onesies, and prints.</p>
+      <p class="footer-copy">A husband-and-wife shop. Personalized mugs, plus other gifts.</p>
     </div>
     <div>
       <div class="footer-title">Shop</div>
@@ -199,7 +199,7 @@ home_ld = {
             "url": "https://habibicraftsco.com/",
             "logo": "https://habibicraftsco.com/assets/logo.png",
             "image": "https://habibicraftsco.com/assets/logo.png",
-            "description": "Arabic phrases on mugs, tees, totes, onesies, and prints.",
+            "description": "A husband-and-wife shop for personalized mugs and gifts — weddings, bachelor and bachelorette parties, and everyday.",
         },
         {
             "@type": "WebSite",
@@ -216,8 +216,8 @@ write(
     "index.html",
     wrap(
         page_head(
-            "Habibi Crafts Co | Mugs, tees, totes, onesies, prints",
-            "Arabic phrases on everyday things: six mugs, two tees, two totes, two onesies, two prints. From California.",
+            "Habibi Crafts Co | Personalized mugs and gifts",
+            "A husband-and-wife shop for personalized mugs and gifts — weddings, bachelor and bachelorette parties, and everyday. California.",
             "https://habibicraftsco.com/",
             extra_ld=[home_ld],
         ),
@@ -225,8 +225,8 @@ write(
         f"""  <section class="hero">
     <div class="shell">
       <div class="eyebrow">Habibi Crafts Co · California</div>
-      <h1>A little home,<br><em>carried forward.</em></h1>
-      <p class="lede">Phrases we grew up with, on mugs, tees, totes, onesies, and a couple of prints.</p>
+      <h1>Personalized mugs,<br><em>and other gifts.</em></h1>
+      <p class="lede">A husband-and-wife shop. Weddings, bachelor and bachelorette parties, and the rest of the week.</p>
       <div class="actions"><a class="button" href="shop.html">See the shop</a><a class="button secondary" href="about.html">Our story</a></div>
     </div>
     <div class="hero-stage" aria-label="Habibi Crafts Co mark"><img src="assets/logo.png" alt="Habibi Crafts Co logo" width="447" height="447"><span class="hero-stage-note">14 pieces · mugs, tees, totes, onesies, prints</span></div>
@@ -234,8 +234,8 @@ write(
 {chr(10).join(home_groups)}
   <section class="section tight"><div class="shell story-panel reveal">
     <div class="kicker" style="color:#eab038">Why this exists</div>
-    <h2>The phrases followed us. The products came later.</h2>
-    <p>Yalla on the way out. Sahtein at the table. Khalas when the conversation is very much over. The shop starts there.</p>
+    <h2>Two of us. A small shop.</h2>
+    <p>Personalized mugs, plus tees, totes, onesies, and prints. Printed after you order. Other crafts as we add them.</p>
     <a class="text-link" href="about.html">Read the story</a>
   </div></section>""",
     ),
@@ -280,7 +280,7 @@ write(
         f"""  <section class="page-hero"><div class="shell">
     <div class="eyebrow">The shop</div>
     <h1>Fourteen pieces.</h1>
-    <p class="lede">Mugs, tees, totes, onesies, and prints. Same phrase, same price, on every page.</p>
+    <p class="lede">Personalized mugs, tees, totes, onesies, and prints. Same prices on every page.</p>
   </div></section>
   <section class="section tight"><div class="shell">
     <div class="filter-bar" role="group" aria-label="Filter by type">{filter_btns}</div>
@@ -386,7 +386,7 @@ write(
     wrap(
         page_head(
             "Our story | Habibi Crafts Co",
-            "Habibi Crafts Co puts the Arabic phrases heard at home on mugs, tees, totes, onesies, and prints.",
+            "Husband-and-wife shop. Personalized mugs and gifts for weddings, bachelor and bachelorette parties, and everyday. Printed to order.",
             "https://habibicraftsco.com/about.html",
             extra_ld=[
                 {
@@ -403,31 +403,32 @@ write(
         """  <section class="section"><div class="shell about-hero">
     <div class="about-block">
       <div class="kicker">Our story</div>
-      <h1>It started with the words.</h1>
-      <p>Yalla when it is time to go. Sahtein before a meal. Khalas when everyone knows the conversation should have ended five minutes ago.</p>
+      <h1>Two of us. A small shop.</h1>
+      <p>Personalized mugs, plus other pieces — for weddings, bachelor and bachelorette parties, and ordinary days.</p>
     </div>
     <div class="about-block art"><img src="assets/logo.png" alt="Habibi Crafts Co logo" width="447" height="447"></div>
   </div></section>
   <article class="editorial shell">
-    <h2>Small pieces of home, made useful.</h2>
-    <p>The phrases come from family group chats, kitchen tables, and the way we actually talk. They are not slogans we found later. They were already there.</p>
-    <p>They go on things that stay in the house: a mug, a shirt, a tote, an onesie, a print by the door.</p>
-    <p id="made-to-order">Each piece is printed after it’s ordered. No closet full of leftover stock.</p>
+    <h2>Printed when you order it.</h2>
+    <p id="made-to-order">We design the pieces. Printful prints them after you order. Not a handmade studio, and no closet of leftover stock.</p>
+    <p>The specialty is personalized mugs. There are also tees, totes, onesies, and prints. A gift for a wedding party, a bachelor weekend, or a desk that needs a mug.</p>
+    <p>Thanks for supporting a small business.</p>
   </article>""",
     ),
 )
 
 # --- faq ---
 faqs = [
-    ("What do you sell?", "Mugs, tees, totes, baby onesies, and 12 × 16 prints. Fourteen pieces right now. Every name is a phrase people actually say."),
+    ("What do you sell?", "Personalized mugs, tees, totes, baby onesies, and 12 × 16 prints. Fourteen pieces right now. Other crafts later."),
     ("How much are they?", "Mugs $18. Tees $32. Totes $34. Onesies $28. Prints $24. Same number on the shop page and the product page."),
     ("What size is the mug?", "11 oz, white glossy ceramic."),
     ("What sizes are the tees?", "Unisex S, M, L, and XL."),
     ("What about the onesies?", "White. 3–6 months, 6–12 months, and 12–18 months."),
     ("Are the prints framed?", "No. 12 × 16 inches, matte paper. You bring the frame."),
+    ("Are they handmade?", "No. Each piece is printed after it’s ordered."),
     ("What does Sit El Kul mean?", "The woman who outranks the room. Said with affection."),
     ("And Ya Aini?", "A person you care about. Literally “my eye.”"),
-    ("Who is this for?", "Anyone who already uses these words — or lives with someone who does."),
+    ("Who is this for?", "Wedding parties, bachelor and bachelorette weekends, and anyone who wants a mug with a name on it."),
 ]
 faq_html = "".join(
     f"<details class=\"faq-item\"><summary>{esc(q)}</summary><p>{esc(a)}</p></details>" for q, a in faqs
@@ -542,7 +543,7 @@ for p in PRODUCTS:
 body = ["<?xml version=\"1.0\" encoding=\"UTF-8\"?>", '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
 for loc, pri, freq in urls:
     body.append(
-        f"  <url><loc>{loc}</loc><lastmod>2026-09-01</lastmod><changefreq>{freq}</changefreq><priority>{pri}</priority></url>"
+        f"  <url><loc>{loc}</loc><lastmod>2026-09-02</lastmod><changefreq>{freq}</changefreq><priority>{pri}</priority></url>"
     )
 body.append("</urlset>")
 (SITE / "sitemap.xml").write_text("\n".join(body) + "\n")

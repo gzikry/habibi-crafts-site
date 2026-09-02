@@ -1,6 +1,6 @@
 # Habibi Crafts Co — Storefront
 
-Static storefront for Arabic-inspired products fulfilled through Printful.
+Static storefront for a husband-and-wife gift shop. Personalized mugs and other pieces, fulfilled through Printful.
 
 **Status:** Apple-inspired multi-page storefront deployed from `main`. Checkout, Plausible, AdSense, and live Printful ordering remain disabled.
 
