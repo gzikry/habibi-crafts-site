@@ -13,12 +13,12 @@ Static storefront for a husband-and-wife shop in California. All kinds of crafts
 
 ## Storefront
 
-- Responsive home, shop, about, FAQ, privacy, 404, and 14 product preview pages
+- Responsive home, shop, collection pages (mugs, tees, totes, onesies, prints), about, FAQ, privacy, 404, and product preview pages
 - Shared design system in `site/styles.css`
-- Mobile menu, product filtering, and reduced-motion-aware reveal behavior in `site/app.js`
+- Mobile menu and reduced-motion-aware reveal behavior in `site/app.js`
 - Checkout language is intentionally disabled until Stripe and order routing are ready
 - Working launch prices shown: mugs $18, tees $32, totes $34, onesies $28, 12 × 16 prints $24
-- Catalog is 14 products with local mockups on the static storefront; checkout still off
+- Current live products use local mockups on the static storefront; checkout still off
 
 ## SEO foundation
 

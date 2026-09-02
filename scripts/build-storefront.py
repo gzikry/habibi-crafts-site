@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import json
-import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -24,15 +23,16 @@ catalog = json.loads(
 PRODUCTS = catalog["products"]
 BY_SLUG = {p["slug"]: p for p in PRODUCTS}
 
+# (category key, heading, price, spec line, collection filename)
 GROUPS = [
-    ("mugs", "Mugs", "$18", "11 oz white glossy. Six designs."),
-    ("tees", "Tees", "$32", "Unisex, S through XL."),
-    ("totes", "Totes", "$34", "Cotton. One size."),
-    ("baby", "Onesies", "$28", "White. 3–6m, 6–12m, 12–18m."),
-    ("prints", "Prints", "$24", "12 × 16 matte. Frame not included."),
+    ("mugs", "Mugs", "$18", "11 oz white glossy.", "mugs.html"),
+    ("tees", "Tees", "$32", "Unisex, S through XL.", "tees.html"),
+    ("totes", "Totes", "$34", "Cotton. One size.", "totes.html"),
+    ("baby", "Onesies", "$28", "White. 3–6m, 6–12m, 12–18m.", "onesies.html"),
+    ("prints", "Prints", "$24", "12 × 16 matte. Frame not included.", "prints.html"),
 ]
 
-FILTERS = [("all", "All"), ("mugs", "Mugs"), ("tees", "Tees"), ("totes", "Totes"), ("baby", "Baby"), ("prints", "Prints")]
+ASSET_V = "shop"
 
 
 def esc(s: str) -> str:
@@ -46,6 +46,10 @@ def esc(s: str) -> str:
 
 def json_ld(obj) -> str:
     return json.dumps(obj, ensure_ascii=False, separators=(",", ":"))
+
+
+def group_for(category: str):
+    return next(g for g in GROUPS if g[0] == category)
 
 
 def page_head(title, description, canonical, extra_meta="", extra_ld=None, og_image="https://habibicraftsco.com/assets/logo.png"):
@@ -73,7 +77,7 @@ def page_head(title, description, canonical, extra_meta="", extra_ld=None, og_im
 <meta name="twitter:description" content="{esc(description)}">
 <meta name="twitter:image" content="{esc(og_image)}">
 <link rel="icon" type="image/png" href="assets/logo.png">
-<link rel="stylesheet" href="styles.css?v=mugs">
+<link rel="stylesheet" href="styles.css?v={ASSET_V}">
 {extra_meta}{ld_tags}
 <script defer src="analytics.js"></script>
 <script defer src="app.js"></script>
@@ -101,7 +105,8 @@ def nav(current: str, prefix: str = "") -> str:
 
 
 def footer() -> str:
-    return """<footer class="site-footer">
+    kind_links = "\n        ".join(f'<a href="{page}">{title}</a>' for _, title, _, _, page in GROUPS)
+    return f"""<footer class="site-footer">
   <div class="footer-grid">
     <div>
       <div class="footer-brand">Habibi Crafts Co</div>
@@ -110,14 +115,15 @@ def footer() -> str:
     <div>
       <div class="footer-title">Shop</div>
       <div class="footer-links">
-        <a href="shop.html">All 14 pieces</a>
-        <a href="about.html">Our story</a>
-        <a href="faq.html">FAQ</a>
+        <a href="shop.html">The shop</a>
+        {kind_links}
       </div>
     </div>
     <div>
       <div class="footer-title">Information</div>
       <div class="footer-links">
+        <a href="about.html">Our story</a>
+        <a href="faq.html">FAQ</a>
         <a href="privacy.html">Privacy</a>
         <a href="sitemap.xml">Sitemap</a>
         <a href="index.html#made-to-order">How it’s printed</a>
@@ -128,6 +134,15 @@ def footer() -> str:
 </footer>"""
 
 
+def kind_bar(current: str) -> str:
+    items = [("all", "All", "shop.html")] + [(key, title, page) for key, title, _, _, page in GROUPS]
+    links = []
+    for key, label, href in items:
+        cur = ' aria-current="page"' if current == key else ""
+        links.append(f'<a class="filter-button" href="{esc(href)}"{cur}>{esc(label)}</a>')
+    return f'<nav class="filter-bar" aria-label="Shop by kind">{"".join(links)}</nav>'
+
+
 def mockup_src(p) -> str:
     """Local PNG under site/assets/mockups/. Rebuilds must keep using these files, not a live CDN."""
     return p.get("image") or f"assets/mockups/{p['slug']}.png"
@@ -136,20 +151,71 @@ def mockup_src(p) -> str:
 def mockup_img(p, *, alt: str, lazy: bool = False) -> str:
     loading = ' loading="lazy"' if lazy else ""
     return (
-        f'<img class="mockup" src="{esc(mockup_src(p))}?v=mugs" alt="{esc(alt)}" '
+        f'<img class="mockup" src="{esc(mockup_src(p))}?v={ASSET_V}" alt="{esc(alt)}" '
         f'width="800" height="800"{loading} decoding="async">'
     )
 
 
-def product_card(p):
+def product_card(p, *, show_type: bool = False):
+    type_html = f'\n    <div class="product-type">{esc(p["kind"])}</div>' if show_type else ""
     return f"""<a class="product-card reveal" href="product-{esc(p['slug'])}.html" data-category="{esc(p['category'])}">
   <div class="product-media">{mockup_img(p, alt="", lazy=True)}</div>
-  <div class="product-copy">
-    <div class="product-type">{esc(p['kind'])}</div>
+  <div class="product-copy">{type_html}
     <div class="product-row"><h3>{esc(p['name'])}</h3><span class="price">{esc(p['priceLabel'])}</span></div>
-    <p class="product-note">{esc(p['note'])}</p>
   </div>
 </a>"""
+
+
+def kind_card(key, title, price, blurb, page):
+    preview = next(p for p in PRODUCTS if p["category"] == key)
+    return f"""<a class="kind-card reveal" href="{esc(page)}" data-kind="{esc(key)}">
+  <div class="kind-card-media">{mockup_img(preview, alt="", lazy=True)}</div>
+  <div class="kind-card-copy">
+    <div class="kicker">{esc(price)}</div>
+    <h3>{esc(title)}</h3>
+    <p>{esc(blurb)}</p>
+  </div>
+</a>"""
+
+
+def catalog_section(key, title, price, blurb, page, *, heading_id: str, link_to_collection: bool):
+    items = [p for p in PRODUCTS if p["category"] == key]
+    cards = "\n".join(product_card(p) for p in items)
+    grid_cls = "product-grid two" if len(items) < 3 else "product-grid"
+    link = f'\n      <a class="text-link" href="{esc(page)}">Shop {esc(title.lower())}</a>' if link_to_collection else ""
+    return f"""<section class="section tight shop-section" id="{esc(heading_id)}" aria-labelledby="{esc(heading_id)}-heading">
+  <div class="shell">
+    <div class="section-head">
+      <div>
+        <div class="kicker">{esc(price)}</div>
+        <h2 id="{esc(heading_id)}-heading">{esc(title)}</h2>
+        <p>{esc(blurb)}</p>
+      </div>{link}
+    </div>
+    <div class="{grid_cls}">{cards}</div>
+  </div>
+</section>"""
+
+
+def item_list_ld(url: str, name: str, products):
+    return {
+        "@context": "https://schema.org",
+        "@type": "CollectionPage",
+        "name": name,
+        "url": url,
+        "mainEntity": {
+            "@type": "ItemList",
+            "itemListElement": [
+                {
+                    "@type": "ListItem",
+                    "position": i + 1,
+                    "url": f"https://habibicraftsco.com/product-{p['slug']}.html",
+                    "name": p["name"],
+                }
+                for i, p in enumerate(products)
+            ],
+        },
+    }
 
 
 def wrap(head, current, main, prefix=""):
@@ -173,26 +239,7 @@ def write(name: str, html: str):
 
 
 # --- index ---
-home_groups = []
-for key, title, price, blurb in GROUPS:
-    items = [p for p in PRODUCTS if p["category"] == key]
-    cards = "\n".join(product_card(p) for p in items)
-    grid_cls = "product-grid two" if len(items) < 3 else "product-grid"
-    home_groups.append(
-        f"""<section class="section tight" id="home-{key}" aria-labelledby="home-{key}-heading">
-  <div class="shell">
-    <div class="section-head">
-      <div>
-        <div class="kicker">{esc(price)}</div>
-        <h2 id="home-{key}-heading">{esc(title)}</h2>
-        <p>{esc(blurb)}</p>
-      </div>
-      <a class="text-link" href="shop.html#{esc(key)}">Shop {esc(title.lower())}</a>
-    </div>
-    <div class="{grid_cls}">{cards}</div>
-  </div>
-</section>"""
-    )
+home_kinds = "\n".join(kind_card(*g) for g in GROUPS)
 
 home_ld = {
     "@context": "https://schema.org",
@@ -234,9 +281,21 @@ write(
       <p class="lede">We’re a husband-and-wife shop. We make a lot of different things — whatever we add next is fair game.</p>
       <div class="actions"><a class="button" href="shop.html">See the shop</a><a class="button secondary" href="about.html">Our story</a></div>
     </div>
-    <div class="hero-stage" aria-label="Habibi Crafts Co mark"><img src="assets/logo.png" alt="Habibi Crafts Co logo" width="447" height="447"><span class="hero-stage-note">14 pieces in the shop now</span></div>
+    <div class="hero-stage" aria-label="Habibi Crafts Co mark"><img src="assets/logo.png" alt="Habibi Crafts Co logo" width="447" height="447"></div>
   </section>
-{chr(10).join(home_groups)}
+  <section class="section tight" id="shop-by-kind" aria-labelledby="shop-by-kind-heading">
+    <div class="shell">
+      <div class="section-head">
+        <div>
+          <div class="kicker">The shop</div>
+          <h2 id="shop-by-kind-heading">Shop by kind</h2>
+          <p>What’s here now. We’ll keep adding.</p>
+        </div>
+        <a class="text-link" href="shop.html">See everything</a>
+      </div>
+      <div class="kind-grid">{home_kinds}</div>
+    </div>
+  </section>
   <section class="section tight" id="made-to-order"><div class="shell story-panel reveal">
     <div class="kicker" style="color:#eab038">Why this exists</div>
     <h2>This is our small business. We design the pieces. They’re printed after you order.</h2>
@@ -246,52 +305,57 @@ write(
 )
 
 # --- shop ---
-filter_btns = "".join(
-    f'<button class="filter-button" data-filter="{k}" aria-pressed="{"true" if k=="all" else "false"}">{lab}</button>'
-    for k, lab in FILTERS
+shop_sections = "\n".join(
+    catalog_section(key, title, price, blurb, page, heading_id=key, link_to_collection=True)
+    for key, title, price, blurb, page in GROUPS
 )
-shop_cards = "\n".join(product_card(p) for p in PRODUCTS)
-shop_ld = {
-    "@context": "https://schema.org",
-    "@type": "CollectionPage",
-    "name": "Shop Habibi Crafts Co",
-    "url": "https://habibicraftsco.com/shop.html",
-    "mainEntity": {
-        "@type": "ItemList",
-        "numberOfItems": len(PRODUCTS),
-        "itemListElement": [
-            {
-                "@type": "ListItem",
-                "position": i + 1,
-                "url": f"https://habibicraftsco.com/product-{p['slug']}.html",
-                "name": p["name"],
-            }
-            for i, p in enumerate(PRODUCTS)
-        ],
-    },
-}
 
 write(
     "shop.html",
     wrap(
         page_head(
             "Shop | Habibi Crafts Co",
-            "Mugs, tees, totes, onesies, and prints. Same prices on every page.",
+            "What’s in the shop now. We’ll keep adding. Same prices on every page.",
             "https://habibicraftsco.com/shop.html",
-            extra_ld=[shop_ld],
+            extra_ld=[item_list_ld("https://habibicraftsco.com/shop.html", "Shop Habibi Crafts Co", PRODUCTS)],
         ),
         "shop",
         f"""  <section class="page-hero"><div class="shell">
     <div class="eyebrow">The shop</div>
     <h1>The shop</h1>
-    <p class="lede">Mugs, tees, totes, onesies, and prints. Same prices on every page.</p>
+    <p class="lede">What’s here now. We’ll keep adding.</p>
+    {kind_bar("all")}
   </div></section>
-  <section class="section tight"><div class="shell">
-    <div class="filter-bar" role="group" aria-label="Filter by type">{filter_btns}</div>
-    <div class="product-grid" id="catalog">{shop_cards}</div>
-  </div></section>""",
+{shop_sections}""",
     ),
 )
+
+# --- collection pages ---
+for key, title, price, blurb, page in GROUPS:
+    items = [p for p in PRODUCTS if p["category"] == key]
+    cards = "\n".join(product_card(p) for p in items)
+    grid_cls = "product-grid two" if len(items) < 3 else "product-grid"
+    write(
+        page,
+        wrap(
+            page_head(
+                f"{title} | Habibi Crafts Co",
+                f"{blurb} What’s here now. We’ll keep adding.",
+                f"https://habibicraftsco.com/{page}",
+                extra_ld=[item_list_ld(f"https://habibicraftsco.com/{page}", f"{title} — Habibi Crafts Co", items)],
+            ),
+            "shop",
+            f"""  <section class="page-hero"><div class="shell">
+    <div class="eyebrow">The shop</div>
+    <h1>{esc(title)}</h1>
+    <p class="lede">{esc(blurb)} {esc(price)}.</p>
+    {kind_bar(key)}
+  </div></section>
+  <section class="section tight"><div class="shell">
+    <div class="{grid_cls}">{cards}</div>
+  </div></section>""",
+        ),
+    )
 
 # --- product pages ---
 for p in PRODUCTS:
@@ -306,7 +370,7 @@ for p in PRODUCTS:
     }[p["category"]]
     related_grid = "product-grid two" if len(siblings) < 3 else "product-grid"
     details = "".join(f'<div class="detail"><span>{esc(k)}</span><span>{esc(v)}</span></div>' for k, v in p["details"])
-    crumb_label = next(t for k, t, *_ in GROUPS if k == p["category"])
+    key, crumb_label, _, _, collection_page = group_for(p["category"])
     extra = ""
     if p["category"] == "tees":
         extra = '<p class="size-line">S · M · L · XL</p>'
@@ -346,6 +410,12 @@ for p in PRODUCTS:
                     {
                         "@type": "ListItem",
                         "position": 3,
+                        "name": crumb_label,
+                        "item": f"https://habibicraftsco.com/{collection_page}",
+                    },
+                    {
+                        "@type": "ListItem",
+                        "position": 4,
                         "name": p["name"],
                         "item": f"https://habibicraftsco.com/product-{p['slug']}.html",
                     },
@@ -368,7 +438,7 @@ for p in PRODUCTS:
             f"""  <div class="shell product-page">
     <div class="product-gallery" data-kind="{esc(p['category'])}">{mockup_img(p, alt=f"{p['name']} {p['kind'].lower()}")}</div>
     <div class="product-meta">
-      <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="index.html">Home</a> / <a href="shop.html">Shop</a> / {esc(crumb_label)}</nav>
+      <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="index.html">Home</a> / <a href="shop.html">Shop</a> / <a href="{esc(collection_page)}">{esc(crumb_label)}</a></nav>
       <div class="eyebrow">{esc(p['kind'])}</div>
       <h1>{esc(p['name'])}</h1>
       <p class="product-subtitle">{esc(p['note'])}</p>
@@ -379,7 +449,7 @@ for p in PRODUCTS:
     </div>
   </div>
   <section class="section tight"><div class="shell">
-    <div class="section-head"><div><div class="kicker">Also in {esc(crumb_label.lower())}</div><h2>{esc(related_h2)}</h2></div></div>
+    <div class="section-head"><div><div class="kicker">Also in {esc(crumb_label.lower())}</div><h2>{esc(related_h2)}</h2></div><a class="text-link" href="{esc(collection_page)}">Shop {esc(crumb_label.lower())}</a></div>
     <div class="{related_grid}">{related}</div>
   </div></section>""",
         ),
@@ -498,7 +568,7 @@ write(
 )
 
 # --- 404 uses root-absolute paths ---
-four = """<!doctype html>
+four = f"""<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -507,7 +577,7 @@ four = """<!doctype html>
 <meta name="theme-color" content="#faf6ef">
 <title>Page not found | Habibi Crafts Co</title>
 <link rel="icon" type="image/png" href="/assets/logo.png">
-<link rel="stylesheet" href="/styles.css?v=mugs">
+<link rel="stylesheet" href="/styles.css?v={ASSET_V}">
 <script defer src="/app.js"></script>
 </head>
 <body>
@@ -535,10 +605,16 @@ write("404.html", four)
 urls = [
     ("https://habibicraftsco.com/", "1.0", "weekly"),
     ("https://habibicraftsco.com/shop.html", "0.9", "weekly"),
-    ("https://habibicraftsco.com/about.html", "0.7", "monthly"),
-    ("https://habibicraftsco.com/faq.html", "0.6", "monthly"),
-    ("https://habibicraftsco.com/privacy.html", "0.3", "yearly"),
 ]
+for _, _, _, _, page in GROUPS:
+    urls.append((f"https://habibicraftsco.com/{page}", "0.85", "weekly"))
+urls.extend(
+    [
+        ("https://habibicraftsco.com/about.html", "0.7", "monthly"),
+        ("https://habibicraftsco.com/faq.html", "0.6", "monthly"),
+        ("https://habibicraftsco.com/privacy.html", "0.3", "yearly"),
+    ]
+)
 for p in PRODUCTS:
     urls.append((f"https://habibicraftsco.com/product-{p['slug']}.html", "0.8", "weekly"))
 body = ["<?xml version=\"1.0\" encoding=\"UTF-8\"?>", '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
