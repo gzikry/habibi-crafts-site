@@ -1,8 +1,8 @@
 # Habibi Crafts Co — Storefront
 
-Static storefront for a husband-and-wife gift shop. Personalized mugs and other pieces, fulfilled through Printful.
+Static storefront for a husband-and-wife shop in California. All kinds of crafts.
 
-**Status:** Apple-inspired multi-page storefront deployed from `main`. Checkout, Plausible, AdSense, and live Printful ordering remain disabled.
+**Status:** Multi-page storefront deployed from `main`. Checkout, Plausible, AdSense, and live ordering remain disabled.
 
 ## Public domain
 
@@ -16,7 +16,7 @@ Static storefront for a husband-and-wife gift shop. Personalized mugs and other 
 - Responsive home, shop, about, FAQ, privacy, 404, and 14 product preview pages
 - Shared design system in `site/styles.css`
 - Mobile menu, product filtering, and reduced-motion-aware reveal behavior in `site/app.js`
-- Checkout language is intentionally disabled until Stripe and Printful order routing are ready
+- Checkout language is intentionally disabled until Stripe and order routing are ready
 - Working launch prices shown: mugs $18, tees $32, totes $34, onesies $28, 12 × 16 prints $24
 - Catalog is 14 products with local mockups on the static storefront; checkout still off
 
