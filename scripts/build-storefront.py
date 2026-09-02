@@ -105,7 +105,7 @@ def footer() -> str:
   <div class="footer-grid">
     <div>
       <div class="footer-brand">Habibi Crafts Co</div>
-      <p class="footer-copy">Our small business. All kinds of crafts.</p>
+      <p class="footer-copy">Our small business.</p>
     </div>
     <div>
       <div class="footer-title">Shop</div>
@@ -199,7 +199,7 @@ home_ld = {
             "url": "https://habibicraftsco.com/",
             "logo": "https://habibicraftsco.com/assets/logo.png",
             "image": "https://habibicraftsco.com/assets/logo.png",
-            "description": "Our small business. All kinds of crafts.",
+            "description": "Our small business.",
         },
         {
             "@type": "WebSite",
@@ -217,7 +217,7 @@ write(
     wrap(
         page_head(
             "Habibi Crafts Co | Our small business",
-            "We make all kinds of crafts. Gifts for weddings, bachelor and bachelorette parties, and whoever you’re shopping for. California.",
+            "Gifts for weddings, bachelor and bachelorette parties, and whoever you’re shopping for. California.",
             "https://habibicraftsco.com/",
             extra_ld=[home_ld],
         ),
@@ -226,7 +226,7 @@ write(
     <div class="shell">
       <div class="eyebrow">Habibi Crafts Co · California</div>
       <h1>Our small business</h1>
-      <p class="lede">We make all kinds of crafts. Gifts for weddings, bachelor and bachelorette parties, and whoever you’re shopping for.</p>
+      <p class="lede">Gifts for weddings, bachelor and bachelorette parties, and whoever you’re shopping for.</p>
       <div class="actions"><a class="button" href="shop.html">See the shop</a><a class="button secondary" href="about.html">Our story</a></div>
     </div>
     <div class="hero-stage" aria-label="Habibi Crafts Co mark"><img src="assets/logo.png" alt="Habibi Crafts Co logo" width="447" height="447"><span class="hero-stage-note">14 pieces in the shop now</span></div>
@@ -271,7 +271,7 @@ write(
     wrap(
         page_head(
             "Shop | Habibi Crafts Co",
-            "Six mugs at $18, two tees at $32, two totes at $34, two onesies at $28, two prints at $24.",
+            "Fourteen pieces. Same prices on every page.",
             "https://habibicraftsco.com/shop.html",
             extra_ld=[shop_ld],
         ),
@@ -279,7 +279,7 @@ write(
         f"""  <section class="page-hero"><div class="shell">
     <div class="eyebrow">The shop</div>
     <h1>Fourteen pieces.</h1>
-    <p class="lede">Mugs, tees, totes, onesies, and prints. Same prices on every page.</p>
+    <p class="lede">Gifts for weddings, bachelor and bachelorette parties, and whoever you’re shopping for. Same prices on every page.</p>
   </div></section>
   <section class="section tight"><div class="shell">
     <div class="filter-bar" role="group" aria-label="Filter by type">{filter_btns}</div>
@@ -419,7 +419,7 @@ write(
 
 # --- faq ---
 faqs = [
-    ("What do you sell?", "Crafts and gifts of all kinds. Right now that includes mugs, tees, totes, onesies, and prints. We’ll add more."),
+    ("What do you sell?", "What’s in the shop now, plus more as we add it. Right now that includes mugs, tees, totes, onesies, and prints."),
     ("How much are they?", "Mugs $18. Tees $32. Totes $34. Onesies $28. Prints $24. Same number on the shop page and the product page."),
     ("What size is the mug?", "11 oz, white glossy ceramic."),
     ("What sizes are the tees?", "Unisex S, M, L, and XL."),
