@@ -1,6 +1,6 @@
 # Habibi Crafts Co — Storefront
 
-Static storefront for Arabic-inspired products fulfilled through Printful.
+Static storefront for a husband-and-wife gift shop. Personalized mugs and other pieces, fulfilled through Printful.
 
 **Status:** Apple-inspired multi-page storefront deployed from `main`. Checkout, Plausible, AdSense, and live Printful ordering remain disabled.
 
@@ -18,7 +18,7 @@ Static storefront for Arabic-inspired products fulfilled through Printful.
 - Mobile menu, product filtering, and reduced-motion-aware reveal behavior in `site/app.js`
 - Checkout language is intentionally disabled until Stripe and Printful order routing are ready
 - Working launch prices shown: mugs $18, tees $32, totes $34, onesies $28, 12 × 16 prints $24
-- Catalog is 14 Printful sync products (type cards on the static storefront; checkout still off)
+- Catalog is 14 products with local mockups on the static storefront; checkout still off
 
 ## SEO foundation
 
