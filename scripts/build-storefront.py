@@ -73,7 +73,7 @@ def page_head(title, description, canonical, extra_meta="", extra_ld=None, og_im
 <meta name="twitter:description" content="{esc(description)}">
 <meta name="twitter:image" content="{esc(og_image)}">
 <link rel="icon" type="image/png" href="assets/logo.png">
-<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="styles.css?v=nav-white">
 {extra_meta}{ld_tags}
 <script defer src="analytics.js"></script>
 <script defer src="app.js"></script>
@@ -87,7 +87,7 @@ def nav(current: str, prefix: str = "") -> str:
 
     return f"""<header class="site-header">
   <nav class="nav" aria-label="Primary navigation">
-    <a class="brand" href="{prefix}index.html"><img src="{prefix}assets/logo-nav.png" alt="Habibi Crafts Co" width="237" height="110"></a>
+    <a class="brand" href="{prefix}index.html"><img src="{prefix}assets/logo-nav-white.png" alt="Habibi Crafts Co" width="213" height="93"></a>
     <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-menu" aria-label="Open menu"><span></span></button>
     <div class="nav-links" id="primary-menu">
       {link("index.html", "Home", "home")}
@@ -505,14 +505,14 @@ four = """<!doctype html>
 <meta name="theme-color" content="#faf6ef">
 <title>Page not found | Habibi Crafts Co</title>
 <link rel="icon" type="image/png" href="/assets/logo.png">
-<link rel="stylesheet" href="/styles.css">
+<link rel="stylesheet" href="/styles.css?v=nav-white">
 <script defer src="/app.js"></script>
 </head>
 <body>
 <a class="skip-link" href="#main">Skip to content</a>
 <header class="site-header">
   <nav class="nav" aria-label="Primary navigation">
-    <a class="brand" href="/"><img src="/assets/logo-nav.png" alt="Habibi Crafts Co" width="237" height="110"></a>
+    <a class="brand" href="/"><img src="/assets/logo-nav-white.png" alt="Habibi Crafts Co" width="213" height="93"></a>
     <a class="nav-cta" href="/shop.html">See the shop</a>
   </nav>
 </header>
