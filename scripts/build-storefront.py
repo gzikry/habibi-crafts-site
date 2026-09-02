@@ -411,8 +411,8 @@ write(
   <article class="editorial shell">
     <h2>A name on the mug.</h2>
     <p>That’s the specialty. Tees, totes, onesies, and prints sit next to it. For a wedding party, a bachelor weekend, or the person who will actually use the thing.</p>
-    <p id="made-to-order">We design the pieces. Each one is printed after you order. Not a handmade studio, and no leftover stock.</p>
     <p>Thanks for supporting a small business. If it ends up at the table, that’s the point.</p>
+    <p id="made-to-order">We design the pieces. Each one is printed after you order.</p>
   </article>""",
     ),
 )
