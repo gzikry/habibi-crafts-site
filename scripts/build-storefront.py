@@ -380,6 +380,7 @@ for p in PRODUCTS:
     )
 
 # --- about ---
+# LOCKED: George approved this About copy. Do not rewrite.
 write(
     "about.html",
     wrap(
