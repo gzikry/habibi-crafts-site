@@ -404,15 +404,15 @@ write(
     <div class="about-block">
       <div class="kicker">Our story</div>
       <h1>Two of us. A small shop.</h1>
-      <p>Personalized mugs, plus other pieces — for weddings, bachelor and bachelorette parties, and ordinary days.</p>
+      <p>Husband and wife. We design this together — personalized mugs, plus other pieces for weddings, bachelor and bachelorette parties, and ordinary days.</p>
     </div>
     <div class="about-block art"><img src="assets/logo.png" alt="Habibi Crafts Co logo" width="447" height="447"></div>
   </div></section>
   <article class="editorial shell">
-    <h2>Printed when you order it.</h2>
-    <p id="made-to-order">We design the pieces. Printful prints them after you order. Not a handmade studio, and no closet of leftover stock.</p>
-    <p>The specialty is personalized mugs. There are also tees, totes, onesies, and prints. A gift for a wedding party, a bachelor weekend, or a desk that needs a mug.</p>
-    <p>Thanks for supporting a small business.</p>
+    <h2>A name on the mug.</h2>
+    <p>That’s the specialty. Tees, totes, onesies, and prints sit next to it. For a wedding party, a bachelor weekend, or the person who will actually use the thing.</p>
+    <p id="made-to-order">We design the pieces. Printful prints each one after you order. Not a handmade studio, and no closet of leftover stock.</p>
+    <p>Thanks for supporting a small business. If it ends up at the table, that’s the point.</p>
   </article>""",
     ),
 )
