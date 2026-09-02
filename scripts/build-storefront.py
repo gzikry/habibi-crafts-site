@@ -105,7 +105,7 @@ def footer() -> str:
   <div class="footer-grid">
     <div>
       <div class="footer-brand">Habibi Crafts Co</div>
-      <p class="footer-copy">A husband-and-wife shop. Personalized mugs, plus other gifts.</p>
+      <p class="footer-copy">Our small business. All kinds of crafts.</p>
     </div>
     <div>
       <div class="footer-title">Shop</div>
@@ -199,7 +199,7 @@ home_ld = {
             "url": "https://habibicraftsco.com/",
             "logo": "https://habibicraftsco.com/assets/logo.png",
             "image": "https://habibicraftsco.com/assets/logo.png",
-            "description": "A husband-and-wife shop for personalized mugs and gifts — weddings, bachelor and bachelorette parties, and everyday.",
+            "description": "Our small business. All kinds of crafts.",
         },
         {
             "@type": "WebSite",
@@ -216,8 +216,8 @@ write(
     "index.html",
     wrap(
         page_head(
-            "Habibi Crafts Co | Personalized mugs and gifts",
-            "A husband-and-wife shop for personalized mugs and gifts — weddings, bachelor and bachelorette parties, and everyday. California.",
+            "Habibi Crafts Co | Our small business",
+            "We make all kinds of crafts. Gifts for weddings, bachelor and bachelorette parties, and whoever you’re shopping for. California.",
             "https://habibicraftsco.com/",
             extra_ld=[home_ld],
         ),
@@ -225,17 +225,16 @@ write(
         f"""  <section class="hero">
     <div class="shell">
       <div class="eyebrow">Habibi Crafts Co · California</div>
-      <h1>Personalized mugs,<br><em>and other gifts.</em></h1>
-      <p class="lede">A husband-and-wife shop. Weddings, bachelor and bachelorette parties, and the rest of the week.</p>
+      <h1>Our small business</h1>
+      <p class="lede">We make all kinds of crafts. Gifts for weddings, bachelor and bachelorette parties, and whoever you’re shopping for.</p>
       <div class="actions"><a class="button" href="shop.html">See the shop</a><a class="button secondary" href="about.html">Our story</a></div>
     </div>
-    <div class="hero-stage" aria-label="Habibi Crafts Co mark"><img src="assets/logo.png" alt="Habibi Crafts Co logo" width="447" height="447"><span class="hero-stage-note">14 pieces · mugs, tees, totes, onesies, prints</span></div>
+    <div class="hero-stage" aria-label="Habibi Crafts Co mark"><img src="assets/logo.png" alt="Habibi Crafts Co logo" width="447" height="447"><span class="hero-stage-note">14 pieces in the shop now</span></div>
   </section>
 {chr(10).join(home_groups)}
   <section class="section tight"><div class="shell story-panel reveal">
     <div class="kicker" style="color:#eab038">Why this exists</div>
-    <h2>Two of us. A small shop.</h2>
-    <p>Personalized mugs, plus tees, totes, onesies, and prints. Printed after you order. Other crafts as we add them.</p>
+    <h2>This is our small business. We design the pieces. They’re printed after you order.</h2>
     <a class="text-link" href="about.html">Read the story</a>
   </div></section>""",
     ),
@@ -280,7 +279,7 @@ write(
         f"""  <section class="page-hero"><div class="shell">
     <div class="eyebrow">The shop</div>
     <h1>Fourteen pieces.</h1>
-    <p class="lede">Personalized mugs, tees, totes, onesies, and prints. Same prices on every page.</p>
+    <p class="lede">Mugs, tees, totes, onesies, and prints. Same prices on every page.</p>
   </div></section>
   <section class="section tight"><div class="shell">
     <div class="filter-bar" role="group" aria-label="Filter by type">{filter_btns}</div>
@@ -386,7 +385,7 @@ write(
     wrap(
         page_head(
             "Our story | Habibi Crafts Co",
-            "Husband-and-wife shop. Personalized mugs and gifts for weddings, bachelor and bachelorette parties, and everyday. Printed to order.",
+            "We’re a husband and wife. This is our small business. We make all kinds of crafts.",
             "https://habibicraftsco.com/about.html",
             extra_ld=[
                 {
@@ -403,23 +402,23 @@ write(
         """  <section class="section"><div class="shell about-hero">
     <div class="about-block">
       <div class="kicker">Our story</div>
-      <h1>Two of us. A small shop.</h1>
-      <p>Husband and wife. We design this together — personalized mugs, plus other pieces for weddings, bachelor and bachelorette parties, and ordinary days.</p>
+      <h1>Our small business.</h1>
     </div>
     <div class="about-block art"><img src="assets/logo.png" alt="Habibi Crafts Co logo" width="447" height="447"></div>
   </div></section>
   <article class="editorial shell">
-    <h2>A name on the mug.</h2>
-    <p>That’s the specialty. Tees, totes, onesies, and prints sit next to it. For a wedding party, a bachelor weekend, or the person who will actually use the thing.</p>
-    <p>Thanks for supporting a small business. If it ends up at the table, that’s the point.</p>
-    <p id="made-to-order">We design the pieces. Each one is printed after you order.</p>
-  </article>""",
+    <p>We’re a husband and wife. This is our small business.</p>
+    <p>We make all kinds of crafts — gifts for weddings, bachelor and bachelorette parties, and everyday.</p>
+    <p>What’s in the shop now is just the start. More as we add it.</p>
+    <p id="made-to-order">We design the pieces. They’re printed after you order.</p>
+    <p>Thanks for supporting our small business.</p>
+  </article>"""
     ),
 )
 
 # --- faq ---
 faqs = [
-    ("What do you sell?", "Personalized mugs, tees, totes, baby onesies, and 12 × 16 prints. Fourteen pieces right now. Other crafts later."),
+    ("What do you sell?", "Crafts and gifts of all kinds. Right now that includes mugs, tees, totes, onesies, and prints. We’ll add more."),
     ("How much are they?", "Mugs $18. Tees $32. Totes $34. Onesies $28. Prints $24. Same number on the shop page and the product page."),
     ("What size is the mug?", "11 oz, white glossy ceramic."),
     ("What sizes are the tees?", "Unisex S, M, L, and XL."),
@@ -428,7 +427,7 @@ faqs = [
     ("Are they handmade?", "No. Each piece is printed after it’s ordered."),
     ("What does Sit El Kul mean?", "The woman who outranks the room. Said with affection."),
     ("And Ya Aini?", "A person you care about. Literally “my eye.”"),
-    ("Who is this for?", "Wedding parties, bachelor and bachelorette weekends, and anyone who wants a mug with a name on it."),
+    ("Who is this for?", "Wedding parties, bachelor and bachelorette weekends, and anyone picking out a gift."),
 ]
 faq_html = "".join(
     f"<details class=\"faq-item\"><summary>{esc(q)}</summary><p>{esc(a)}</p></details>" for q, a in faqs
@@ -453,7 +452,7 @@ write(
         f"""  <section class="page-hero"><div class="shell">
     <div class="eyebrow">FAQ</div>
     <h1>Questions.</h1>
-    <p class="lede">Sizes, prices, and a few of the names. If you want the longer version, that’s the story page.</p>
+    <p class="lede">Sizes, prices, and a few of the names.</p>
   </div></section>
   <section class="section tight"><div class="shell faq-list">{faq_html}</div></section>""",
     ),
