@@ -37,8 +37,6 @@
 .product-media img.mockup{width:100%;height:100%;max-width:100%;max-height:100%;object-fit:contain;mix-blend-mode:normal;filter:none}
 .product-gallery{min-height:0;aspect-ratio:1;padding:clamp(16px,2.5vw,28px)}
 .product-gallery img.mockup{width:100%;height:100%;max-height:none;object-fit:contain;mix-blend-mode:normal;filter:none}
-.product-media:has(.mockup-photo),.product-gallery:has(.mockup-photo){padding:0}
-.product-media img.mockup-photo,.product-gallery img.mockup-photo{object-fit:cover}
 @media(max-width:900px){
   .product-gallery{min-height:0}
 }

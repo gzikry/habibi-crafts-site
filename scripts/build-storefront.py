@@ -73,7 +73,7 @@ def page_head(title, description, canonical, extra_meta="", extra_ld=None, og_im
 <meta name="twitter:description" content="{esc(description)}">
 <meta name="twitter:image" content="{esc(og_image)}">
 <link rel="icon" type="image/png" href="assets/logo.png">
-<link rel="stylesheet" href="styles.css?v=mockups">
+<link rel="stylesheet" href="styles.css?v=maroon">
 {extra_meta}{ld_tags}
 <script defer src="analytics.js"></script>
 <script defer src="app.js"></script>
@@ -134,10 +134,9 @@ def mockup_src(p) -> str:
 
 
 def mockup_img(p, *, alt: str, lazy: bool = False) -> str:
-    classes = "mockup mockup-photo" if p["slug"] == "maamoul" else "mockup"
     loading = ' loading="lazy"' if lazy else ""
     return (
-        f'<img class="{classes}" src="{esc(mockup_src(p))}" alt="{esc(alt)}" '
+        f'<img class="mockup" src="{esc(mockup_src(p))}?v=maroon" alt="{esc(alt)}" '
         f'width="800" height="800"{loading} decoding="async">'
     )
 
@@ -514,7 +513,7 @@ four = """<!doctype html>
 <meta name="theme-color" content="#faf6ef">
 <title>Page not found | Habibi Crafts Co</title>
 <link rel="icon" type="image/png" href="/assets/logo.png">
-<link rel="stylesheet" href="/styles.css?v=mockups">
+<link rel="stylesheet" href="/styles.css?v=maroon">
 <script defer src="/app.js"></script>
 </head>
 <body>
