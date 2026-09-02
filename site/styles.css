@@ -28,3 +28,20 @@
 @media(max-width:620px){
   .product-gallery .type-card-lg{min-height:320px}
 }
+.product-media{padding:18px}
+.product-card[data-category=mugs] .product-media,.product-gallery[data-kind=mugs]{background:var(--sand)}
+.product-card[data-category=tees] .product-media,.product-gallery[data-kind=tees]{background:var(--sand-warm)}
+.product-card[data-category=totes] .product-media,.product-gallery[data-kind=totes]{background:var(--sand-cool)}
+.product-card[data-category=baby] .product-media,.product-gallery[data-kind=baby]{background:var(--sand-warm)}
+.product-card[data-category=prints] .product-media,.product-gallery[data-kind=prints]{background:var(--sand-cool)}
+.product-media img.mockup{width:100%;height:100%;max-width:100%;max-height:100%;object-fit:contain;mix-blend-mode:normal;filter:none}
+.product-gallery{min-height:0;aspect-ratio:1;padding:clamp(16px,2.5vw,28px)}
+.product-gallery img.mockup{width:100%;height:100%;max-height:none;object-fit:contain;mix-blend-mode:normal;filter:none}
+.product-media:has(.mockup-photo),.product-gallery:has(.mockup-photo){padding:0}
+.product-media img.mockup-photo,.product-gallery img.mockup-photo{object-fit:cover}
+@media(max-width:900px){
+  .product-gallery{min-height:0}
+}
+@media(max-width:620px){
+  .product-gallery{min-height:0;padding:16px}
+}

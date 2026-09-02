@@ -73,7 +73,7 @@ def page_head(title, description, canonical, extra_meta="", extra_ld=None, og_im
 <meta name="twitter:description" content="{esc(description)}">
 <meta name="twitter:image" content="{esc(og_image)}">
 <link rel="icon" type="image/png" href="assets/logo.png">
-<link rel="stylesheet" href="styles.css?v=nav-white">
+<link rel="stylesheet" href="styles.css?v=mockups">
 {extra_meta}{ld_tags}
 <script defer src="analytics.js"></script>
 <script defer src="app.js"></script>
@@ -128,17 +128,23 @@ def footer() -> str:
 </footer>"""
 
 
-def type_card(p, extra_class=""):
-    cls = f"type-card {extra_class}".strip()
-    return f"""<div class="{cls}" data-kind="{esc(p['category'])}" aria-hidden="true">
-  <span class="type-card-phrase">{esc(p['name'])}</span>
-  <span class="type-card-kind">{esc(p['kind'])} · {esc(p['priceLabel'])}</span>
-</div>"""
+def mockup_src(p) -> str:
+    """Local PNG under site/assets/mockups/. Rebuilds must keep using these files, not a live CDN."""
+    return p.get("image") or f"assets/mockups/{p['slug']}.png"
+
+
+def mockup_img(p, *, alt: str, lazy: bool = False) -> str:
+    classes = "mockup mockup-photo" if p["slug"] == "maamoul" else "mockup"
+    loading = ' loading="lazy"' if lazy else ""
+    return (
+        f'<img class="{classes}" src="{esc(mockup_src(p))}" alt="{esc(alt)}" '
+        f'width="800" height="800"{loading} decoding="async">'
+    )
 
 
 def product_card(p):
     return f"""<a class="product-card reveal" href="product-{esc(p['slug'])}.html" data-category="{esc(p['category'])}">
-  <div class="product-media">{type_card(p)}</div>
+  <div class="product-media">{mockup_img(p, alt="", lazy=True)}</div>
   <div class="product-copy">
     <div class="product-type">{esc(p['kind'])}</div>
     <div class="product-row"><h3>{esc(p['name'])}</h3><span class="price">{esc(p['priceLabel'])}</span></div>
@@ -322,6 +328,7 @@ for p in PRODUCTS:
                 "@id": f"https://habibicraftsco.com/product-{p['slug']}.html#product",
                 "name": p["name"],
                 "description": p["blurb"],
+                "image": f"https://habibicraftsco.com/{mockup_src(p)}",
                 "brand": {"@type": "Brand", "name": "Habibi Crafts Co"},
                 "offers": {
                     "@type": "Offer",
@@ -356,10 +363,11 @@ for p in PRODUCTS:
                 p["blurb"],
                 f"https://habibicraftsco.com/product-{p['slug']}.html",
                 extra_ld=[product_ld],
+                og_image=f"https://habibicraftsco.com/{mockup_src(p)}",
             ).replace('property="og:type" content="website"', 'property="og:type" content="product"'),
             "shop",
             f"""  <div class="shell product-page">
-    <div class="product-gallery">{type_card(p, "type-card-lg")}</div>
+    <div class="product-gallery" data-kind="{esc(p['category'])}">{mockup_img(p, alt=f"{p['name']} {p['kind'].lower()}")}</div>
     <div class="product-meta">
       <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="index.html">Home</a> / <a href="shop.html">Shop</a> / {esc(crumb_label)}</nav>
       <div class="eyebrow">{esc(p['kind'])}</div>
@@ -506,7 +514,7 @@ four = """<!doctype html>
 <meta name="theme-color" content="#faf6ef">
 <title>Page not found | Habibi Crafts Co</title>
 <link rel="icon" type="image/png" href="/assets/logo.png">
-<link rel="stylesheet" href="/styles.css?v=nav-white">
+<link rel="stylesheet" href="/styles.css?v=mockups">
 <script defer src="/app.js"></script>
 </head>
 <body>
