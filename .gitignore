@@ -1,5 +1,11 @@
 node_modules
 .vercel
+.wrangler
+.dev.vars
+.env
+.env.*
+!.env.example
+api/catalog.variants.generated.json
 *.log
 .DS_Store
 .vscode

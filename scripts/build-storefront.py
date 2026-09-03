@@ -97,7 +97,9 @@ def page_head(
 <link rel="apple-touch-icon" href="assets/logo.png">
 <link rel="stylesheet" href="styles.css?v={ASSET_V}">
 {extra_meta}{ld_tags}
+<script src="public-config.js"></script>
 <script defer src="analytics.js"></script>
+<script defer src="checkout.js"></script>
 <script defer src="app.js"></script>
 </head>"""
 
@@ -476,7 +478,7 @@ for p in PRODUCTS:
       <h1>{esc(p['name'])}</h1>
       <div class="product-price">{esc(p['priceLabel'])}</div>
       {extra}
-      <div class="actions"><button class="button" type="button" disabled aria-disabled="true">Notify me</button></div>
+      <div class="actions"><button class="button" type="button" disabled data-checkout data-product-slug="{esc(p['slug'])}" aria-disabled="true">Notify me</button></div>
     </div>
   </div>
   <section class="section tight"><div class="shell">

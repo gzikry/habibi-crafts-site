@@ -1,0 +1,6 @@
+# Cloudflare Pages project for /api/* only. GitHub Pages still publishes site/.
+# Connect THIS same GitHub repo — do not add a second GitHub remote.
+name = "habibi-crafts-api"
+pages_build_output_dir = "site"
+compatibility_date = "2026-09-01"
+compatibility_flags = ["nodejs_compat"]

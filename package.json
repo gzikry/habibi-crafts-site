@@ -5,8 +5,10 @@
   "type": "module",
   "scripts": {
     "test": "node --test api/__tests__/*.test.js",
+    "dev:api": "node scripts/local-backend.js --once",
     "checkout:local": "node scripts/local-checkout.js",
     "webhook:local": "node scripts/local-webhook.js",
-    "dev": "vercel dev"
+    "printful:pull": "node scripts/printful-pull-variants.js",
+    "dev": "node scripts/local-backend.js"
   }
 }
