@@ -41,7 +41,7 @@ FEATURED_SLUGS = (
     "beit-el-hobb",
 )
 
-ASSET_V = "voice"
+ASSET_V = "catalog"
 SITEMAP_LASTMOD = "2026-09-03"
 
 
@@ -104,11 +104,9 @@ def nav(current: str, prefix: str = "") -> str:
     <a class="brand" href="{prefix}index.html"><img src="{prefix}assets/logo-nav-white.png" alt="Habibi Crafts Co" width="213" height="93"></a>
     <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-menu" aria-label="Open menu"><span></span></button>
     <div class="nav-links" id="primary-menu">
-      {link("index.html", "Home", "home")}
       {link("shop.html", "Shop", "shop")}
       {link("about.html", "About", "about")}
       {link("faq.html", "FAQ", "faq")}
-      <a class="nav-cta" href="{prefix}shop.html">Shop</a>
     </div>
   </nav>
 </header>"""
@@ -281,11 +279,11 @@ write(
             "A husband-and-wife shop. Mugs, tees, totes, onesies, and prints.",
             "https://habibicraftsco.com/",
             extra_ld=[home_ld],
+            og_image="https://habibicraftsco.com/assets/mockups/ya-aini.png",
         ),
         "home",
         f"""  <section class="shop-intro">
     <div class="shell">
-      <div class="eyebrow">California</div>
       <h1>Habibi Crafts Co</h1>
       <p class="lede">We’re a husband-and-wife shop.</p>
     </div>
@@ -293,10 +291,7 @@ write(
   <section class="section tight" id="shop-by-collection" aria-labelledby="shop-by-collection-heading">
     <div class="shell">
       <div class="section-head">
-        <div>
-          <div class="kicker">Shop</div>
-          <h2 id="shop-by-collection-heading">Shop by collection</h2>
-        </div>
+        <h2 id="shop-by-collection-heading">Shop by collection</h2>
         <a class="text-link" href="shop.html">See everything</a>
       </div>
       <div class="kind-grid">{home_kinds}</div>
@@ -305,10 +300,7 @@ write(
   <section class="section tight" id="from-the-shop" aria-labelledby="from-the-shop-heading">
     <div class="shell">
       <div class="section-head">
-        <div>
-          <div class="kicker">The shop</div>
-          <h2 id="from-the-shop-heading">From the shop</h2>
-        </div>
+        <h2 id="from-the-shop-heading">From the shop</h2>
         <a class="text-link" href="shop.html">See everything</a>
       </div>
       <div class="product-grid">{home_featured}</div>
@@ -335,10 +327,10 @@ write(
             "Mugs, tees, totes, onesies, and prints. We’ll keep adding.",
             "https://habibicraftsco.com/shop.html",
             extra_ld=[item_list_ld("https://habibicraftsco.com/shop.html", "Shop Habibi Crafts Co", PRODUCTS)],
+            og_image="https://habibicraftsco.com/assets/mockups/ya-aini.png",
         ),
         "shop",
-        f"""  <section class="page-hero"><div class="shell">
-    <div class="eyebrow">Habibi Crafts Co</div>
+        f"""  <section class="catalog-head"><div class="shell">
     <h1>The shop</h1>
     <p class="lede">We’ll keep adding.</p>
     {kind_bar("all")}
@@ -360,10 +352,10 @@ for key, title, price, blurb, page in GROUPS:
                 f"{blurb} {price}.",
                 f"https://habibicraftsco.com/{page}",
                 extra_ld=[item_list_ld(f"https://habibicraftsco.com/{page}", f"{title} — Habibi Crafts Co", items)],
+                og_image=f"https://habibicraftsco.com/{mockup_src(items[0])}",
             ),
             "shop",
-            f"""  <section class="page-hero"><div class="shell">
-    <div class="eyebrow">The shop</div>
+            f"""  <section class="catalog-head"><div class="shell">
     <h1>{esc(title)}</h1>
     <p class="lede">{esc(blurb)} {esc(price)}.</p>
     {kind_bar(key)}
@@ -386,7 +378,6 @@ for p in PRODUCTS:
         "prints": "More prints",
     }[p["category"]]
     related_grid = "product-grid two" if len(siblings) < 3 else "product-grid"
-    details = "".join(f'<div class="detail"><span>{esc(k)}</span><span>{esc(v)}</span></div>' for k, v in p["details"])
     key, crumb_label, _, _, collection_page = group_for(p["category"])
     extra = ""
     if p["category"] == "tees":
@@ -456,17 +447,14 @@ for p in PRODUCTS:
     <div class="product-gallery" data-kind="{esc(p['category'])}">{mockup_img(p, alt=p["name"])}</div>
     <div class="product-meta">
       <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="index.html">Home</a> / <a href="shop.html">Shop</a> / <a href="{esc(collection_page)}">{esc(crumb_label)}</a></nav>
-      <div class="eyebrow">{esc(p['kind'])}</div>
       <h1>{esc(p['name'])}</h1>
-      <p class="product-subtitle">{esc(p['note'])}</p>
       <div class="product-price">{esc(p['priceLabel'])}</div>
       {extra}
       <div class="actions" style="justify-content:flex-start"><button class="button" type="button" disabled>Notify me</button></div>
-      <div class="details">{details}</div>
     </div>
   </div>
   <section class="section tight"><div class="shell">
-    <div class="section-head"><div><div class="kicker">{esc(crumb_label)}</div><h2>{esc(related_h2)}</h2></div><a class="text-link" href="{esc(collection_page)}">Shop {esc(crumb_label.lower())}</a></div>
+    <div class="section-head"><h2>{esc(related_h2)}</h2><a class="text-link" href="{esc(collection_page)}">Shop {esc(crumb_label.lower())}</a></div>
     <div class="{related_grid}">{related}</div>
   </div></section>""",
         ),
@@ -492,8 +480,7 @@ write(
             ],
         ),
         "about",
-        """  <section class="page-hero"><div class="shell">
-    <div class="eyebrow">Habibi Crafts Co</div>
+        """  <section class="policy-head"><div class="shell">
     <h1>About</h1>
     <p class="lede">We’re a husband and wife, and this is our shop.</p>
   </div></section>
@@ -539,8 +526,7 @@ write(
             extra_ld=[faq_ld],
         ),
         "faq",
-        f"""  <section class="page-hero"><div class="shell">
-    <div class="eyebrow">The shop</div>
+        f"""  <section class="policy-head"><div class="shell">
     <h1>FAQ</h1>
     <p class="lede">Sizes, checkout, and how pieces are made.</p>
   </div></section>
@@ -568,7 +554,6 @@ write(
         ),
         "",
         """  <article class="legal-shell">
-    <div class="kicker">The shop</div>
     <h1>Shipping</h1>
     <p class="legal-updated">Last updated September 3, 2026</p>
     <h2>Orders</h2>
@@ -576,7 +561,7 @@ write(
     <h2>When we open</h2>
     <p>Pieces will print after you order, then they will ship. We will post timing, rates, and where we ship when checkout opens. We do not have those details yet.</p>
     <h2>Returns</h2>
-    <p>We will publish a return policy when we start taking orders. We are not inventing a window or a carrier before then.</p>
+    <p>We will publish a return policy when we start taking orders.</p>
   </article>""",
     ),
 )
@@ -601,8 +586,7 @@ write(
             ],
         ),
         "",
-        """  <section class="page-hero"><div class="shell">
-    <div class="eyebrow">The shop</div>
+        """  <section class="policy-head"><div class="shell">
     <h1>Contact</h1>
     <p class="lede">We’re a husband-and-wife shop.</p>
   </div></section>
@@ -633,7 +617,6 @@ write(
         ),
         "",
         """  <article class="legal-shell">
-    <div class="kicker">The shop</div>
     <h1>Privacy</h1>
     <p class="legal-updated">Last updated September 3, 2026</p>
     <h2>This site</h2>
@@ -668,8 +651,7 @@ write(
     wrap(
         four_head,
         "",
-        """  <section class="page-hero"><div class="shell">
-    <div class="eyebrow">404</div>
+        """  <section class="catalog-head"><div class="shell">
     <h1>This page isn’t here.</h1>
     <p class="lede">It may have moved. The shop is still on this site.</p>
     <div class="actions"><a class="button" href="/">Go home</a><a class="button secondary" href="/shop.html">Shop</a></div>
