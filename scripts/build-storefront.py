@@ -31,17 +31,15 @@ GROUPS = [
     ("prints", "Prints", "$24", "12 × 16 matte. Frame not included.", "prints.html"),
 ]
 
-# Live featured pieces only. Do not add unpublished drafts.
+# Live featured pieces only. Intentional mix: mug, tee, tote, print.
 FEATURED_SLUGS = (
     "ya-aini",
-    "knafeh-club",
     "khalas-habibi",
     "halawa",
-    "ya-teta",
     "beit-el-hobb",
 )
 
-ASSET_V = "catalog"
+ASSET_V = "shop"
 SITEMAP_LASTMOD = "2026-09-03"
 
 
@@ -62,7 +60,15 @@ def group_for(category: str):
     return next(g for g in GROUPS if g[0] == category)
 
 
-def page_head(title, description, canonical, extra_meta="", extra_ld=None, og_image="https://habibicraftsco.com/assets/logo.png"):
+def page_head(
+    title,
+    description,
+    canonical,
+    extra_meta="",
+    extra_ld=None,
+    og_image="https://habibicraftsco.com/assets/mockups/ya-aini.png",
+    og_image_alt="Ya Aini",
+):
     ld = extra_ld or []
     ld_tags = "\n".join(f'<script type="application/ld+json">{json_ld(item)}</script>' for item in ld)
     return f"""<!doctype html>
@@ -70,7 +76,7 @@ def page_head(title, description, canonical, extra_meta="", extra_ld=None, og_im
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#faf6ef">
+<meta name="theme-color" content="#7d2e21">
 <title>{esc(title)}</title>
 <meta name="description" content="{esc(description)}">
 <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
@@ -81,12 +87,14 @@ def page_head(title, description, canonical, extra_meta="", extra_ld=None, og_im
 <meta property="og:description" content="{esc(description)}">
 <meta property="og:url" content="{esc(canonical)}">
 <meta property="og:image" content="{esc(og_image)}">
-<meta property="og:image:alt" content="Habibi Crafts Co">
+<meta property="og:image:alt" content="{esc(og_image_alt)}">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="{esc(title)}">
 <meta name="twitter:description" content="{esc(description)}">
 <meta name="twitter:image" content="{esc(og_image)}">
+<meta name="twitter:image:alt" content="{esc(og_image_alt)}">
 <link rel="icon" type="image/png" href="assets/logo.png">
+<link rel="apple-touch-icon" href="assets/logo.png">
 <link rel="stylesheet" href="styles.css?v={ASSET_V}">
 {extra_meta}{ld_tags}
 <script defer src="analytics.js"></script>
@@ -99,9 +107,10 @@ def nav(current: str, prefix: str = "") -> str:
         cur = ' aria-current="page"' if current == key else ""
         return f'<a href="{prefix}{href}"{cur}>{label}</a>'
 
+    brand_cur = ' aria-current="page"' if current == "home" else ""
     return f"""<header class="site-header">
   <nav class="nav" aria-label="Primary navigation">
-    <a class="brand" href="{prefix}index.html"><img src="{prefix}assets/logo-nav-white.png" alt="Habibi Crafts Co" width="213" height="93"></a>
+    <a class="brand" href="{prefix}index.html"{brand_cur}><img src="{prefix}assets/logo-nav-white.png" alt="Habibi Crafts Co" width="213" height="93"></a>
     <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-menu" aria-label="Open menu"><span></span></button>
     <div class="nav-links" id="primary-menu">
       {link("shop.html", "Shop", "shop")}
@@ -174,10 +183,24 @@ def product_card(p, *, show_type: bool = False):
 </a>"""
 
 
+def policy_bar(current: str) -> str:
+    items = (
+        ("faq", "FAQ", "faq.html"),
+        ("shipping", "Shipping", "shipping.html"),
+        ("privacy", "Privacy", "privacy.html"),
+        ("contact", "Contact", "contact.html"),
+    )
+    links = []
+    for key, label, href in items:
+        cur = ' aria-current="page"' if current == key else ""
+        links.append(f'<a href="{esc(href)}"{cur}>{esc(label)}</a>')
+    return f'<nav class="policy-bar" aria-label="Shop information">{"".join(links)}</nav>'
+
+
 def kind_card(key, title, page):
     preview = next(p for p in PRODUCTS if p["category"] == key)
     return f"""<a class="kind-card reveal" href="{esc(page)}" data-kind="{esc(key)}">
-  <div class="kind-card-media">{mockup_img(preview, alt="", lazy=True)}</div>
+  <div class="kind-card-media">{mockup_img(preview, alt=title, lazy=True)}</div>
   <div class="kind-card-copy">
     <h3>{esc(title)}</h3>
   </div>
@@ -193,7 +216,6 @@ def catalog_section(key, title, price, blurb, page, *, heading_id: str, link_to_
   <div class="shell">
     <div class="section-head">
       <div>
-        <div class="kicker">{esc(price)}</div>
         <h2 id="{esc(heading_id)}-heading">{esc(title)}</h2>
         <p>{esc(blurb)}</p>
       </div>{link}
@@ -257,7 +279,7 @@ home_ld = {
             "name": "Habibi Crafts Co",
             "url": "https://habibicraftsco.com/",
             "logo": "https://habibicraftsco.com/assets/logo.png",
-            "image": "https://habibicraftsco.com/assets/logo.png",
+            "image": "https://habibicraftsco.com/assets/mockups/ya-aini.png",
             "description": "A husband-and-wife shop in California.",
         },
         {
@@ -280,6 +302,7 @@ write(
             "https://habibicraftsco.com/",
             extra_ld=[home_ld],
             og_image="https://habibicraftsco.com/assets/mockups/ya-aini.png",
+            og_image_alt="Ya Aini",
         ),
         "home",
         f"""  <section class="shop-intro">
@@ -303,7 +326,7 @@ write(
         <h2 id="from-the-shop-heading">From the shop</h2>
         <a class="text-link" href="shop.html">See everything</a>
       </div>
-      <div class="product-grid">{home_featured}</div>
+      <div class="product-grid featured">{home_featured}</div>
     </div>
   </section>
   <section class="section tight" id="shop-note"><div class="shell shop-note reveal">
@@ -328,6 +351,7 @@ write(
             "https://habibicraftsco.com/shop.html",
             extra_ld=[item_list_ld("https://habibicraftsco.com/shop.html", "Shop Habibi Crafts Co", PRODUCTS)],
             og_image="https://habibicraftsco.com/assets/mockups/ya-aini.png",
+            og_image_alt="Ya Aini",
         ),
         "shop",
         f"""  <section class="catalog-head"><div class="shell">
@@ -353,6 +377,7 @@ for key, title, price, blurb, page in GROUPS:
                 f"https://habibicraftsco.com/{page}",
                 extra_ld=[item_list_ld(f"https://habibicraftsco.com/{page}", f"{title} — Habibi Crafts Co", items)],
                 og_image=f"https://habibicraftsco.com/{mockup_src(items[0])}",
+                og_image_alt=items[0]["name"],
             ),
             "shop",
             f"""  <section class="catalog-head"><div class="shell">
@@ -441,6 +466,7 @@ for p in PRODUCTS:
                 f"https://habibicraftsco.com/product-{p['slug']}.html",
                 extra_ld=[product_ld],
                 og_image=f"https://habibicraftsco.com/{mockup_src(p)}",
+                og_image_alt=p["name"],
             ).replace('property="og:type" content="website"', 'property="og:type" content="product"'),
             "shop",
             f"""  <div class="shell product-page">
@@ -450,7 +476,7 @@ for p in PRODUCTS:
       <h1>{esc(p['name'])}</h1>
       <div class="product-price">{esc(p['priceLabel'])}</div>
       {extra}
-      <div class="actions" style="justify-content:flex-start"><button class="button" type="button" disabled>Notify me</button></div>
+      <div class="actions"><button class="button" type="button" disabled aria-disabled="true">Notify me</button></div>
     </div>
   </div>
   <section class="section tight"><div class="shell">
@@ -529,6 +555,7 @@ write(
         f"""  <section class="policy-head"><div class="shell">
     <h1>FAQ</h1>
     <p class="lede">Sizes, checkout, and how pieces are made.</p>
+    {policy_bar("faq")}
   </div></section>
   <section class="section tight"><div class="shell faq-list">{faq_html}</div></section>""",
     ),
@@ -553,9 +580,10 @@ write(
             ],
         ),
         "",
-        """  <article class="legal-shell">
+        f"""  <article class="legal-shell">
     <h1>Shipping</h1>
     <p class="legal-updated">Last updated September 3, 2026</p>
+    {policy_bar("shipping")}
     <h2>Orders</h2>
     <p>We are not taking orders yet. Checkout is closed.</p>
     <h2>When we open</h2>
@@ -586,9 +614,10 @@ write(
             ],
         ),
         "",
-        """  <section class="policy-head"><div class="shell">
+        f"""  <section class="policy-head"><div class="shell">
     <h1>Contact</h1>
     <p class="lede">We’re a husband-and-wife shop.</p>
+    {policy_bar("contact")}
   </div></section>
   <article class="editorial shell">
     <p>We haven’t posted a public email, phone, or address yet. When we have a way to reach us, it will be here.</p>
@@ -616,9 +645,10 @@ write(
             ],
         ),
         "",
-        """  <article class="legal-shell">
+        f"""  <article class="legal-shell">
     <h1>Privacy</h1>
     <p class="legal-updated">Last updated September 3, 2026</p>
+    {policy_bar("privacy")}
     <h2>This site</h2>
     <p>This is a static shop site on GitHub Pages. The host may log visits the way any web host does.</p>
     <h2>Orders</h2>
@@ -640,9 +670,10 @@ four_head = f"""<!doctype html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex">
-<meta name="theme-color" content="#faf6ef">
+<meta name="theme-color" content="#7d2e21">
 <title>Page not found | Habibi Crafts Co</title>
 <link rel="icon" type="image/png" href="/assets/logo.png">
+<link rel="apple-touch-icon" href="/assets/logo.png">
 <link rel="stylesheet" href="/styles.css?v={ASSET_V}">
 <script defer src="/app.js"></script>
 </head>"""
