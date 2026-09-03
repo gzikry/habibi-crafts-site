@@ -129,7 +129,7 @@ def footer(prefix: str = "") -> str:
   <div class="footer-grid">
     <div>
       <div class="footer-brand">Habibi Crafts Co</div>
-      <p class="footer-copy">A husband-and-wife shop.</p>
+      <p class="footer-copy">Middle Eastern crafts, and crafts that aren’t.</p>
     </div>
     <div>
       <div class="footer-title">Shop</div>
@@ -282,7 +282,7 @@ home_ld = {
             "url": "https://habibicraftsco.com/",
             "logo": "https://habibicraftsco.com/assets/logo.png",
             "image": "https://habibicraftsco.com/assets/mockups/ya-aini.png",
-            "description": "A husband-and-wife shop in California.",
+            "description": "A husband-and-wife shop in California. Middle Eastern crafts, and crafts that aren’t.",
         },
         {
             "@type": "WebSite",
@@ -300,7 +300,7 @@ write(
     wrap(
         page_head(
             "Habibi Crafts Co",
-            "A husband-and-wife shop. Mugs, tees, totes, onesies, and prints.",
+            "A husband-and-wife shop. Middle Eastern crafts, and crafts that aren’t. Mugs, tees, totes, onesies, and prints.",
             "https://habibicraftsco.com/",
             extra_ld=[home_ld],
             og_image="https://habibicraftsco.com/assets/mockups/ya-aini.png",
@@ -310,7 +310,7 @@ write(
         f"""  <section class="shop-intro">
     <div class="shell">
       <h1>Habibi Crafts Co</h1>
-      <p class="lede">We’re a husband-and-wife shop.</p>
+      <p class="lede">We’re a husband-and-wife shop. Middle Eastern crafts, and crafts that aren’t.</p>
     </div>
   </section>
   <section class="section tight" id="shop-by-collection" aria-labelledby="shop-by-collection-heading">
@@ -349,7 +349,7 @@ write(
     wrap(
         page_head(
             "Shop | Habibi Crafts Co",
-            "Mugs, tees, totes, onesies, and prints. We’ll keep adding.",
+            "All kinds of crafts. Mugs, tees, totes, onesies, and prints. We’ll keep adding.",
             "https://habibicraftsco.com/shop.html",
             extra_ld=[item_list_ld("https://habibicraftsco.com/shop.html", "Shop Habibi Crafts Co", PRODUCTS)],
             og_image="https://habibicraftsco.com/assets/mockups/ya-aini.png",
@@ -358,7 +358,7 @@ write(
         "shop",
         f"""  <section class="catalog-head"><div class="shell">
     <h1>The shop</h1>
-    <p class="lede">We’ll keep adding.</p>
+    <p class="lede">Middle Eastern crafts, and crafts that aren’t. We’ll keep adding.</p>
     {kind_bar("all")}
   </div></section>
 {shop_sections}""",
@@ -494,7 +494,7 @@ write(
     wrap(
         page_head(
             "About | Habibi Crafts Co",
-            "We’re a husband and wife, and this is our shop.",
+            "We’re a husband and wife, and this is our shop. We make Middle Eastern crafts, and crafts that aren’t.",
             "https://habibicraftsco.com/about.html",
             extra_ld=[
                 {
@@ -513,6 +513,8 @@ write(
     <p class="lede">We’re a husband and wife, and this is our shop.</p>
   </div></section>
   <article class="editorial shell">
+    <p>We make all kinds of crafts — Middle Eastern and not. Not one style and not one culture. Mugs, clothes, bags, prints, and whatever else we take on.</p>
+    <p>What’s in the shop now is a first batch. We’ll keep adding.</p>
     <p>Thanks for stopping by.</p>
   </article>""",
     ),
@@ -520,8 +522,9 @@ write(
 
 # --- faq ---
 faqs = [
-    ("What is Habibi Crafts Co?", "A husband-and-wife shop."),
-    ("What do you sell?", "Mugs, tees, totes, onesies, and prints. We’ll keep adding."),
+    ("What is Habibi Crafts Co?", "A husband-and-wife shop. We make Middle Eastern crafts, and crafts that aren’t."),
+    ("What do you sell?", "All kinds of crafts. Right now: mugs, tees, totes, onesies, and prints. We’ll keep adding."),
+    ("Who is this for?", "Anyone shopping for a craft or a gift. Not one culture."),
     ("Can I order?", "Not yet. Checkout isn’t open."),
     ("How are the pieces made?", "We design them. Once checkout opens, each piece prints after you order."),
     ("What size is the mug?", "11 oz, white glossy."),

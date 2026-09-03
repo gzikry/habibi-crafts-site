@@ -1,6 +1,6 @@
 # Habibi Crafts Co — Storefront
 
-Static storefront for a husband-and-wife shop in California.
+Static storefront for a husband-and-wife shop in California. Public copy is Middle Eastern crafts and crafts that aren’t.
 
 **Status:** Multi-page storefront deployed from `main`. Checkout, Plausible, AdSense, and live ordering remain disabled.
 
@@ -14,6 +14,7 @@ Static storefront for a husband-and-wife shop in California.
 ## Storefront
 
 - Responsive home (collections + featured products), shop, collection pages (mugs, tees, totes, onesies, prints), about, FAQ, shipping, contact, privacy, 404, and product preview pages
+- Positioning: all kinds of crafts, Middle Eastern and not. Product names such as Ya Aini and Khalas Habibi stay; checkout stays off
 - Shared design system in `site/styles.css`
 - Mobile menu and reduced-motion-aware reveal behavior in `site/app.js`
 - Checkout language is intentionally disabled until Stripe and order routing are ready
