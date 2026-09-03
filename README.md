@@ -1,6 +1,6 @@
 # Habibi Crafts Co — Storefront
 
-Static storefront for a husband-and-wife shop in California. All kinds of crafts.
+Static storefront for a husband-and-wife shop in California.
 
 **Status:** Multi-page storefront deployed from `main`. Checkout, Plausible, AdSense, and live ordering remain disabled.
 
@@ -13,7 +13,7 @@ Static storefront for a husband-and-wife shop in California. All kinds of crafts
 
 ## Storefront
 
-- Responsive home, shop, collection pages (mugs, tees, totes, onesies, prints), about, FAQ, privacy, 404, and product preview pages
+- Responsive home (collections + featured products), shop, collection pages (mugs, tees, totes, onesies, prints), about, FAQ, shipping, contact, privacy, 404, and product preview pages
 - Shared design system in `site/styles.css`
 - Mobile menu and reduced-motion-aware reveal behavior in `site/app.js`
 - Checkout language is intentionally disabled until Stripe and order routing are ready
@@ -73,4 +73,4 @@ This repository is public. Never put Stripe secret keys, Printful tokens, or pri
 python3 -m http.server 8080 -d site
 ```
 
-Check `/`, `/shop.html`, all product pages, `/privacy.html`, `/robots.txt`, `/sitemap.xml`, `/assets/logo.png`, and an unknown path for the 404 page behavior.
+Check `/`, `/shop.html`, collection pages, all product pages, `/about.html`, `/faq.html`, `/shipping.html`, `/contact.html`, `/privacy.html`, `/robots.txt`, `/sitemap.xml`, `/assets/logo.png`, and an unknown path for the 404 page behavior.
