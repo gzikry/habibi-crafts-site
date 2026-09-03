@@ -1,3 +1,3 @@
-export default function handler(request) {
-  return new Response('ok', { status: 200, headers: { 'content-type': 'text/plain' } });
-}
+import { handleCheckoutSession, vercelHandler } from './lib/handlers.js';
+
+export default vercelHandler(handleCheckoutSession);

@@ -67,6 +67,8 @@ Add the exact `ads.txt` line from AdSense at that time. Never publish a placehol
 
 This repository is public. Never put Stripe secret keys, Printful tokens, or private credentials in `site/`, client JavaScript, or git. Payment and fulfillment need a server-side or protected serverless integration.
 
+Checkout, ads, and live ordering stay **off**. Production wiring (flags, catalog map, Stripe webhook → Printful v1 orders, Cloudflare Pages Functions on this same repo) is documented in `PRODUCTION.md`. Do not flip `CHECKOUT_ENABLED` or `ADSENSE_ENABLED` until George says so.
+
 ## Local QA
 
 ```bash
