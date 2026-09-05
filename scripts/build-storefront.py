@@ -494,7 +494,7 @@ write(
     wrap(
         page_head(
             "About | Habibi Crafts Co",
-            "We’re a husband and wife, and this is our shop.",
+            "A husband-and-wife shop making personalized mugs and handcrafted gifts.",
             "https://habibicraftsco.com/about.html",
             extra_ld=[
                 {
@@ -510,10 +510,13 @@ write(
         "about",
         """  <section class="policy-head"><div class="shell">
     <h1>About</h1>
-    <p class="lede">We’re a husband and wife, and this is our shop.</p>
+    <p class="lede">A husband-and-wife shop making personalized mugs and handcrafted gifts.</p>
   </div></section>
   <article class="editorial shell">
-    <p>Thanks for stopping by.</p>
+    <p>We're thrilled to have you here. Habibi Crafts Co is a labor of love, born from our passion for creativity and the joy of crafting together. As a husband-and-wife team, we pour our hearts into every piece we create, ensuring that each item is as unique and special as the moments they are meant to celebrate.</p>
+    <p>Our specialty lies in personalized mugs crafted with care, along with a variety of other handcrafted items perfect for weddings, bachelor and bachelorette parties, and more. We believe in the power of personalization to make any occasion memorable, and we take pride in adding that personal touch to your celebrations.</p>
+    <p>Crafting is more than just a hobby for us; it's a way to spend quality time together and share our creativity with the world. We hope our creations bring as much joy to your life as they do to ours.</p>
+    <p>Thank you for supporting our small business. We look forward to being a part of your special moments!</p>
   </article>""",
     ),
 )
