@@ -1,0 +1,5 @@
+# Placeholder — Google AdSense is not active.
+# After Google issues a real publisher ID, replace this file with the exact
+# line from the AdSense dashboard. Do not invent a pub- / ca-pub number.
+# Example shape only (not a real account):
+# google.com, pub-XXXXXXXXXXXXXXXX, DIRECT, f08c47fec0942fa0
