@@ -1,0 +1,81 @@
+[
+  {"slug":"ya-aini","name":"Ya Aini","category":"mugs","price":18,"printful_id":462528261,
+   "subtitle":"Said to someone you love, usually while handing them a cup.",
+   "desc":"11 oz white glossy mug. Ya Aini is what you call a person, not a mood."},
+
+  {"slug":"baladi","name":"Baladi","category":"mugs","price":18,"printful_id":462528274,
+   "subtitle":"Hometown. The plate, the street, the way the coffee tastes there.",
+   "desc":"11 oz white glossy mug for the place you're from."},
+
+  {"slug":"ya-dunia","name":"Ya Dunia","category":"mugs","price":18,"printful_id":462528282,
+   "subtitle":"Said to the room at large. Usually with a sigh.",
+   "desc":"11 oz white glossy mug. For the days that need an audience."},
+
+  {"slug":"jiran","name":"Jiran","category":"mugs","price":18,"printful_id":462528284,
+   "subtitle":"Neighbors. They borrow sugar and know too much.",
+   "desc":"11 oz white glossy mug for the people next door."},
+
+  {"slug":"maamoul","name":"Maamoul","category":"mugs","price":18,"printful_id":462532463,
+   "subtitle":"The cookie that shows up for the holidays and is gone by Thursday.",
+   "desc":"11 oz white glossy mug named for the holiday cookie."},
+
+  {"slug":"knafeh-club","name":"Knafeh Club","category":"mugs","price":18,"printful_id":462540373,
+   "subtitle":"Cheese or cream. You already picked a side.",
+   "desc":"11 oz white glossy mug for people with opinions about dessert."},
+
+  {"slug":"morning-ritual","name":"Morning Ritual","category":"mugs","price":18,"printful_id":471225077,
+   "subtitle":"The first cup, before anyone needs anything.",
+   "desc":"11 oz white glossy mug for the quiet part of the morning."},
+
+  {"slug":"khalas-habibi","name":"Khalas Habibi","category":"tees","price":32,"printful_id":462532457,
+   "subtitle":"We're done talking. Affectionate. Final.",
+   "desc":"Unisex tee, S through XL. Khalas Habibi ends the conversation kindly."},
+
+  {"slug":"ya-habayeb","name":"Ya Habayeb","category":"tees","price":32,"printful_id":462540352,
+   "subtitle":"For the group. The table, the chat, the people you keep.",
+   "desc":"Unisex tee, S through XL, for the whole circle."},
+
+  {"slug":"warm-embrace","name":"Warm Embrace","category":"tees","price":32,"printful_id":471226873,
+   "subtitle":"What you give someone before they ask for it.",
+   "desc":"Unisex tee, S through XL. Simple type, one small motif."},
+
+  {"slug":"halawa","name":"Halawa","category":"totes","price":34,"printful_id":462532459,
+   "subtitle":"Sweetness. Also what you carry to someone else's house.",
+   "desc":"Cotton tote, one size. For the sweets you bring along."},
+
+  {"slug":"sit-el-kul","name":"Sit El Kul","category":"totes","price":34,"printful_id":462540360,
+   "subtitle":"The one who runs the room. She knows.",
+   "desc":"Cotton tote, one size, for the woman who holds it all together."},
+
+  {"slug":"early-light","name":"Early Light","category":"totes","price":34,"printful_id":471225102,
+   "subtitle":"The hour before the house wakes up.",
+   "desc":"Cotton tote, one size. Quiet type on a warm ground."},
+
+  {"slug":"gather-grow","name":"Gather & Grow","category":"totes","price":34,"printful_id":471226874,
+   "subtitle":"For market day and everything after.",
+   "desc":"Cotton tote, one size. Made for the weekly haul."},
+
+  {"slug":"ya-teta","name":"Ya Teta","category":"baby","price":28,"printful_id":462532461,
+   "subtitle":"For the baby Teta is already spoiling.",
+   "desc":"White onesie in 3–6m, 6–12m, and 12–18m."},
+
+  {"slug":"amoura","name":"Amoura","category":"baby","price":28,"printful_id":462540363,
+   "subtitle":"A small name for a small person.",
+   "desc":"White onesie in 3–6m, 6–12m, and 12–18m. Soft print, no harsh edges."},
+
+  {"slug":"garden-gate","name":"Garden Gate","category":"baby","price":28,"printful_id":471225103,
+   "subtitle":"Where the backyard starts.",
+   "desc":"White onesie in 3–6m, 6–12m, and 12–18m."},
+
+  {"slug":"beit-el-hobb","name":"Beit El Hobb","category":"prints","price":24,"printful_id":462532462,
+   "subtitle":"House of love. For the wall you see when you come in.",
+   "desc":"12 × 16 inch matte print. Frame not included."},
+
+  {"slug":"dar-el-hawa","name":"Dar El Hawa","category":"prints","price":24,"printful_id":462540368,
+   "subtitle":"The other house. Same idea, different street.",
+   "desc":"12 × 16 inch matte print. Frame not included."},
+
+  {"slug":"starlight","name":"Starlight","category":"prints","price":24,"printful_id":471225105,
+   "subtitle":"For the hallway light you leave on.",
+   "desc":"12 × 16 inch matte print. Frame not included."}
+]

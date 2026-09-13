@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#7d2e21">
-<title>Habibi Crafts Co</title>
-<meta name="description" content="Arabic phrases on everyday things. Mugs, tees, totes, onesies, and prints.">
+<title>Habibi Crafts Co — mugs, tees, totes, onesies, prints</title>
+<meta name="description" content="Arabic phrases on everyday things. Mugs, tees, totes, onesies, and prints. Drag any product to see it from every angle.">
 <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
 <link rel="canonical" href="https://habibicraftsco.com/">
 <meta property="og:type" content="website">
@@ -22,11 +22,13 @@
 <meta name="twitter:image:alt" content="Ya Aini">
 <link rel="icon" type="image/png" href="assets/logo.png">
 <link rel="apple-touch-icon" href="assets/logo.png">
-<link rel="stylesheet" href="styles.css?v=shop">
+<link rel="preload" as="image" href="assets/angles/ya-aini/front-view.png">
+<link rel="stylesheet" href="styles.css?v=3">
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Store","@id":"https://habibicraftsco.com/#store","name":"Habibi Crafts Co","url":"https://habibicraftsco.com/","logo":"https://habibicraftsco.com/assets/logo.png","image":"https://habibicraftsco.com/assets/mockups/ya-aini.png","description":"Arabic phrases on mugs, tees, totes, onesies, and prints."},{"@type":"WebSite","@id":"https://habibicraftsco.com/#website","url":"https://habibicraftsco.com/","name":"Habibi Crafts Co","publisher":{"@id":"https://habibicraftsco.com/#store"},"inLanguage":"en-US"}]}</script>
 <script src="public-config.js"></script>
 <script defer src="analytics.js"></script>
 <script defer src="checkout.js"></script>
+<script defer src="spin.js"></script>
 <script defer src="app.js"></script>
 </head>
 <body>
@@ -43,75 +45,101 @@
   </nav>
 </header>
 <main id="main">
-  <section class="shop-intro">
-    <div class="shell">
-      <h1>Habibi Crafts Co</h1>
-      <p class="lede">Phrases we grew up with, on things we use every day.</p>
+  <section class="hero">
+    <div class="shell hero-grid">
+      <div class="hero-copy">
+        <div class="eyebrow">Habibi Crafts Co · California</div>
+        <h1>Phrases we grew up with, on things you reach for.</h1>
+        <p class="lede">Mugs, tees, totes, onesies, and prints. Every piece is made after you order it.</p>
+        <div class="actions">
+          <a class="button" href="shop.html">Shop all</a>
+          <a class="button secondary" href="about.html">Our story</a>
+        </div>
+        <dl class="hero-stats">
+          <div><dt>Mugs</dt><dd>$18</dd></div>
+          <div><dt>Tees</dt><dd>$32</dd></div>
+          <div><dt>Totes</dt><dd>$34</dd></div>
+          <div><dt>Prints</dt><dd>$24</dd></div>
+        </dl>
+      </div>
+      <div class="hero-viewer">
+        <div class="spin hero-spin" data-spin data-kind="mugs" data-frames="[{&quot;src&quot;:&quot;assets/angles/ya-aini/front-view.png&quot;,&quot;label&quot;:&quot;Front view&quot;},{&quot;src&quot;:&quot;assets/angles/ya-aini/handle-on-left.png&quot;,&quot;label&quot;:&quot;Handle on Left&quot;},{&quot;src&quot;:&quot;assets/angles/ya-aini/handle-on-right.png&quot;,&quot;label&quot;:&quot;Handle on Right&quot;}]" data-alt="Ya Aini">
+          <div class="spin-counter" data-spin-counter>Front view</div>
+          <div class="spin-stage" data-spin-stage>
+            <img data-spin-image class="mockup" src="assets/angles/ya-aini/front-view.png" alt="Ya Aini" width="1200" height="1200" decoding="async" fetchpriority="high">
+          </div>
+          <div class="spin-hint" data-spin-hint>Drag to rotate</div>
+          <div class="spin-rail" data-spin-rail aria-hidden="true"></div>
+        </div>
+        <p class="hero-viewer-note">Every product on this site turns. Drag it.</p>
+      </div>
     </div>
   </section>
-  <section class="section tight" id="shop-by-collection" aria-labelledby="shop-by-collection-heading">
+
+  <section class="section" id="shop-by-collection" aria-labelledby="collections-heading">
     <div class="shell">
       <div class="section-head">
-        <h2 id="shop-by-collection-heading">Shop by collection</h2>
+        <div><h2 id="collections-heading">Shop by collection</h2>
+        <p>Five kinds of things, one set of words.</p></div>
         <a class="text-link" href="shop.html">See everything</a>
       </div>
       <div class="kind-grid"><a class="kind-card reveal" href="mugs.html" data-kind="mugs">
   <div class="kind-card-media"><img class="mockup" src="assets/mockups/ya-aini.png?v=shop" alt="Mugs" width="800" height="800" loading="lazy" decoding="async"></div>
   <div class="kind-card-copy">
     <h3>Mugs</h3>
+    <p>Cold mornings, warm hands</p>
   </div>
-</a>
-<a class="kind-card reveal" href="tees.html" data-kind="tees">
+</a><a class="kind-card reveal" href="tees.html" data-kind="tees">
   <div class="kind-card-media"><img class="mockup" src="assets/mockups/khalas-habibi.png?v=shop" alt="Tees" width="800" height="800" loading="lazy" decoding="async"></div>
   <div class="kind-card-copy">
     <h3>Tees</h3>
+    <p>Soft cotton, easy type</p>
   </div>
-</a>
-<a class="kind-card reveal" href="totes.html" data-kind="totes">
+</a><a class="kind-card reveal" href="totes.html" data-kind="totes">
   <div class="kind-card-media"><img class="mockup" src="assets/mockups/halawa.png?v=shop" alt="Totes" width="800" height="800" loading="lazy" decoding="async"></div>
   <div class="kind-card-copy">
     <h3>Totes</h3>
+    <p>Market runs and everything after</p>
   </div>
-</a>
-<a class="kind-card reveal" href="onesies.html" data-kind="baby">
+</a><a class="kind-card reveal" href="baby.html" data-kind="baby">
   <div class="kind-card-media"><img class="mockup" src="assets/mockups/ya-teta.png?v=shop" alt="Onesies" width="800" height="800" loading="lazy" decoding="async"></div>
   <div class="kind-card-copy">
     <h3>Onesies</h3>
+    <p>Small clothes, big feelings</p>
   </div>
-</a>
-<a class="kind-card reveal" href="prints.html" data-kind="prints">
+</a><a class="kind-card reveal" href="prints.html" data-kind="prints">
   <div class="kind-card-media"><img class="mockup" src="assets/mockups/beit-el-hobb.png?v=shop" alt="Prints" width="800" height="800" loading="lazy" decoding="async"></div>
   <div class="kind-card-copy">
     <h3>Prints</h3>
+    <p>Light on the wall by the door</p>
   </div>
 </a></div>
     </div>
   </section>
-  <section class="section tight" id="from-the-shop" aria-labelledby="from-the-shop-heading">
+
+  <section class="section" id="from-the-shop" aria-labelledby="featured-heading">
     <div class="shell">
       <div class="section-head">
-        <h2 id="from-the-shop-heading">From the shop</h2>
+        <div><h2 id="featured-heading">From the shop</h2>
+        <p>Four that leave the house a lot.</p></div>
         <a class="text-link" href="shop.html">See everything</a>
       </div>
-      <div class="product-grid featured"><a class="product-card reveal" href="product-ya-aini.html" data-category="mugs">
+      <div class="product-grid featured"><a class="product-card reveal is-featured" href="product-ya-aini.html" data-category="mugs">
   <div class="product-media"><img class="mockup" src="assets/mockups/ya-aini.png?v=shop" alt="Ya Aini" width="800" height="800" loading="lazy" decoding="async"></div>
   <div class="product-copy">
     <div class="product-row"><h3>Ya Aini</h3><span class="price">$18</span></div>
   </div>
-</a>
-<a class="product-card reveal" href="product-khalas-habibi.html" data-category="tees">
+</a><a class="product-card reveal is-featured" href="product-khalas-habibi.html" data-category="tees">
   <div class="product-media"><img class="mockup" src="assets/mockups/khalas-habibi.png?v=shop" alt="Khalas Habibi" width="800" height="800" loading="lazy" decoding="async"></div>
   <div class="product-copy">
     <div class="product-row"><h3>Khalas Habibi</h3><span class="price">$32</span></div>
   </div>
-</a>
-<a class="product-card reveal" href="product-halawa.html" data-category="totes">
+</a><a class="product-card reveal is-featured" href="product-halawa.html" data-category="totes">
   <div class="product-media"><img class="mockup" src="assets/mockups/halawa.png?v=shop" alt="Halawa" width="800" height="800" loading="lazy" decoding="async"></div>
   <div class="product-copy">
     <div class="product-row"><h3>Halawa</h3><span class="price">$34</span></div>
   </div>
-</a>
-<a class="product-card reveal" href="product-beit-el-hobb.html" data-category="prints">
+</a><a class="product-card reveal is-featured" href="product-beit-el-hobb.html" data-category="prints">
   <div class="product-media"><img class="mockup" src="assets/mockups/beit-el-hobb.png?v=shop" alt="Beit El Hobb" width="800" height="800" loading="lazy" decoding="async"></div>
   <div class="product-copy">
     <div class="product-row"><h3>Beit El Hobb</h3><span class="price">$24</span></div>
@@ -119,6 +147,61 @@
 </a></div>
     </div>
   </section>
+
+  <section class="section tight" aria-labelledby="mugs-heading">
+    <div class="shell">
+      <div class="section-head">
+        <div><h2 id="mugs-heading">The mug wall</h2>
+        <p>Six phrases, one shape.</p></div>
+        <a class="text-link" href="mugs.html">Shop mugs</a>
+      </div>
+      <div class="product-grid"><a class="product-card reveal" href="product-ya-aini.html" data-category="mugs">
+  <div class="product-media"><img class="mockup" src="assets/mockups/ya-aini.png?v=shop" alt="Ya Aini" width="800" height="800" loading="lazy" decoding="async"></div>
+  <div class="product-copy">
+    <div class="product-row"><h3>Ya Aini</h3><span class="price">$18</span></div>
+  </div>
+</a><a class="product-card reveal" href="product-baladi.html" data-category="mugs">
+  <div class="product-media"><img class="mockup" src="assets/mockups/baladi.png?v=shop" alt="Baladi" width="800" height="800" loading="lazy" decoding="async"></div>
+  <div class="product-copy">
+    <div class="product-row"><h3>Baladi</h3><span class="price">$18</span></div>
+  </div>
+</a><a class="product-card reveal" href="product-ya-dunia.html" data-category="mugs">
+  <div class="product-media"><img class="mockup" src="assets/mockups/ya-dunia.png?v=shop" alt="Ya Dunia" width="800" height="800" loading="lazy" decoding="async"></div>
+  <div class="product-copy">
+    <div class="product-row"><h3>Ya Dunia</h3><span class="price">$18</span></div>
+  </div>
+</a><a class="product-card reveal" href="product-jiran.html" data-category="mugs">
+  <div class="product-media"><img class="mockup" src="assets/mockups/jiran.png?v=shop" alt="Jiran" width="800" height="800" loading="lazy" decoding="async"></div>
+  <div class="product-copy">
+    <div class="product-row"><h3>Jiran</h3><span class="price">$18</span></div>
+  </div>
+</a><a class="product-card reveal" href="product-maamoul.html" data-category="mugs">
+  <div class="product-media"><img class="mockup" src="assets/mockups/maamoul.png?v=shop" alt="Maamoul" width="800" height="800" loading="lazy" decoding="async"></div>
+  <div class="product-copy">
+    <div class="product-row"><h3>Maamoul</h3><span class="price">$18</span></div>
+  </div>
+</a><a class="product-card reveal" href="product-knafeh-club.html" data-category="mugs">
+  <div class="product-media"><img class="mockup" src="assets/mockups/knafeh-club.png?v=shop" alt="Knafeh Club" width="800" height="800" loading="lazy" decoding="async"></div>
+  <div class="product-copy">
+    <div class="product-row"><h3>Knafeh Club</h3><span class="price">$18</span></div>
+  </div>
+</a><a class="product-card reveal" href="product-morning-ritual.html" data-category="mugs">
+  <div class="product-media"><img class="mockup" src="assets/mockups/morning-ritual.png?v=shop" alt="Morning Ritual" width="800" height="800" loading="lazy" decoding="async"></div>
+  <div class="product-copy">
+    <div class="product-row"><h3>Morning Ritual</h3><span class="price">$18</span></div>
+  </div>
+</a></div>
+    </div>
+  </section>
+
+  <section class="section"><div class="shell">
+    <div class="story-panel reveal">
+      <div class="kicker">Why this exists</div>
+      <h2>Yalla on the way out. Sahtein at the table. Khalas when the conversation is over.</h2>
+      <p>We started with the words. The products came later.</p>
+      <a class="text-link" href="about.html">Read the story</a>
+    </div>
+  </div></section>
 </main>
 <footer class="site-footer">
   <div class="footer-grid">
