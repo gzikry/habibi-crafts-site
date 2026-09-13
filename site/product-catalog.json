@@ -5,7 +5,7 @@
     "category": "mugs",
     "price": 18,
     "printful_id": 462528261,
-    "subtitle": "What you call someone, usually while handing them a cup."
+    "subtitle": "11 oz mug."
   },
   {
     "slug": "baladi",
@@ -13,7 +13,7 @@
     "category": "mugs",
     "price": 18,
     "printful_id": 462528274,
-    "subtitle": "For the place you're from."
+    "subtitle": "11 oz mug."
   },
   {
     "slug": "ya-dunia",
@@ -21,7 +21,7 @@
     "category": "mugs",
     "price": 18,
     "printful_id": 462528282,
-    "subtitle": "For the mornings that need a witness."
+    "subtitle": "11 oz mug."
   },
   {
     "slug": "jiran",
@@ -29,7 +29,7 @@
     "category": "mugs",
     "price": 18,
     "printful_id": 462528284,
-    "subtitle": "For the neighbors who know too much."
+    "subtitle": "11 oz mug."
   },
   {
     "slug": "maamoul",
@@ -37,7 +37,7 @@
     "category": "mugs",
     "price": 18,
     "printful_id": 462532463,
-    "subtitle": "Here for the holidays, gone by Thursday."
+    "subtitle": "11 oz mug."
   },
   {
     "slug": "knafeh-club",
@@ -45,7 +45,7 @@
     "category": "mugs",
     "price": 18,
     "printful_id": 462540373,
-    "subtitle": "For people with strong opinions about dessert."
+    "subtitle": "11 oz mug."
   },
   {
     "slug": "morning-ritual",
@@ -53,7 +53,7 @@
     "category": "mugs",
     "price": 18,
     "printful_id": 471225077,
-    "subtitle": "The first cup, before anyone needs anything."
+    "subtitle": "11 oz mug."
   },
   {
     "slug": "khalas-habibi",
@@ -61,7 +61,7 @@
     "category": "tees",
     "price": 32,
     "printful_id": 462532457,
-    "subtitle": "Ends the conversation. Keeps the affection."
+    "subtitle": "Unisex tee."
   },
   {
     "slug": "ya-habayeb",
@@ -69,7 +69,7 @@
     "category": "tees",
     "price": 32,
     "printful_id": 462540352,
-    "subtitle": "For the group chat and the dinner table."
+    "subtitle": "Unisex tee."
   },
   {
     "slug": "warm-embrace",
@@ -77,7 +77,7 @@
     "category": "tees",
     "price": 32,
     "printful_id": 471226873,
-    "subtitle": "A hug, in type."
+    "subtitle": "Unisex tee."
   },
   {
     "slug": "halawa",
@@ -85,7 +85,7 @@
     "category": "totes",
     "price": 34,
     "printful_id": 462532459,
-    "subtitle": "For whatever you're carrying to someone's house."
+    "subtitle": "Cotton tote."
   },
   {
     "slug": "sit-el-kul",
@@ -93,7 +93,7 @@
     "category": "totes",
     "price": 34,
     "printful_id": 462540360,
-    "subtitle": "For the one who runs the room."
+    "subtitle": "Cotton tote."
   },
   {
     "slug": "early-light",
@@ -101,7 +101,7 @@
     "category": "totes",
     "price": 34,
     "printful_id": 471225102,
-    "subtitle": "For the hour before the house wakes up."
+    "subtitle": "Cotton tote."
   },
   {
     "slug": "gather-grow",
@@ -109,7 +109,7 @@
     "category": "totes",
     "price": 34,
     "printful_id": 471226874,
-    "subtitle": "Market days and everything after."
+    "subtitle": "Cotton tote."
   },
   {
     "slug": "ya-teta",
@@ -117,7 +117,7 @@
     "category": "baby",
     "price": 28,
     "printful_id": 462532461,
-    "subtitle": "For the baby Teta is already spoiling."
+    "subtitle": "Baby onesie."
   },
   {
     "slug": "amoura",
@@ -125,7 +125,7 @@
     "category": "baby",
     "price": 28,
     "printful_id": 462540363,
-    "subtitle": "A small word for a small person."
+    "subtitle": "Baby onesie."
   },
   {
     "slug": "garden-gate",
@@ -133,7 +133,7 @@
     "category": "baby",
     "price": 28,
     "printful_id": 471225103,
-    "subtitle": "Where the backyard starts."
+    "subtitle": "Baby onesie."
   },
   {
     "slug": "beit-el-hobb",
@@ -141,7 +141,7 @@
     "category": "prints",
     "price": 24,
     "printful_id": 462532462,
-    "subtitle": "For the wall you see when you walk in."
+    "subtitle": "12 × 16 print."
   },
   {
     "slug": "dar-el-hawa",
@@ -149,7 +149,7 @@
     "category": "prints",
     "price": 24,
     "printful_id": 462540368,
-    "subtitle": "Same idea, different street."
+    "subtitle": "12 × 16 print."
   },
   {
     "slug": "starlight",
@@ -157,6 +157,6 @@
     "category": "prints",
     "price": 24,
     "printful_id": 471225105,
-    "subtitle": "For the hallway light you leave on."
+    "subtitle": "12 × 16 print."
   }
 ]
