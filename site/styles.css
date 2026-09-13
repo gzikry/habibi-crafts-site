@@ -317,12 +317,52 @@ html.js-reveal .reveal.visible{opacity:1;transform:none}
 .story-panel .kicker{color:var(--mustard)}
 .story-panel .text-link{color:#f2ba98;margin-top:22px}
 
-/* ---------- spin viewer ---------- */
+/* ---------- policy / prose pages ---------- */
+.policy{max-width:68ch}
+.policy h2{
+  font-family:var(--serif);font-size:19px;letter-spacing:-.01em;
+  margin:34px 0 10px;color:var(--ink);
+}
+.policy h2:first-child{margin-top:0}
+.policy p{font-size:15.5px;line-height:1.72;color:var(--ink-soft);margin-bottom:14px}
+.policy a{color:var(--maroon);text-decoration:underline;text-underline-offset:3px}
+.policy a:hover{color:var(--terracotta)}
+
+/* ---------- about / story ---------- */
+.story-grid{
+  display:grid;grid-template-columns:minmax(0,1.25fr) minmax(280px,.75fr);
+  gap:clamp(28px,5vw,72px);align-items:center;
+}
+.story-copy p{
+  font-size:16.5px;line-height:1.72;color:var(--ink-soft);margin-bottom:18px;max-width:60ch;
+}
+.story-copy p:last-child{margin-bottom:0}
+.story-copy em{font-style:italic;color:var(--maroon);font-weight:500}
+.story-media img{
+  width:100%;height:auto;border-radius:14px;border:1px solid var(--line);
+  background:var(--sand);
+}
+.steps{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+  gap:clamp(20px,3vw,40px);margin-top:8px;
+}
+.step-num{
+  font-family:var(--serif);font-size:13px;letter-spacing:.1em;
+  color:var(--terracotta);font-weight:600;margin-bottom:10px;
+}
+.step h3{font-size:17px;margin-bottom:8px;letter-spacing:-.01em}
+.step p{font-size:14.5px;line-height:1.65;color:var(--ink-soft)}
+@media(max-width:820px){
+  .story-grid{grid-template-columns:1fr;gap:28px}
+  .story-media{order:-1}
+}
+
+
+/* ---------- angle viewer ---------- */
 .spin{  position:relative;aspect-ratio:1;border-radius:14px;overflow:hidden;
   background:radial-gradient(120% 90% at 50% 12%,var(--paper) 0%,var(--sand) 62%,var(--sand-cool) 100%);
   border:1px solid var(--line);display:grid;place-items:center;
   touch-action:pan-y;cursor:grab;user-select:none;
-  perspective:1100px;
 }
 .spin[data-kind=tees],.spin[data-kind=baby]{
   background:radial-gradient(120% 90% at 50% 12%,var(--paper) 0%,var(--sand-warm) 62%,#e6d3c6 100%);
@@ -331,21 +371,19 @@ html.js-reveal .reveal.visible{opacity:1;transform:none}
   background:radial-gradient(120% 90% at 50% 12%,var(--paper) 0%,var(--sand-cool) 62%,#dcd3c4 100%);
 }
 .spin.is-dragging{cursor:grabbing}
-.spin.is-tilt .spin-stage img{cursor:crosshair}
-.spin.is-tilt{cursor:default}
+/* One frame only: nothing to rotate, so no grab affordance. */
+.spin:not(.has-frames){cursor:default}
 .spin-stage{
-  position:absolute;inset:0;display:grid;place-items:center;
-  transform-style:preserve-3d;will-change:transform;
+  position:absolute;inset:0 0 56px;display:grid;place-items:center;
 }
+/* The artwork is never rotated, scaled or skewed: any 3D transform on a flat
+   product still shears the print. Frames change, the image does not. */
 .spin-stage img{
   width:100%;height:100%;object-fit:contain;
-  transform-origin:50% 50%;transition:transform .12s linear;
-  will-change:transform;pointer-events:none;
-  filter:drop-shadow(0 26px 34px rgba(64,39,23,.16));
+  pointer-events:none;
 }
-.spin.is-dragging .spin-stage img{transition:none}
 .spin-hint{
-  position:absolute;left:50%;bottom:14px;transform:translate(-50%,10px);
+  position:absolute;left:50%;top:14px;transform:translate(-50%,-8px);
   display:inline-flex;align-items:center;gap:7px;
   padding:7px 13px;border-radius:999px;
   background:rgba(36,27,20,.82);color:var(--cream);
@@ -359,18 +397,6 @@ html.js-reveal .reveal.visible{opacity:1;transform:none}
   background:linear-gradient(90deg,transparent 45%,var(--cream) 45%,var(--cream) 55%,transparent 55%);
   border:1.5px solid currentColor;
 }
-.spin-rail{
-  position:absolute;left:50%;bottom:12px;transform:translateX(-50%);
-  display:flex;gap:6px;padding:6px 9px;border-radius:999px;
-  background:rgba(255,253,249,.82);border:1px solid var(--line);
-  backdrop-filter:blur(8px);opacity:0;transition:opacity .25s;
-}
-.spin:hover .spin-rail,.spin:focus-within .spin-rail,.spin.is-dragging .spin-rail{opacity:1}
-.spin-dot{
-  width:7px;height:7px;border-radius:50%;background:rgba(36,27,20,.26);
-  transition:background .2s,transform .2s;cursor:pointer;
-}
-.spin-dot.is-active{background:var(--maroon);transform:scale(1.35)}
 .spin-counter{
   position:absolute;top:12px;left:14px;
   font-size:10.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;
@@ -378,13 +404,55 @@ html.js-reveal .reveal.visible{opacity:1;transform:none}
   padding:5px 10px;border-radius:999px;border:1px solid var(--line);
   backdrop-filter:blur(8px);
 }
+.spin-controls[hidden],.spin-slider[hidden],.spin-counter[hidden]{display:none}
+.spin-controls{
+  position:absolute;left:0;right:0;bottom:0;height:56px;
+  display:flex;align-items:center;gap:12px;padding:0 18px;
+  background:linear-gradient(to top,rgba(255,253,249,.96),rgba(255,253,249,.72) 60%,transparent);
+}
+.spin-end{
+  font-size:10.5px;font-weight:700;letter-spacing:.08em;
+  color:var(--maroon);opacity:.75;white-space:nowrap;
+}
+/* Range input restyled as a scrubber: the default thumb is a grey circle
+   that looks pasted on, so both tracks are drawn explicitly. */
+.spin-slider{
+  -webkit-appearance:none;appearance:none;
+  flex:1;height:20px;background:transparent;cursor:pointer;margin:0;
+}
+.spin-slider::-webkit-slider-runnable-track{
+  height:3px;border-radius:2px;background:rgba(36,27,20,.18);
+}
+.spin-slider::-webkit-slider-thumb{
+  -webkit-appearance:none;appearance:none;
+  width:15px;height:15px;margin-top:-6px;border-radius:50%;
+  background:var(--maroon);border:2.5px solid var(--paper);
+  box-shadow:0 1px 5px rgba(64,39,23,.3);
+  transition:transform .15s;
+}
+.spin-slider:hover::-webkit-slider-thumb,
+.spin-slider:focus-visible::-webkit-slider-thumb{transform:scale(1.16)}
+.spin-slider::-moz-range-track{
+  height:3px;border-radius:2px;background:rgba(36,27,20,.18);
+}
+.spin-slider::-moz-range-thumb{
+  width:15px;height:15px;border-radius:50%;
+  background:var(--maroon);border:2.5px solid var(--paper);
+  box-shadow:0 1px 5px rgba(64,39,23,.3);
+}
+.spin-slider:focus-visible{outline:none}
+.spin-slider:focus-visible::-webkit-slider-thumb{
+  box-shadow:0 0 0 3px var(--mustard);
+}
 @media(prefers-reduced-motion:reduce){
-  .spin-stage img{transition:none}
   .spin-hint{display:none}
+  .spin{scroll-behavior:auto}
 }
 @media(max-width:620px){
   .spin{border-radius:12px}
-  .spin-rail{bottom:9px}
+  .spin-stage{inset:0 0 50px}
+  .spin-controls{height:50px;padding:0 13px;gap:9px}
+  .spin-end{display:none}
   .spin-counter{top:9px;left:10px}
 }
 
