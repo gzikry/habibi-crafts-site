@@ -61,6 +61,9 @@
     this.lastT = 0;
     this.raf = null;
     this.currentSrc = null;
+    this.perFrame = 1;
+    this.dragStartIndex = 0;   // where a drag began, to detect a dead landing
+    this.dragFrames = 0;       // total frames travelled this drag
 
     this.syncSlider();
     this.preload();
@@ -121,6 +124,8 @@
         self.lastT = performance.now();
         self.velocity = 0;
         self.perFrame = pxPerFrame(self.count, self.stageWidth());
+        self.dragStartIndex = self.index;
+        self.dragFrames = 0;
         self.root.classList.add('is-dragging');
         if (self.hint) self.hint.classList.remove('is-visible');
         if (e.cancelable) e.preventDefault();
@@ -137,6 +142,7 @@
         self.lastT = now;
 
         self.pos = mod(self.pos - dx / self.perFrame, self.count);
+        self.dragFrames += Math.abs(dx) / self.perFrame;
         self.render();
         if (e.cancelable) e.preventDefault();
       }
@@ -158,6 +164,15 @@
         var cap = Math.min(MAX_COAST, self.count - 1) * (1 - FLING_DECAY);
         self.fling = Math.max(-cap, Math.min(cap, self.fling));
         if (reduced || Math.abs(self.fling) < 0.001) { self.fling = 0; self.settle(); }
+
+        // A deliberate drag that ends on the frame it started from reads as a
+        // broken viewer. If the shopper clearly dragged a whole angle, nudge
+        // one frame in the direction they were heading.
+        if (!self.fling && self.dragFrames >= 0.9 &&
+            mod(Math.round(self.pos), self.count) === self.dragStartIndex) {
+          var dir = (self.velocity > 0) ? -1 : 1;   // screen drag right = turn back
+          self.goTo(Math.round(self.pos) + dir);
+        }
       }
 
       this.stage.addEventListener('mousedown', down);
