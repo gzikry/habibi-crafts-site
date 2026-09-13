@@ -163,15 +163,11 @@
         // A product with two angles has no room to coast past its neighbour.
         var cap = Math.min(MAX_COAST, self.count - 1) * (1 - FLING_DECAY);
         self.fling = Math.max(-cap, Math.min(cap, self.fling));
-        if (reduced || Math.abs(self.fling) < 0.001) { self.fling = 0; self.settle(); }
-
-        // A deliberate drag that ends on the frame it started from reads as a
-        // broken viewer. If the shopper clearly dragged a whole angle, nudge
-        // one frame in the direction they were heading.
-        if (!self.fling && self.dragFrames >= 0.9 &&
-            mod(Math.round(self.pos), self.count) === self.dragStartIndex) {
-          var dir = (self.velocity > 0) ? -1 : 1;   // screen drag right = turn back
-          self.goTo(Math.round(self.pos) + dir);
+        self.flingDir = self.velocity > 0 ? -1 : 1;
+        if (reduced || Math.abs(self.fling) < 0.001) {
+          self.fling = 0;
+          self.settle();
+          self.finishDrag();
         }
       }
 
@@ -219,6 +215,25 @@
     this.render();
   };
 
+  /**
+   * A drag that ends on the frame it started from reads as a viewer that does
+   * not work — most likely on a two-angle product, where one revolution is a
+   * single frame. If the shopper clearly dragged at least a full angle and
+   * landed back where they began, step one frame the way they were heading.
+   */
+  Viewer.prototype.finishDrag = function () {
+    if (this.dragFrames < 0.5) return;
+    if (this.count < 2) return;
+    if (mod(Math.round(this.pos), this.count) !== this.dragStartIndex) {
+      this.dragFrames = 0;
+      return;
+    }
+    var dir = this.flingDir || 1;
+    this.pos = mod(Math.round(this.pos) + dir, this.count);
+    this.dragFrames = 0;
+    this.render();
+  };
+
   Viewer.prototype.autospin = function () {
     // Opt-in, and only on the hero: a slow turn shows the product is
     // interactive. Product pages stay still until the shopper moves them.
@@ -243,8 +258,11 @@
       if (self.fling) {
         self.pos = mod(self.pos + self.fling, self.count);
         self.fling *= FLING_DECAY;
-        if (Math.abs(self.fling) < FLING_STOP) { self.fling = 0; self.settle(); }
-        else self.render();
+        if (Math.abs(self.fling) < FLING_STOP) {
+          self.fling = 0;
+          self.settle();
+          self.finishDrag();
+        } else self.render();
       }
       self.raf = requestAnimationFrame(tick);
     }
