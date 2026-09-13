@@ -1,61 +1,162 @@
 [
-  {"slug":"ya-aini","name":"Ya Aini","category":"mugs","price":18,"printful_id":462528261,
-   "subtitle":"What you call someone, usually while handing them a cup."},
-
-  {"slug":"baladi","name":"Baladi","category":"mugs","price":18,"printful_id":462528274,
-   "subtitle":"For the place you're from."},
-
-  {"slug":"ya-dunia","name":"Ya Dunia","category":"mugs","price":18,"printful_id":462528282,
-   "subtitle":"For the mornings that need a witness."},
-
-  {"slug":"jiran","name":"Jiran","category":"mugs","price":18,"printful_id":462528284,
-   "subtitle":"For the neighbors who know too much."},
-
-  {"slug":"maamoul","name":"Maamoul","category":"mugs","price":18,"printful_id":462532463,
-   "subtitle":"Here for the holidays, gone by Thursday."},
-
-  {"slug":"knafeh-club","name":"Knafeh Club","category":"mugs","price":18,"printful_id":462540373,
-   "subtitle":"For people with strong opinions about dessert."},
-
-  {"slug":"morning-ritual","name":"Morning Ritual","category":"mugs","price":18,"printful_id":471225077,
-   "subtitle":"The first cup, before anyone needs anything."},
-
-  {"slug":"khalas-habibi","name":"Khalas Habibi","category":"tees","price":32,"printful_id":462532457,
-   "subtitle":"Ends the conversation. Keeps the affection."},
-
-  {"slug":"ya-habayeb","name":"Ya Habayeb","category":"tees","price":32,"printful_id":462540352,
-   "subtitle":"For the group chat and the dinner table."},
-
-  {"slug":"warm-embrace","name":"Warm Embrace","category":"tees","price":32,"printful_id":471226873,
-   "subtitle":"A hug, in type."},
-
-  {"slug":"halawa","name":"Halawa","category":"totes","price":34,"printful_id":462532459,
-   "subtitle":"For whatever you're carrying to someone's house."},
-
-  {"slug":"sit-el-kul","name":"Sit El Kul","category":"totes","price":34,"printful_id":462540360,
-   "subtitle":"For the one who runs the room."},
-
-  {"slug":"early-light","name":"Early Light","category":"totes","price":34,"printful_id":471225102,
-   "subtitle":"For the hour before the house wakes up."},
-
-  {"slug":"gather-grow","name":"Gather & Grow","category":"totes","price":34,"printful_id":471226874,
-   "subtitle":"Market days and everything after."},
-
-  {"slug":"ya-teta","name":"Ya Teta","category":"baby","price":28,"printful_id":462532461,
-   "subtitle":"For the baby Teta is already spoiling."},
-
-  {"slug":"amoura","name":"Amoura","category":"baby","price":28,"printful_id":462540363,
-   "subtitle":"A small word for a small person."},
-
-  {"slug":"garden-gate","name":"Garden Gate","category":"baby","price":28,"printful_id":471225103,
-   "subtitle":"Where the backyard starts."},
-
-  {"slug":"beit-el-hobb","name":"Beit El Hobb","category":"prints","price":24,"printful_id":462532462,
-   "subtitle":"For the wall you see when you walk in."},
-
-  {"slug":"dar-el-hawa","name":"Dar El Hawa","category":"prints","price":24,"printful_id":462540368,
-   "subtitle":"Same idea, different street."},
-
-  {"slug":"starlight","name":"Starlight","category":"prints","price":24,"printful_id":471225105,
-   "subtitle":"For the hallway light you leave on."}
+  {
+    "slug": "ya-aini",
+    "name": "Ya Aini",
+    "category": "mugs",
+    "price": 18,
+    "printful_id": 462528261,
+    "subtitle": "What you call someone, usually while handing them a cup."
+  },
+  {
+    "slug": "baladi",
+    "name": "Baladi",
+    "category": "mugs",
+    "price": 18,
+    "printful_id": 462528274,
+    "subtitle": "For the place you're from."
+  },
+  {
+    "slug": "ya-dunia",
+    "name": "Ya Dunia",
+    "category": "mugs",
+    "price": 18,
+    "printful_id": 462528282,
+    "subtitle": "For the mornings that need a witness."
+  },
+  {
+    "slug": "jiran",
+    "name": "Jiran",
+    "category": "mugs",
+    "price": 18,
+    "printful_id": 462528284,
+    "subtitle": "For the neighbors who know too much."
+  },
+  {
+    "slug": "maamoul",
+    "name": "Maamoul",
+    "category": "mugs",
+    "price": 18,
+    "printful_id": 462532463,
+    "subtitle": "Here for the holidays, gone by Thursday."
+  },
+  {
+    "slug": "knafeh-club",
+    "name": "Knafeh Club",
+    "category": "mugs",
+    "price": 18,
+    "printful_id": 462540373,
+    "subtitle": "For people with strong opinions about dessert."
+  },
+  {
+    "slug": "morning-ritual",
+    "name": "Morning Ritual",
+    "category": "mugs",
+    "price": 18,
+    "printful_id": 471225077,
+    "subtitle": "The first cup, before anyone needs anything."
+  },
+  {
+    "slug": "khalas-habibi",
+    "name": "Khalas Habibi",
+    "category": "tees",
+    "price": 32,
+    "printful_id": 462532457,
+    "subtitle": "Ends the conversation. Keeps the affection."
+  },
+  {
+    "slug": "ya-habayeb",
+    "name": "Ya Habayeb",
+    "category": "tees",
+    "price": 32,
+    "printful_id": 462540352,
+    "subtitle": "For the group chat and the dinner table."
+  },
+  {
+    "slug": "warm-embrace",
+    "name": "Warm Embrace",
+    "category": "tees",
+    "price": 32,
+    "printful_id": 471226873,
+    "subtitle": "A hug, in type."
+  },
+  {
+    "slug": "halawa",
+    "name": "Halawa",
+    "category": "totes",
+    "price": 34,
+    "printful_id": 462532459,
+    "subtitle": "For whatever you're carrying to someone's house."
+  },
+  {
+    "slug": "sit-el-kul",
+    "name": "Sit El Kul",
+    "category": "totes",
+    "price": 34,
+    "printful_id": 462540360,
+    "subtitle": "For the one who runs the room."
+  },
+  {
+    "slug": "early-light",
+    "name": "Early Light",
+    "category": "totes",
+    "price": 34,
+    "printful_id": 471225102,
+    "subtitle": "For the hour before the house wakes up."
+  },
+  {
+    "slug": "gather-grow",
+    "name": "Gather & Grow",
+    "category": "totes",
+    "price": 34,
+    "printful_id": 471226874,
+    "subtitle": "Market days and everything after."
+  },
+  {
+    "slug": "ya-teta",
+    "name": "Ya Teta",
+    "category": "baby",
+    "price": 28,
+    "printful_id": 462532461,
+    "subtitle": "For the baby Teta is already spoiling."
+  },
+  {
+    "slug": "amoura",
+    "name": "Amoura",
+    "category": "baby",
+    "price": 28,
+    "printful_id": 462540363,
+    "subtitle": "A small word for a small person."
+  },
+  {
+    "slug": "garden-gate",
+    "name": "Garden Gate",
+    "category": "baby",
+    "price": 28,
+    "printful_id": 471225103,
+    "subtitle": "Where the backyard starts."
+  },
+  {
+    "slug": "beit-el-hobb",
+    "name": "Beit El Hobb",
+    "category": "prints",
+    "price": 24,
+    "printful_id": 462532462,
+    "subtitle": "For the wall you see when you walk in."
+  },
+  {
+    "slug": "dar-el-hawa",
+    "name": "Dar El Hawa",
+    "category": "prints",
+    "price": 24,
+    "printful_id": 462540368,
+    "subtitle": "Same idea, different street."
+  },
+  {
+    "slug": "starlight",
+    "name": "Starlight",
+    "category": "prints",
+    "price": 24,
+    "printful_id": 471225105,
+    "subtitle": "For the hallway light you leave on."
+  }
 ]
