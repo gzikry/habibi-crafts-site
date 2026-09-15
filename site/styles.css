@@ -455,10 +455,17 @@ html.js-reveal .reveal.visible{opacity:1;transform:none}
   position:absolute;inset:0 0 56px;display:grid;place-items:center;
 }
 /* The artwork is never rotated, scaled or skewed: any 3D transform on a flat
-   product still shears the print. Frames change, the image does not. */
+   product still shears the print. Frames change, the image does not.
+   The second image is the crossfade overlay: as `pos` moves between frame 2
+   and frame 3, frame 3 is drawn over frame 2 with opacity equal to the
+   fraction travelled, so a three-frame product still reads as motion. */
 .spin-stage img{
   width:100%;height:100%;object-fit:contain;
   pointer-events:none;
+}
+.spin-stage img[data-spin-overlay]{
+  position:absolute;inset:0;
+  will-change:opacity;
 }
 .spin-hint{
   position:absolute;left:50%;top:14px;transform:translate(-50%,-8px);
