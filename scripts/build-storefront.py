@@ -2,6 +2,33 @@
 """Generate static Habibi Crafts Co pages from the public catalog. No API tokens."""
 from __future__ import annotations
 
+# ---------------------------------------------------------------------------
+# STOP: this builder does not emit the product angle viewer.
+#
+# It writes over site/*.html from site/catalog.js and knows nothing about
+# site/assets/angles/ or site/spin.js, so running it silently strips the 360
+# viewer from every product page and the homepage. The active pipeline is the
+# one that owns product-catalog.json:
+#
+#   cd ../../workspace && ./add-products.sh
+#
+# If you are here to change generated HTML, change that pipeline instead, or
+# delete this guard deliberately once the two builders are reconciled.
+# ---------------------------------------------------------------------------
+import sys as _sys
+if "--force" not in _sys.argv:
+    _sys.exit(
+        "refusing to run: this builder strips the angle viewer and overwrites "
+        "the hand-written pages.\n"
+        "Use the catalog pipeline (workspace/add-products.sh) instead."
+    )
+# Even with --force, never clobber the hand-maintained prose pages: this
+# builder rewrites them without the reviewed copy.
+_PROS = {"about.html", "faq.html", "shipping.html", "contact.html",
+         "privacy.html", "404.html"}
+_orig_write = None
+
+
 import json
 from pathlib import Path
 import subprocess
@@ -263,6 +290,11 @@ def wrap(head, current, main, prefix=""):
 
 
 def write(name: str, html: str):
+    # Prose pages are hand-maintained and carry reviewed copy; this builder
+    # would replace them with generated text. Skip them even under --force.
+    if name in _PROS:
+        print("skipped (hand-written, not generated)", name)
+        return
     path = SITE / name
     path.write_text(html)
     print("wrote", path.relative_to(ROOT))
@@ -494,7 +526,7 @@ write(
     wrap(
         page_head(
             "About | Habibi Crafts Co",
-            "A husband-and-wife shop making personalized mugs and handcrafted gifts.",
+            "A husband-and-wife shop in California. We design mugs, tees, totes, onesies, and prints.",
             "https://habibicraftsco.com/about.html",
             extra_ld=[
                 {
@@ -510,13 +542,12 @@ write(
         "about",
         """  <section class="policy-head"><div class="shell">
     <h1>About</h1>
-    <p class="lede">A husband-and-wife shop making personalized mugs and handcrafted gifts.</p>
+    <p class="lede">A husband-and-wife shop in California.</p>
   </div></section>
   <article class="editorial shell">
-    <p>We're thrilled to have you here. Habibi Crafts Co is a labor of love, born from our passion for creativity and the joy of crafting together. As a husband-and-wife team, we pour our hearts into every piece we create, ensuring that each item is as unique and special as the moments they are meant to celebrate.</p>
-    <p>Our specialty lies in personalized mugs crafted with care, along with a variety of other handcrafted items perfect for weddings, bachelor and bachelorette parties, and more. We believe in the power of personalization to make any occasion memorable, and we take pride in adding that personal touch to your celebrations.</p>
-    <p>Crafting is more than just a hobby for us; it's a way to spend quality time together and share our creativity with the world. We hope our creations bring as much joy to your life as they do to ours.</p>
-    <p>Thank you for supporting our small business. We look forward to being a part of your special moments!</p>
+    <p>We're a husband and wife, and this is our shop. We design mugs, tees, totes, onesies, prints, and whatever else we take on next.</p>
+    <p>What's here now is a first batch. We'll keep adding.</p>
+    <p>Thanks for stopping by.</p>
   </article>""",
     ),
 )
@@ -533,7 +564,6 @@ faqs = [
     ("What about the totes?", "Cotton. One size."),
     ("Are the prints framed?", "No. 12 × 16 inches, matte paper. Frame not included."),
     ("How much are they?", "Mugs $18. Tees $32. Totes $34. Onesies $28. Prints $24."),
-    ("What do the names mean?", "They’re just names. We don’t translate them."),
     ("How does shipping work?", "We’re not taking orders yet. When we open, pieces print after you order, then they ship. Details will be on the shipping page."),
     ("How do I reach you?", "We haven’t posted a public email or phone yet. When we do, it will be on the contact page."),
 ]

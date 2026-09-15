@@ -241,10 +241,17 @@
     if (!this.root.hasAttribute('data-autospin')) return;
 
     var self = this;
+    var steps = 0;
+
+    // One revolution, then stop. Looping forever is distracting, and on a mug
+    // the side views barely show the print, so a hero left mid-turn reads as
+    // an empty product. Finishing the turn lands back on the printed front.
     var timer = setInterval(function () {
       if (self.taken || self.dragging) { clearInterval(timer); return; }
+      steps++;
       self.pos = mod(Math.round(self.pos) + 1, self.count);
       self.render();
+      if (steps >= self.count) { clearInterval(timer); self.settle(); }
     }, 2800);
 
     this.stopAutospin = function () { clearInterval(timer); };
