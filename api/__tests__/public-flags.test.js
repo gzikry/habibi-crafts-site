@@ -59,7 +59,7 @@ describe('public flags stay off and invent no secrets', () => {
     assert.doesNotMatch(privacy, /Printful/i);
     assert.doesNotMatch(faq, /Printful/i);
     assert.doesNotMatch(index, /Printful/i);
-    assert.match(index, /print after you order/i);
+    assert.match(index, /made after you order/i);
   });
 
   it('product structured data stays OutOfStock while checkout is off', () => {
