@@ -22,9 +22,17 @@ Static storefront for a husband-and-wife shop in California.
 
 ## SEO foundation
 
-Each indexable page has a unique title, description, canonical URL, Open Graph/Twitter metadata, and page-specific JSON-LD. Product pages use `OutOfStock` until checkout opens. `site/robots.txt` points to `site/sitemap.xml`, which contains only intended public pages.
+Each indexable page has a unique title, description, canonical URL, Open Graph/Twitter metadata, and page-specific JSON-LD. Product pages use `OutOfStock` until checkout opens. `site/robots.txt` points to `site/sitemap.xml`, which contains only intended public pages. Root `/favicon.ico` and a 1200×630 share image (`assets/og-share.png`) ship with the storefront.
 
-After DNS and HTTPS are stable:
+Live hosting is Porkbun Static Hosting (pixie-sh). Custom 404 wiring, the `www` → apex `https://` Location header, and HTTPS security headers are host-panel steps — see `SEO-TECH-REPORT.md`.
+
+After DNS and HTTPS are stable (George):
+
+1. Add `https://habibicraftsco.com` as a Google Search Console domain/URL-prefix property.
+2. Verify ownership using the DNS record Google provides.
+3. Submit `https://habibicraftsco.com/sitemap.xml`.
+4. Request indexing for the home page and shop page.
+5. Add Bing Webmaster Tools and submit the same sitemap.
 
 1. Add `https://habibicraftsco.com` as a Google Search Console domain/URL-prefix property.
 2. Verify ownership using the DNS record Google provides.
@@ -75,4 +83,4 @@ Checkout, ads, and live ordering stay **off**. Production wiring (flags, catalog
 python3 -m http.server 8080 -d site
 ```
 
-Check `/`, `/shop.html`, collection pages, all product pages, `/about.html`, `/faq.html`, `/shipping.html`, `/contact.html`, `/privacy.html`, `/robots.txt`, `/sitemap.xml`, `/assets/logo.png`, and an unknown path for the 404 page behavior.
+Check `/`, `/shop.html`, collection pages, all product pages, `/about.html`, `/faq.html`, `/shipping.html`, `/contact.html`, `/privacy.html`, `/robots.txt`, `/sitemap.xml`, `/favicon.ico`, `/assets/logo.png`, `/assets/og-share.png`, and an unknown path for the 404 page behavior.
