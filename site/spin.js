@@ -1,8 +1,8 @@
 /*!
  * Habibi Crafts Co — product angle viewer
  *
- * Between the product's real photographs. Frames come from the Printful mockup
- * generator (front, right, back, left).
+ * Between the product's real photographs. Frames are the available angles
+ * (front, right, back, left) in rotational order.
  *
  * Two things make this smooth, and neither is a transform:
  *
@@ -12,11 +12,11 @@
  *    mug dissolves from one angle into the next instead of snapping, and a
  *    three-frame product still reads as motion.
  *
- * 2. Correct frame order. Printful returns the views but not in rotational
+ * 2. Correct frame order. The photographs are not always named in rotational
  *    order, and sorting them by name (Front, Left, Right, Back) gives steps of
- *    90°, 270°, 180° — two of the four jump half a turn. pfangles.py orders
- *    them by their real angle, so the cycle is even. The JS trusts the order
- *    it is handed and never re-sorts.
+ *    90°, 270°, 180° — two of the four jump half a turn. Frames are handed in
+ *    by their real angle, so the cycle is even. The JS trusts the order it is
+ *    handed and never re-sorts.
  *
  * The image itself is never rotated, scaled or skewed. Any 3D transform on a
  * flat product still shears the print; that was a reported defect.
@@ -46,7 +46,7 @@
   var SLIDER_MIN = 0.001;       // a dead slider thumb cannot be dragged
   var SNAP_DEGREES = 135;       // steps wider than this get a cut, not a blend
 
-  // Printful returns photographs, not a turntable. A 90-degree step has a real
+  // These are still photographs, not a turntable. A 90-degree step has a real
   // intermediate position, so dissolving between the two frames reads as
   // rotation. A 180-degree step does not: blending a mug's handle-right into
   // its handle-left paints two handles at once — a double exposure. Steps at
