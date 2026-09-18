@@ -141,7 +141,7 @@
     "category": "prints",
     "price": 24,
     "printful_id": 462532462,
-    "subtitle": "12 × 16 print."
+    "subtitle": "12 \u00d7 16 print."
   },
   {
     "slug": "dar-el-hawa",
@@ -149,7 +149,7 @@
     "category": "prints",
     "price": 24,
     "printful_id": 462540368,
-    "subtitle": "12 × 16 print."
+    "subtitle": "12 \u00d7 16 print."
   },
   {
     "slug": "starlight",
@@ -157,6 +157,48 @@
     "category": "prints",
     "price": 24,
     "printful_id": 471225105,
-    "subtitle": "12 × 16 print."
+    "subtitle": "12 \u00d7 16 print."
+  },
+  {
+    "slug": "craft-club-sticker",
+    "name": "Craft Club",
+    "category": "stickers",
+    "price": 6,
+    "subtitle": "Vinyl sticker."
+  },
+  {
+    "slug": "make-something-sticker",
+    "name": "Make Something",
+    "category": "stickers",
+    "price": 6,
+    "subtitle": "Vinyl sticker."
+  },
+  {
+    "slug": "leaf-season-sticker",
+    "name": "Leaf Season",
+    "category": "stickers",
+    "price": 6,
+    "subtitle": "Vinyl sticker."
+  },
+  {
+    "slug": "habibi-crafts-hat",
+    "name": "Habibi Crafts",
+    "category": "hats",
+    "price": 30,
+    "subtitle": "Unstructured dad hat."
+  },
+  {
+    "slug": "make-something-hat",
+    "name": "Make Something",
+    "category": "hats",
+    "price": 30,
+    "subtitle": "Unstructured dad hat."
+  },
+  {
+    "slug": "leaf-season-hat",
+    "name": "Leaf Season",
+    "category": "hats",
+    "price": 30,
+    "subtitle": "Unstructured dad hat."
   }
 ]
