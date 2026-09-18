@@ -44,7 +44,7 @@ Verified locally after the edit (python `http.server` on `site/`). Live Porkbun 
 | Product OG | 800×800 mockup | Unchanged (product-specific); width/height declared | **Yes** |
 | Store / Organization JSON-LD | Store only | Store+Organization; CA / US; no invented `sameAs`; **no SearchAction** (no site search) | **Yes** |
 | Product JSON-LD | Offer `OutOfStock` | Still `OutOfStock`; added `url`, `sku`, `seller` | **Yes** |
-| `baby.html` duplicate | Indexed canonical on itself; filters linked here | `noindex,follow` + canonical to `onesies.html`; internal Onesies links now `onesies.html` | **Yes** |
+| `baby.html` duplicate | Indexed canonical on itself; filters linked here | `noindex,follow` + canonical to `onesies.html`; internal Onesies links now `onesies.html`; Garden Gate listed on `onesies.html` | **Yes** |
 
 Checkout buttons remain `disabled` / “Notify me”. No Printful name in customer HTML. No designer/brand “inspired by” copy. No Terms page (nothing to link; a legal stub without review is not worth indexing).
 

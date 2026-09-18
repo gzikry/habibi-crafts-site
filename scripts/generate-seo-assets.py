@@ -57,10 +57,12 @@ def square_on_cream(mark: Image.Image, size: int, pad_ratio: float = 0.16) -> Im
     return canvas
 
 
-def write_ico(mark: Image.Image, dest: Path) -> None:
-    square_on_cream(mark, 256, pad_ratio=0.14).save(
-        dest, format="ICO", sizes=[(16, 16), (32, 32), (48, 48)]
-    )
+def write_ico(white_mark: Image.Image, dest: Path) -> None:
+    """Header-colored tile so the tab icon is visible at 16px."""
+    src = ImageOps.contain(white_mark.convert("RGBA"), (220, 96), Image.Resampling.LANCZOS)
+    hi = Image.new("RGBA", (256, 256), MAROON)
+    hi.alpha_composite(src, ((256 - src.width) // 2, (256 - src.height) // 2))
+    hi.save(dest, format="ICO", sizes=[(16, 16), (32, 32), (48, 48)])
 
 
 def write_apple_touch(mark: Image.Image, dest: Path) -> None:
@@ -97,9 +99,10 @@ def write_og_share(logo: Image.Image, mug: Image.Image, dest: Path) -> None:
 def main() -> None:
     logo = Image.open(ASSETS / "logo.png")
     mark = trim_logo(logo)
+    white = Image.open(ASSETS / "logo-nav-white.png")
     mug = Image.open(ASSETS / "mockups" / "ya-aini.png")
 
-    write_ico(mark, SITE / "favicon.ico")
+    write_ico(white, SITE / "favicon.ico")
     write_apple_touch(mark, ASSETS / "apple-touch-icon.png")
     write_og_share(logo, mug, ASSETS / "og-share.png")
     print("wrote", SITE / "favicon.ico")
