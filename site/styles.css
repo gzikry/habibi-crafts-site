@@ -157,7 +157,7 @@ button{background:none;border:0;padding:0;font:inherit;color:inherit;cursor:poin
 .pcard:focus-visible{outline:none}
 .pcard:focus-visible .pcard-media{outline:2.5px solid var(--mustard);outline-offset:3px}
 /* Name left, price right — the row a craft shop uses, kept quiet. */
-.pcard[data-category=hats] .pcard-media,
+.pcard[data-category=hats] .pcard-media{background:var(--sand-warm)}
 .pcard[data-category=stickers] .pcard-media{background:var(--sand-cool)}
 /* One listing: type, then name left / price right. Same on shop cards. */
 .pcard-type{
@@ -297,8 +297,8 @@ button{background:none;border:0;padding:0;font:inherit;color:inherit;cursor:poin
 .product-card[data-category=baby] .product-media{background:var(--sand-warm)}
 .product-card[data-category=totes] .product-media,
 .product-card[data-category=prints] .product-media,
-.product-card[data-category=stickers] .product-media,
-.product-card[data-category=hats] .product-media{background:var(--sand-cool)}
+.product-card[data-category=stickers] .product-media{background:var(--sand-cool)}
+.product-card[data-category=hats] .product-media{background:var(--sand-warm)}
 .product-media img.mockup{width:100%;height:100%;object-fit:contain;transition:transform .5s cubic-bezier(.2,.7,.2,1)}
 .product-card:hover .product-media img.mockup{transform:scale(1.04)}
 .product-copy{padding:12px 14px 15px}
@@ -358,6 +358,8 @@ button{background:none;border:0;padding:0;font:inherit;color:inherit;cursor:poin
   aspect-ratio:1;
 }
 .product-gallery img.mockup{width:100%;height:100%;object-fit:contain}
+.product-gallery[data-kind=hats]{background:var(--sand-warm)}
+.product-gallery[data-kind=stickers]{background:var(--sand-cool)}
 
 .shop-note{padding:4px 0 8px}
 .shop-note p{color:var(--muted);font-size:15px}
