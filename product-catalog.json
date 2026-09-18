@@ -1,0 +1,204 @@
+[
+  {
+    "slug": "ya-aini",
+    "name": "Ya Aini",
+    "category": "mugs",
+    "price": 18,
+    "printful_id": 462528261,
+    "subtitle": "11 oz mug."
+  },
+  {
+    "slug": "baladi",
+    "name": "Baladi",
+    "category": "mugs",
+    "price": 18,
+    "printful_id": 462528274,
+    "subtitle": "11 oz mug."
+  },
+  {
+    "slug": "ya-dunia",
+    "name": "Ya Dunia",
+    "category": "mugs",
+    "price": 18,
+    "printful_id": 462528282,
+    "subtitle": "11 oz mug."
+  },
+  {
+    "slug": "jiran",
+    "name": "Jiran",
+    "category": "mugs",
+    "price": 18,
+    "printful_id": 462528284,
+    "subtitle": "11 oz mug."
+  },
+  {
+    "slug": "maamoul",
+    "name": "Maamoul",
+    "category": "mugs",
+    "price": 18,
+    "printful_id": 462532463,
+    "subtitle": "11 oz mug."
+  },
+  {
+    "slug": "knafeh-club",
+    "name": "Knafeh Club",
+    "category": "mugs",
+    "price": 18,
+    "printful_id": 462540373,
+    "subtitle": "11 oz mug."
+  },
+  {
+    "slug": "morning-ritual",
+    "name": "Morning Ritual",
+    "category": "mugs",
+    "price": 18,
+    "printful_id": 471225077,
+    "subtitle": "11 oz mug."
+  },
+  {
+    "slug": "khalas-habibi",
+    "name": "Khalas Habibi",
+    "category": "tees",
+    "price": 32,
+    "printful_id": 462532457,
+    "subtitle": "Unisex tee."
+  },
+  {
+    "slug": "ya-habayeb",
+    "name": "Ya Habayeb",
+    "category": "tees",
+    "price": 32,
+    "printful_id": 462540352,
+    "subtitle": "Unisex tee."
+  },
+  {
+    "slug": "warm-embrace",
+    "name": "Warm Embrace",
+    "category": "tees",
+    "price": 32,
+    "printful_id": 471226873,
+    "subtitle": "Unisex tee."
+  },
+  {
+    "slug": "halawa",
+    "name": "Halawa",
+    "category": "totes",
+    "price": 34,
+    "printful_id": 462532459,
+    "subtitle": "Cotton tote."
+  },
+  {
+    "slug": "sit-el-kul",
+    "name": "Sit El Kul",
+    "category": "totes",
+    "price": 34,
+    "printful_id": 462540360,
+    "subtitle": "Cotton tote."
+  },
+  {
+    "slug": "early-light",
+    "name": "Early Light",
+    "category": "totes",
+    "price": 34,
+    "printful_id": 471225102,
+    "subtitle": "Cotton tote."
+  },
+  {
+    "slug": "gather-grow",
+    "name": "Gather & Grow",
+    "category": "totes",
+    "price": 34,
+    "printful_id": 471226874,
+    "subtitle": "Cotton tote."
+  },
+  {
+    "slug": "ya-teta",
+    "name": "Ya Teta",
+    "category": "baby",
+    "price": 28,
+    "printful_id": 462532461,
+    "subtitle": "Baby onesie."
+  },
+  {
+    "slug": "amoura",
+    "name": "Amoura",
+    "category": "baby",
+    "price": 28,
+    "printful_id": 462540363,
+    "subtitle": "Baby onesie."
+  },
+  {
+    "slug": "garden-gate",
+    "name": "Garden Gate",
+    "category": "baby",
+    "price": 28,
+    "printful_id": 471225103,
+    "subtitle": "Baby onesie."
+  },
+  {
+    "slug": "beit-el-hobb",
+    "name": "Beit El Hobb",
+    "category": "prints",
+    "price": 24,
+    "printful_id": 462532462,
+    "subtitle": "12 \u00d7 16 print."
+  },
+  {
+    "slug": "dar-el-hawa",
+    "name": "Dar El Hawa",
+    "category": "prints",
+    "price": 24,
+    "printful_id": 462540368,
+    "subtitle": "12 \u00d7 16 print."
+  },
+  {
+    "slug": "starlight",
+    "name": "Starlight",
+    "category": "prints",
+    "price": 24,
+    "printful_id": 471225105,
+    "subtitle": "12 \u00d7 16 print."
+  },
+  {
+    "slug": "craft-club-sticker",
+    "name": "Craft Club",
+    "category": "stickers",
+    "price": 6,
+    "subtitle": "Vinyl sticker."
+  },
+  {
+    "slug": "make-something-sticker",
+    "name": "Make Something",
+    "category": "stickers",
+    "price": 6,
+    "subtitle": "Vinyl sticker."
+  },
+  {
+    "slug": "leaf-season-sticker",
+    "name": "Leaf Season",
+    "category": "stickers",
+    "price": 6,
+    "subtitle": "Vinyl sticker."
+  },
+  {
+    "slug": "habibi-crafts-hat",
+    "name": "Habibi Crafts",
+    "category": "hats",
+    "price": 30,
+    "subtitle": "Unstructured dad hat."
+  },
+  {
+    "slug": "make-something-hat",
+    "name": "Make Something",
+    "category": "hats",
+    "price": 30,
+    "subtitle": "Unstructured dad hat."
+  },
+  {
+    "slug": "leaf-season-hat",
+    "name": "Leaf Season",
+    "category": "hats",
+    "price": 30,
+    "subtitle": "Unstructured dad hat."
+  }
+]
