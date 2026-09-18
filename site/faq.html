@@ -27,8 +27,8 @@
 <link rel="icon" type="image/png" href="/assets/logo.png">
 <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
 <meta name="referrer" content="strict-origin-when-cross-origin">
-<link rel="stylesheet" href="styles.css?v=13">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","url":"https://habibicraftsco.com/faq.html","mainEntity":[{"@type":"Question","name":"Can I buy something today?","acceptedAnswer":{"@type":"Answer","text":"Checkout is opening soon. You can browse every piece now — nothing is charged yet."}},{"@type":"Question","name":"What does it cost?","acceptedAnswer":{"@type":"Answer","text":"Mugs $18. Tees $32. Totes $34. Onesies $28. Prints $24. Shipping is added at checkout."}},{"@type":"Question","name":"How long until it arrives?","acceptedAnswer":{"@type":"Answer","text":"Everything is printed after you order it. Mugs and totes usually leave the workshop in two to five days; apparel takes a little longer."}},{"@type":"Question","name":"What sizes do the tees come in?","acceptedAnswer":{"@type":"Answer","text":"Unisex, S through XL."}},{"@type":"Question","name":"What sizes do the onesies come in?","acceptedAnswer":{"@type":"Answer","text":"White, in 3–6, 6–12, and 12–18 months."}},{"@type":"Question","name":"Do the prints come framed?","acceptedAnswer":{"@type":"Answer","text":"No. They are 12 × 16 inch matte prints. The frame is not included."}}]}</script>
+<link rel="stylesheet" href="styles.css?v=14">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","url":"https://habibicraftsco.com/faq.html","mainEntity":[{"@type":"Question","name":"Can I buy something today?","acceptedAnswer":{"@type":"Answer","text":"Checkout is opening soon. You can browse every piece now — nothing is charged yet."}},{"@type":"Question","name":"What does it cost?","acceptedAnswer":{"@type":"Answer","text":"Mugs $18. Tees $32. Totes $34. Onesies $28. Prints $24. Stickers $6. Dad hats $30. Shipping is added at checkout."}},{"@type":"Question","name":"How long until it arrives?","acceptedAnswer":{"@type":"Answer","text":"Everything is printed after you order it. Mugs and totes usually leave the workshop in two to five days; apparel takes a little longer."}},{"@type":"Question","name":"What sizes do the tees come in?","acceptedAnswer":{"@type":"Answer","text":"Unisex, S through XL."}},{"@type":"Question","name":"What sizes do the onesies come in?","acceptedAnswer":{"@type":"Answer","text":"White, in 3–6, 6–12, and 12–18 months."}},{"@type":"Question","name":"Do the prints come framed?","acceptedAnswer":{"@type":"Answer","text":"No. They are 12 × 16 inch matte prints. The frame is not included."}},{"@type":"Question","name":"Do you sell stickers and hats?","acceptedAnswer":{"@type":"Answer","text":"Yes. Vinyl stickers are $6: Craft Club, Make Something, and Leaf Season. Unstructured dad hats are $30: Habibi Crafts, Make Something, and Leaf Season. Checkout is not open yet."}},{"@type":"Question","name":"What about sweatshirts, hoodies, and the rest?","acceptedAnswer":{"@type":"Answer","text":"Sweatshirts, long sleeves, beanies, hoodies, youth tees, coasters, journals, and aprons have type pages now. Nothing is listed on those pages yet — we will not invent a product until we have a real piece to show."}}]}</script>
 <script src="public-config.js?v=10"></script>
 <script defer src="analytics.js?v=10"></script>
 <script defer src="checkout.js?v=11"></script>
@@ -41,7 +41,29 @@
     <a class="brand" href="index.html"><img src="assets/logo-nav-white.png" alt="Habibi Crafts Co" width="213" height="93"></a>
     <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-menu" aria-label="Open menu"><span></span></button>
     <div class="nav-links" id="primary-menu">
-      <a href="shop.html">Shop</a>
+      <details class="nav-shop">
+        <summary>Shop</summary>
+        <div class="nav-shop-menu">
+        <span class="nav-shop-label">In the shop</span>
+        <a href="shop.html">All</a>
+        <a href="mugs.html">Mugs</a>
+        <a href="tees.html">Tees</a>
+        <a href="totes.html">Totes</a>
+        <a href="onesies.html">Onesies</a>
+        <a href="prints.html">Prints</a>
+        <a href="stickers.html">Stickers</a>
+        <a href="hats.html">Hats</a>
+        <span class="nav-shop-label">Coming next</span>
+        <a href="sweatshirts.html">Sweatshirts</a>
+        <a href="long-sleeves.html">Long sleeves</a>
+        <a href="beanies.html">Beanies</a>
+        <a href="hoodies.html">Hoodies</a>
+        <a href="youth-tees.html">Youth tees</a>
+        <a href="coasters.html">Coasters</a>
+        <a href="journals.html">Journals</a>
+        <a href="aprons.html">Aprons</a>
+        </div>
+      </details>
       <a href="about.html">About</a>
       <a href="faq.html" aria-current="page">FAQ</a>
     </div>
@@ -71,7 +93,7 @@
       </details>
       <details class="faq-item">
         <summary>What does it cost?</summary>
-        <p>Mugs $18. Tees $32. Totes $34. Onesies $28. Prints $24. Shipping is calculated at checkout.</p>
+        <p>Mugs $18. Tees $32. Totes $34. Onesies $28. Prints $24. Stickers $6. Dad hats $30. Shipping will be calculated when checkout opens.</p>
       </details>
       <details class="faq-item">
         <summary>How long until it arrives?</summary>
@@ -88,6 +110,14 @@
       <details class="faq-item">
         <summary>Do the prints come framed?</summary>
         <p>No. They are 12 × 16 inch matte prints with a white border, so a standard frame fits. The frame is not included.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Do you sell stickers and hats?</summary>
+        <p>Yes. Vinyl stickers are $6 — Craft Club, Make Something, and Leaf Season. Unstructured dad hats are $30 — Habibi Crafts, Make Something, and Leaf Season. Checkout isn't open yet; nothing is charged.</p>
+      </details>
+      <details class="faq-item">
+        <summary>What about sweatshirts, hoodies, and the rest?</summary>
+        <p>Sweatshirts, long sleeves, beanies, hoodies, youth tees, coasters, journals, and aprons have type pages now. Nothing is listed on those pages yet — we won't invent a product until we have a real piece to show.</p>
       </details>
       <details class="faq-item">
         <summary>Are the mugs dishwasher safe?</summary>
@@ -126,12 +156,27 @@
     <div>
       <div class="footer-title">Shop</div>
       <div class="footer-links">
-        <a href="shop.html">Shop</a>
+        <a href="shop.html">All</a>
         <a href="mugs.html">Mugs</a>
         <a href="tees.html">Tees</a>
         <a href="totes.html">Totes</a>
         <a href="onesies.html">Onesies</a>
         <a href="prints.html">Prints</a>
+        <a href="stickers.html">Stickers</a>
+        <a href="hats.html">Hats</a>
+      </div>
+    </div>
+    <div>
+      <div class="footer-title">Coming next</div>
+      <div class="footer-links">
+        <a href="sweatshirts.html">Sweatshirts</a>
+        <a href="long-sleeves.html">Long sleeves</a>
+        <a href="beanies.html">Beanies</a>
+        <a href="hoodies.html">Hoodies</a>
+        <a href="youth-tees.html">Youth tees</a>
+        <a href="coasters.html">Coasters</a>
+        <a href="journals.html">Journals</a>
+        <a href="aprons.html">Aprons</a>
       </div>
     </div>
     <div>

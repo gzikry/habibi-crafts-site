@@ -44,6 +44,66 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://habibicraftsco.com/stickers.html</loc>
+    <lastmod>2026-09-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://habibicraftsco.com/hats.html</loc>
+    <lastmod>2026-09-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://habibicraftsco.com/sweatshirts.html</loc>
+    <lastmod>2026-09-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://habibicraftsco.com/long-sleeves.html</loc>
+    <lastmod>2026-09-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://habibicraftsco.com/beanies.html</loc>
+    <lastmod>2026-09-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://habibicraftsco.com/hoodies.html</loc>
+    <lastmod>2026-09-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://habibicraftsco.com/youth-tees.html</loc>
+    <lastmod>2026-09-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://habibicraftsco.com/coasters.html</loc>
+    <lastmod>2026-09-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://habibicraftsco.com/journals.html</loc>
+    <lastmod>2026-09-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://habibicraftsco.com/aprons.html</loc>
+    <lastmod>2026-09-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://habibicraftsco.com/about.html</loc>
     <lastmod>2026-09-18</lastmod>
     <changefreq>monthly</changefreq>
@@ -271,6 +331,66 @@
     <image:image>
       <image:loc>https://habibicraftsco.com/assets/mockups/starlight.png</image:loc>
       <image:title>Starlight — Habibi Crafts Co</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://habibicraftsco.com/product-craft-club-sticker.html</loc>
+    <lastmod>2026-09-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://habibicraftsco.com/assets/mockups/craft-club-sticker.png</image:loc>
+      <image:title>Craft Club — Habibi Crafts Co</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://habibicraftsco.com/product-make-something-sticker.html</loc>
+    <lastmod>2026-09-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://habibicraftsco.com/assets/mockups/make-something-sticker.png</image:loc>
+      <image:title>Make Something — Habibi Crafts Co</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://habibicraftsco.com/product-leaf-season-sticker.html</loc>
+    <lastmod>2026-09-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://habibicraftsco.com/assets/mockups/leaf-season-sticker.png</image:loc>
+      <image:title>Leaf Season — Habibi Crafts Co</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://habibicraftsco.com/product-habibi-crafts-hat.html</loc>
+    <lastmod>2026-09-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://habibicraftsco.com/assets/mockups/habibi-crafts-hat.png</image:loc>
+      <image:title>Habibi Crafts — Habibi Crafts Co</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://habibicraftsco.com/product-make-something-hat.html</loc>
+    <lastmod>2026-09-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://habibicraftsco.com/assets/mockups/make-something-hat.png</image:loc>
+      <image:title>Make Something — Habibi Crafts Co</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://habibicraftsco.com/product-leaf-season-hat.html</loc>
+    <lastmod>2026-09-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://habibicraftsco.com/assets/mockups/leaf-season-hat.png</image:loc>
+      <image:title>Leaf Season — Habibi Crafts Co</image:title>
     </image:image>
   </url>
 </urlset>
