@@ -67,7 +67,7 @@ FEATURED_SLUGS = (
 )
 
 ASSET_V = "shop"
-SITEMAP_LASTMOD = "2026-09-03"
+SITEMAP_LASTMOD = "2026-09-18"
 
 
 def esc(s: str) -> str:
@@ -93,8 +93,10 @@ def page_head(
     canonical,
     extra_meta="",
     extra_ld=None,
-    og_image="https://habibicraftsco.com/assets/mockups/ya-aini.png",
-    og_image_alt="Ya Aini",
+    og_image="https://habibicraftsco.com/assets/og-share.png",
+    og_image_alt="Habibi Crafts Co — mugs, tees, totes, onesies, and prints",
+    og_w="1200",
+    og_h="630",
 ):
     ld = extra_ld or []
     ld_tags = "\n".join(f'<script type="application/ld+json">{json_ld(item)}</script>' for item in ld)
@@ -114,14 +116,19 @@ def page_head(
 <meta property="og:description" content="{esc(description)}">
 <meta property="og:url" content="{esc(canonical)}">
 <meta property="og:image" content="{esc(og_image)}">
+<meta property="og:image:width" content="{esc(og_w)}">
+<meta property="og:image:height" content="{esc(og_h)}">
+<meta property="og:locale" content="en_US">
 <meta property="og:image:alt" content="{esc(og_image_alt)}">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="{esc(title)}">
 <meta name="twitter:description" content="{esc(description)}">
 <meta name="twitter:image" content="{esc(og_image)}">
 <meta name="twitter:image:alt" content="{esc(og_image_alt)}">
-<link rel="icon" type="image/png" href="assets/logo.png">
-<link rel="apple-touch-icon" href="assets/logo.png">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="/assets/logo.png">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<meta name="referrer" content="strict-origin-when-cross-origin">
 <link rel="stylesheet" href="styles.css?v={ASSET_V}">
 {extra_meta}{ld_tags}
 <script src="public-config.js"></script>
@@ -308,13 +315,15 @@ home_ld = {
     "@context": "https://schema.org",
     "@graph": [
         {
-            "@type": "Store",
+            "@type": ["Store", "Organization"],
             "@id": "https://habibicraftsco.com/#store",
             "name": "Habibi Crafts Co",
             "url": "https://habibicraftsco.com/",
             "logo": "https://habibicraftsco.com/assets/logo.png",
-            "image": "https://habibicraftsco.com/assets/mockups/ya-aini.png",
-            "description": "A husband-and-wife shop in California.",
+            "image": "https://habibicraftsco.com/assets/og-share.png",
+            "description": "A husband-and-wife shop in California. Mugs, tees, totes, onesies, and prints, made after you order them.",
+            "address": {"@type": "PostalAddress", "addressRegion": "CA", "addressCountry": "US"},
+            "areaServed": {"@type": "Country", "name": "US"},
         },
         {
             "@type": "WebSite",
@@ -335,8 +344,6 @@ write(
             "A husband-and-wife shop. Mugs, tees, totes, onesies, and prints.",
             "https://habibicraftsco.com/",
             extra_ld=[home_ld],
-            og_image="https://habibicraftsco.com/assets/mockups/ya-aini.png",
-            og_image_alt="Ya Aini",
         ),
         "home",
         f"""  <section class="shop-intro">
@@ -384,8 +391,6 @@ write(
             "Mugs, tees, totes, onesies, and prints. We’ll keep adding.",
             "https://habibicraftsco.com/shop.html",
             extra_ld=[item_list_ld("https://habibicraftsco.com/shop.html", "Shop Habibi Crafts Co", PRODUCTS)],
-            og_image="https://habibicraftsco.com/assets/mockups/ya-aini.png",
-            og_image_alt="Ya Aini",
         ),
         "shop",
         f"""  <section class="catalog-head"><div class="shell">
@@ -412,6 +417,8 @@ for key, title, price, blurb, page in GROUPS:
                 extra_ld=[item_list_ld(f"https://habibicraftsco.com/{page}", f"{title} — Habibi Crafts Co", items)],
                 og_image=f"https://habibicraftsco.com/{mockup_src(items[0])}",
                 og_image_alt=items[0]["name"],
+                og_w="800",
+                og_h="800",
             ),
             "shop",
             f"""  <section class="catalog-head"><div class="shell">
@@ -460,6 +467,14 @@ for p in PRODUCTS:
                 "description": p["blurb"],
                 "image": f"https://habibicraftsco.com/{mockup_src(p)}",
                 "brand": {"@type": "Brand", "name": "Habibi Crafts Co"},
+                "url": f"https://habibicraftsco.com/product-{p['slug']}.html",
+                "sku": p["slug"],
+                "seller": {
+                    "@type": "Organization",
+                    "@id": "https://habibicraftsco.com/#store",
+                    "name": "Habibi Crafts Co",
+                    "url": "https://habibicraftsco.com/",
+                },
                 "offers": {
                     "@type": "Offer",
                     "url": f"https://habibicraftsco.com/product-{p['slug']}.html",
@@ -501,6 +516,8 @@ for p in PRODUCTS:
                 extra_ld=[product_ld],
                 og_image=f"https://habibicraftsco.com/{mockup_src(p)}",
                 og_image_alt=p["name"],
+                og_w="800",
+                og_h="800",
             ).replace('property="og:type" content="website"', 'property="og:type" content="product"'),
             "shop",
             f"""  <div class="shell product-page">

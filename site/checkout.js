@@ -6,6 +6,7 @@
     button.disabled = true;
     button.setAttribute('aria-disabled', 'true');
     button.setAttribute('data-checkout-enabled', 'false');
+    button.textContent = 'Checkout opening soon';
   }
 
   document.querySelectorAll('[data-checkout]').forEach(function (button) {
