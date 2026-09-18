@@ -162,7 +162,9 @@ button{background:none;border:0;padding:0;font:inherit;color:inherit;cursor:poin
 .pcard[data-category=tees] .pcard-media,
 .pcard[data-category=baby] .pcard-media{background:var(--sand-warm)}
 .pcard[data-category=totes] .pcard-media,
-.pcard[data-category=prints] .pcard-media{background:var(--sand-cool)}
+.pcard[data-category=prints] .pcard-media,
+.pcard[data-category=stickers] .pcard-media{background:var(--sand-cool)}
+.pcard[data-category=hats] .pcard-media{background:var(--sand-warm)}
 .pcard-media img.mockup{
   width:100%;height:100%;object-fit:contain;
   transition:transform .55s cubic-bezier(.2,.7,.2,1);
@@ -375,24 +377,6 @@ button{background:none;border:0;padding:0;font:inherit;color:inherit;cursor:poin
 .shop-note{padding:4px 0 8px}
 .shop-note p{color:var(--muted);font-size:15px}
 .shop-note .text-link{margin-top:10px}
-
-.gift-paths{padding-top:12px;padding-bottom:8px}
-.gift-grid{
-  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;
-}
-.gift-card{display:block}
-.gift-media{
-  aspect-ratio:1;display:grid;place-items:center;background:var(--sand);
-  border-radius:12px;overflow:hidden;
-}
-.gift-card[data-kind=tees] .gift-media,.gift-card[data-kind=baby] .gift-media{background:var(--sand-warm)}
-.gift-card[data-kind=prints] .gift-media{background:var(--sand-cool)}
-.gift-media img{width:100%;height:100%;object-fit:contain;transition:transform .5s cubic-bezier(.2,.7,.2,1)}
-.gift-card:hover .gift-media img{transform:scale(1.035)}
-.gift-copy{padding:11px 2px 4px}
-.gift-copy h3{font-family:var(--sans);font-size:14.5px;font-weight:600;letter-spacing:-.005em}
-.gift-card:hover .gift-copy h3{text-decoration:underline;text-underline-offset:3px}
-.gift-copy p{margin-top:3px;font-size:12.5px;color:var(--muted);line-height:1.4}
 
 .product-page{
   display:grid;grid-template-columns:minmax(0,1fr) minmax(300px,.72fr);
@@ -722,7 +706,7 @@ html.js-reveal .reveal.visible{opacity:1;transform:none}
   .section{padding:22px 0}
   .section.tight{padding-top:6px;padding-bottom:16px}
   .catalog-head,.policy-head{padding:18px 0 8px}
-  .product-grid,.product-grid.two,.product-grid.featured,.kind-grid,.gift-grid{
+  .product-grid,.product-grid.two,.product-grid.featured,.kind-grid,.gift-grid,.soon-grid{
     grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;
   }
   .product-row h3,.kind-card-copy h3{font-size:14px}
