@@ -330,7 +330,7 @@ button{background:none;border:0;padding:0;font:inherit;color:inherit;cursor:poin
 .gift-copy p{margin-top:3px;font-size:12.5px;color:var(--muted);line-height:1.4}
 .gift-card.gift-soon{
   background:var(--paper);border:1px dashed var(--line);border-radius:12px;
-  padding:18px 16px;min-height:100%;display:flex;align-items:flex-end;
+  padding:18px 16px;min-height:100%;display:flex;align-items:flex-start;
 }
 .gift-card.gift-soon .gift-copy{padding:0}
 .gift-card.gift-soon:hover{border-style:solid;border-color:rgba(36,27,20,.35)}
