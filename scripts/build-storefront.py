@@ -158,12 +158,13 @@ def nav(current: str, prefix: str = "") -> str:
 
 
 def footer(prefix: str = "") -> str:
+    # LOCKED George 2026-09-02 — do not rewrite without YES.
     kind_links = "\n        ".join(f'<a href="{prefix}{page}">{title}</a>' for _, title, _, _, page in GROUPS)
     return f"""<footer class="site-footer">
   <div class="footer-grid">
     <div>
-      <div class="footer-brand">Habibi Crafts Co</div>
-      <p class="footer-copy">A husband-and-wife shop.</p>
+      <a class="footer-brand" href="{prefix}index.html"><img src="{prefix}assets/logo-nav-white.png" alt="Habibi Crafts Co" width="213" height="93"></a>
+      <p class="footer-copy">Our small business. All kinds of crafts.</p>
     </div>
     <div>
       <div class="footer-title">Shop</div>
@@ -336,20 +337,22 @@ home_ld = {
     ],
 }
 
+# LOCKED George 2026-09-02 — do not rewrite without YES.
 write(
     "index.html",
     wrap(
         page_head(
             "Habibi Crafts Co",
-            "A husband-and-wife shop. Mugs, tees, totes, onesies, and prints.",
+            "Our small business. We make all kinds of crafts. Printed after you order.",
             "https://habibicraftsco.com/",
             extra_ld=[home_ld],
         ),
         "home",
         f"""  <section class="shop-intro">
     <div class="shell">
-      <h1>Habibi Crafts Co</h1>
-      <p class="lede">We’re a husband-and-wife shop.</p>
+      <div class="eyebrow">Habibi Crafts Co · California</div>
+      <h1>Our small business</h1>
+      <p class="lede">We make all kinds of crafts. Gifts for weddings, bachelor and bachelorette parties, and whoever you’re shopping for.</p>
     </div>
   </section>
   <section class="section tight" id="shop-by-collection" aria-labelledby="shop-by-collection-heading">
@@ -371,7 +374,7 @@ write(
     </div>
   </section>
   <section class="section tight" id="shop-note"><div class="shell shop-note reveal">
-    <p>Once we open, pieces print after you order. We’ll keep adding.</p>
+    <p>This is our small business. We design the pieces. They’re printed after you order.</p>
     <a class="text-link" href="about.html">About</a>
   </div></section>""",
     ),
@@ -538,12 +541,14 @@ for p in PRODUCTS:
     )
 
 # --- about ---
+# LOCKED George 2026-09-02 — do not rewrite without YES.
+# Hand-written site/about.html is also in _PROS so this builder cannot wipe it.
 write(
     "about.html",
     wrap(
         page_head(
             "About | Habibi Crafts Co",
-            "A husband-and-wife shop in California. We design mugs, tees, totes, onesies, and prints.",
+            "Our small business. We make all kinds of crafts. Printed after you order.",
             "https://habibicraftsco.com/about.html",
             extra_ld=[
                 {
@@ -557,14 +562,17 @@ write(
             ],
         ),
         "about",
-        """  <section class="policy-head"><div class="shell">
+        """  <!-- LOCKED George 2026-09-02 — do not rewrite without YES. -->
+  <section class="policy-head"><div class="shell">
     <h1>About</h1>
-    <p class="lede">A husband-and-wife shop in California.</p>
+    <p class="lede">Our small business.</p>
   </div></section>
   <article class="editorial shell">
-    <p>We're a husband and wife, and this is our shop. We design mugs, tees, totes, onesies, prints, and whatever else we take on next.</p>
-    <p>What's here now is a first batch. We'll keep adding.</p>
-    <p>Thanks for stopping by.</p>
+    <p>We’re a husband and wife. This is our small business.</p>
+    <p>We make all kinds of crafts — gifts for weddings, bachelor and bachelorette parties, and everyday.</p>
+    <p>What’s in the shop now is just the start. More as we add it.</p>
+    <p>We design the pieces. They’re printed after you order.</p>
+    <p>Thanks for supporting our small business.</p>
   </article>""",
     ),
 )

@@ -61,6 +61,29 @@ describe('commerce scaffold stays off and chrome is branded', () => {
     assert.doesNotMatch(faq, /Printful/i);
   });
 
+  it('locks George 2026-09-02 About copy verbatim', () => {
+    const about = read('site/about.html');
+    assert.match(about, /LOCKED George 2026-09-02/);
+    assert.match(about, />Our small business\.</);
+    assert.match(about, /We’re a husband and wife\. This is our small business\./);
+    assert.match(about, /We make all kinds of crafts — gifts for weddings, bachelor and bachelorette parties, and everyday\./);
+    assert.match(about, /What’s in the shop now is just the start\. More as we add it\./);
+    assert.match(about, /We design the pieces\. They’re printed after you order\./);
+    assert.match(about, /Thanks for supporting our small business\./);
+    assert.doesNotMatch(about, /Thanks for stopping by/);
+    assert.doesNotMatch(about, /labor of love|handcrafted|thrilled/i);
+    const home = read('site/index.html');
+    assert.match(home, />Our small business</);
+    assert.match(home, /whoever you’re shopping for/);
+    assert.match(home, /Why this exists/);
+    assert.match(home, /This is our small business\./);
+    assert.match(home, /footer-copy">Our small business\. All kinds of crafts\./);
+    assert.match(home, /footer-brand[\s\S]*logo-nav-white\.png/);
+    assert.match(read('site/404.html'), /footer-brand[\s\S]*logo-nav-white\.png/);
+    assert.match(read('site/cart.html'), /footer-brand[\s\S]*logo-nav-white\.png/);
+    assert.match(read('scripts/build-storefront.py'), /LOCKED George 2026-09-02/);
+  });
+
   it('contact does not invent an email address', () => {
     const contact = read('site/contact.html');
     assert.match(contact, /haven.t posted a public email yet/i);
