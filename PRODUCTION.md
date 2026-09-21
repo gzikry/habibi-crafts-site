@@ -34,6 +34,7 @@ Put these in **hosting secrets**, not in the repo. Template: `.env.example`.
 | `ADSENSE_PUBLISHER_ID` | empty | Real `ca-pub-…` from Google only — do not invent one |
 | `ADSENSE_ENABLED` | `false` | Must stay false until AdSense is approved **and** George says ads are on |
 | `CHECKOUT_ENABLED` | `false` | UI and `/api/checkout` stay disabled |
+| `window.HABIBI_CHECKOUT_ENABLED` | `false` | Browser alias in `site/public-config.js`; must stay false with `CHECKOUT_ENABLED` |
 | `APP_ORIGIN` | `https://habibicraftsco.com` | Stripe redirects + CORS |
 
 Browser flags (not secrets) live in `site/public-config.js` and also default off. Flip that file **and** the host env together when going live.
@@ -70,7 +71,7 @@ node scripts/printful-pull-variants.js
 
 ## What stays off until George says so
 
-- Checkout buttons stay `disabled` (`Notify me`). `/api/checkout` returns 403.
+- Checkout buttons stay `disabled` (`Browsing only · Checkout opens soon`). `/api/checkout` returns 403. `window.HABIBI_CHECKOUT_ENABLED` stays `false`.
 - Product JSON-LD stays `OutOfStock` (does not claim `InStock` purchases).
 - AdSense script does not load. `ads.txt` has no publisher id.
 - Printful drafts stay ignored. This PR does not publish or un-ignore products.

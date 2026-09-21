@@ -13,10 +13,11 @@ Static storefront for a husband-and-wife shop in California.
 
 ## Storefront
 
-- Responsive home (collections + featured products), shop, collection pages (mugs, tees, totes, onesies, prints), about, FAQ, shipping, contact, privacy, 404, and product preview pages
+- Responsive home (collections + featured products), shop, collection pages (mugs, tees, totes, onesies, prints, stickers, hats), about, FAQ, shipping, contact, privacy, 404, and product preview pages
+- Branded holders for bag (`cart.html`), checkout (`checkout.html`), plus unlinked stubs for order confirmation and tracking
 - Shared design system in `site/styles.css`
 - Mobile menu and reduced-motion-aware reveal behavior in `site/app.js`
-- Checkout language is intentionally disabled until Stripe and order routing are ready
+- Checkout stays off: `window.HABIBI_CHECKOUT_ENABLED = false` and `HABIBI_PUBLIC_CONFIG.CHECKOUT_ENABLED = false` in `site/public-config.js`
 - Working launch prices shown: mugs $18, tees $32, totes $34, onesies $28, 12 × 16 prints $24
 - Current live products use local mockups on the static storefront; checkout still off
 
@@ -83,4 +84,4 @@ Checkout, ads, and live ordering stay **off**. Production wiring (flags, catalog
 python3 -m http.server 8080 -d site
 ```
 
-Check `/`, `/shop.html`, collection pages, all product pages, `/about.html`, `/faq.html`, `/shipping.html`, `/contact.html`, `/privacy.html`, `/robots.txt`, `/sitemap.xml`, `/favicon.ico`, `/assets/logo.png`, `/assets/og-share.png`, and an unknown path for the 404 page behavior.
+Check `/`, `/shop.html`, collection pages, all product pages, `/about.html`, `/faq.html`, `/shipping.html`, `/contact.html`, `/privacy.html`, `/cart.html`, `/checkout.html`, `/robots.txt`, `/sitemap.xml`, `/favicon.ico`, `/assets/logo.png`, `/assets/og-share.png`, and an unknown path for the 404 page behavior. Checkout must stay off.

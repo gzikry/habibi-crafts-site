@@ -27,21 +27,25 @@
 <link rel="icon" type="image/png" href="/assets/logo.png">
 <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
 <meta name="referrer" content="strict-origin-when-cross-origin">
-<link rel="stylesheet" href="styles.css?v=14">
+<link rel="stylesheet" href="styles.css?v=15">
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Product","@id":"https://habibicraftsco.com/product-ya-habayeb.html#product","name":"Ya Habayeb","description":"Ya Habayeb — Unisex tee.","image":"https://habibicraftsco.com/assets/mockups/ya-habayeb.png","brand":{"@type":"Brand","name":"Habibi Crafts Co"},"offers":{"@type":"Offer","url":"https://habibicraftsco.com/product-ya-habayeb.html","priceCurrency":"USD","price":"32.00","availability":"https://schema.org/OutOfStock","itemCondition":"https://schema.org/NewCondition"},"url":"https://habibicraftsco.com/product-ya-habayeb.html","sku":"ya-habayeb","seller":{"@type":"Organization","@id":"https://habibicraftsco.com/#store","name":"Habibi Crafts Co","url":"https://habibicraftsco.com/"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://habibicraftsco.com/"},{"@type":"ListItem","position":2,"name":"Shop","item":"https://habibicraftsco.com/shop.html"},{"@type":"ListItem","position":3,"name":"Tees","item":"https://habibicraftsco.com/tees.html"},{"@type":"ListItem","position":4,"name":"Ya Habayeb","item":"https://habibicraftsco.com/product-ya-habayeb.html"}]}]}</script>
-<script src="public-config.js?v=10"></script>
+<script src="public-config.js?v=11"></script>
 <script defer src="analytics.js?v=10"></script>
-<script defer src="checkout.js?v=11"></script>
+<script defer src="checkout.js?v=12"></script>
 <script defer src="spin.js?v=11"></script>
-<script defer src="app.js?v=11"></script>
+<script defer src="app.js?v=12"></script>
 </head>
 <body>
 <a class="skip-link" href="#main">Skip to content</a>
 <header class="site-header">
   <nav class="nav" aria-label="Primary navigation">
     <a class="brand" href="index.html"><img src="assets/logo-nav-white.png" alt="Habibi Crafts Co" width="213" height="93"></a>
-    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-menu" aria-label="Open menu"><span></span></button>
+    <div class="nav-end">
+      <a class="nav-bag" href="cart.html" aria-label="Bag — checkout isn’t open"><svg class="nav-bag-icon" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"><path d="M6.4 8h11.2l1.1 12.2A1.2 1.2 0 0 1 17.5 21.5H6.5a1.2 1.2 0 0 1-1.2-1.3L6.4 8z"/><path d="M9 8V6.8A3 3 0 0 1 15 6.8V8"/></svg><span class="nav-bag-label">Bag</span><span class="nav-bag-badge" hidden>0</span></a>
+      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-menu" aria-label="Open menu"><span></span></button>
+    </div>
     <div class="nav-links" id="primary-menu">
+      <a class="nav-mobile-only" href="shop.html">Shop all</a>
       <details class="nav-shop">
         <summary aria-current="page">Shop</summary>
         <div class="nav-shop-menu">
@@ -67,6 +71,8 @@
       </details>
       <a href="about.html">About</a>
       <a href="faq.html">FAQ</a>
+      <a class="nav-mobile-only" href="shipping.html">Shipping</a>
+      <a class="nav-mobile-only" href="contact.html">Contact</a>
     </div>
   </nav>
 </header>
@@ -101,9 +107,18 @@
       <h1>Ya Habayeb</h1>
       <p class="product-subtitle">Unisex tee.</p>
       <div class="product-price">$32</div>
-      <p class="size-line">Unisex · S through XL</p>
-      <div class="actions"><button class="button" type="button" disabled data-checkout data-product-slug="ya-habayeb" aria-disabled="true">Checkout opening soon</button></div>
-      <p class="checkout-note">Checkout isn’t open yet. Nothing is charged.</p>
+      <div class="size-picker" data-size-picker>
+        <p class="size-picker-label" id="size-ya-habayeb">Size</p>
+        <div class="size-options" role="group" aria-labelledby="size-ya-habayeb">
+          <button type="button" class="size-option" data-size="S" aria-pressed="true">S</button>
+          <button type="button" class="size-option" data-size="M" aria-pressed="false">M</button>
+          <button type="button" class="size-option" data-size="L" aria-pressed="false">L</button>
+          <button type="button" class="size-option" data-size="XL" aria-pressed="false">XL</button>
+        </div>
+        <p class="size-picker-note">Choosing a size does not start an order. Checkout isn’t open.</p>
+      </div>
+      <div class="actions"><button class="button browse-mode" type="button" disabled data-checkout data-product-slug="ya-habayeb" aria-disabled="true">Browsing only · Checkout opens soon</button></div>
+      <p class="checkout-note">Nothing is charged.</p>
       <div class="detail-list">
         <h2>Details</h2>
         <dl><div><dt>Sizes</dt><dd>S, M, L, XL</dd></div><div><dt>Fit</dt><dd>Unisex</dd></div><div><dt>Material</dt><dd>Cotton</dd></div><div><dt>Print</dt><dd>Front</dd></div><div><dt>Care</dt><dd>Wash cold, inside out · tumble dry low</dd></div><div><dt>Timing</dt><dd>Printed after you order · usually 3–7 days</dd></div></dl>

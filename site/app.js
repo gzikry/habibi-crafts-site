@@ -9,9 +9,18 @@
     nav.classList.toggle('open',open);
   }
 
+  function revealMobileShop(open){
+    if(!nav||!open) return;
+    if(!window.matchMedia('(max-width:900px)').matches) return;
+    var shop=nav.querySelector('.nav-shop');
+    if(shop) shop.open=true;
+  }
+
   if(toggle&&nav){
     toggle.addEventListener('click',function(){
-      setMenu(toggle.getAttribute('aria-expanded')!=='true');
+      var open=toggle.getAttribute('aria-expanded')!=='true';
+      setMenu(open);
+      revealMobileShop(open);
     });
     nav.addEventListener('click',function(e){
       if(e.target.closest('a')) setMenu(false);
@@ -125,4 +134,15 @@
       card.addEventListener('focusout',stop);
     });
   }
+
+  // Visual size picker only. Updates aria-pressed. Does not enable purchase.
+  Array.prototype.forEach.call(document.querySelectorAll('[data-size-picker]'),function(picker){
+    picker.addEventListener('click',function(e){
+      var btn=e.target.closest('[data-size]');
+      if(!btn||!picker.contains(btn)) return;
+      Array.prototype.forEach.call(picker.querySelectorAll('[data-size]'),function(option){
+        option.setAttribute('aria-pressed',option===btn?'true':'false');
+      });
+    });
+  });
 })();

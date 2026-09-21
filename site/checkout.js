@@ -1,12 +1,20 @@
 (function () {
   var cfg = window.HABIBI_PUBLIC_CONFIG || {};
-  var enabled = cfg.CHECKOUT_ENABLED === true && Boolean(cfg.CHECKOUT_API_BASE);
+  // Alias stays false with the public config. Either flag can keep purchase off.
+  if (typeof window.HABIBI_CHECKOUT_ENABLED !== 'boolean') {
+    window.HABIBI_CHECKOUT_ENABLED = cfg.CHECKOUT_ENABLED === true;
+  }
+  var enabled =
+    window.HABIBI_CHECKOUT_ENABLED === true &&
+    cfg.CHECKOUT_ENABLED === true &&
+    Boolean(cfg.CHECKOUT_API_BASE);
 
   function lock(button) {
     button.disabled = true;
     button.setAttribute('aria-disabled', 'true');
     button.setAttribute('data-checkout-enabled', 'false');
-    button.textContent = 'Checkout opening soon';
+    button.classList.add('browse-mode');
+    button.textContent = 'Browsing only · Checkout opens soon';
   }
 
   document.querySelectorAll('[data-checkout]').forEach(function (button) {
@@ -16,7 +24,7 @@
     }
     button.setAttribute('data-checkout-enabled', 'true');
     button.addEventListener('click', function () {
-      if (!cfg.CHECKOUT_ENABLED) return;
+      if (!cfg.CHECKOUT_ENABLED || window.HABIBI_CHECKOUT_ENABLED !== true) return;
       var slug = button.getAttribute('data-product-slug');
       if (!slug || !cfg.CHECKOUT_API_BASE) return;
       button.disabled = true;
