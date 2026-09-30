@@ -1,8 +1,9 @@
+import json
 import os
 from decimal import Decimal, ROUND_HALF_UP
 from pathlib import Path
 
-EXCLUDED_SYNC_IDS = {471226874, 471225102, 462540360, 462532459}
+EXCLUDED_SYNC_IDS = set(json.loads(Path(__file__).with_name('retired-totes.json').read_text()))
 
 _token = None
 

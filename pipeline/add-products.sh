@@ -49,7 +49,7 @@ echo "== 7. verify locally =="
 echo "   start: (cd site && python3 -m http.server 8090)"
 for t in verify-viewer verify-smooth verify-slider verify-label-sync verify-hover verify-viewer-size verify-visible; do
   printf '   %-22s ' "$t"
-  node "$t.js" http://127.0.0.1:8090 2>&1 | tail -1
+  node "pipeline/$t.js" http://127.0.0.1:8090 2>&1 | tail -1
 done
 
 cat <<'EOF'

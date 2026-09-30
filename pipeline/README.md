@@ -22,7 +22,7 @@ Entry point: `add-products.sh` runs, in order:
 - No secrets are stored here. Sync, fetch, and rank read `PRINTFUL_API_TOKEN` from
   the environment, or from the file named by `HABIBI_ENV_FILE`. Do not commit that file.
 - `site/product-catalog.json` stores `price` in cents. Builders print `$24.99` from that number.
-- Catalogue product 367 is a tote. Sync ids 471226874, 471225102, 462540360, and 462532459 are retired and skipped.
+- Catalogue product 367 is a tote. The sync ids in `retired-totes.json` are retired and skipped.
 - Steps 7-9 of `add-products.sh` call local verification scripts (`verify-*.js`,
   `shoot-newhome.js`) that are not part of this commit.
 - Working prices (`pricing.json`) are not included; no builder reads it.

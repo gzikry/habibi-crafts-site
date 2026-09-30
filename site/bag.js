@@ -1,5 +1,6 @@
 var KEY = 'habibi-bag';
-var FREE_AT = 3900;
+export var FREE_AT = 3900;
+export var SHIPPING_CENTS = 699;
 
 export function formatCents(cents) {
   var negative = cents < 0;
@@ -9,8 +10,13 @@ export function formatCents(cents) {
 }
 
 export function shippingProgress(cents) {
-  if (cents >= FREE_AT) return 'Free US shipping';
-  return formatCents(FREE_AT - cents) + ' to free US shipping';
+  if (cents >= FREE_AT) return "You've got free US shipping";
+  return 'Add ' + formatCents(FREE_AT - cents) + ' for free US shipping';
+}
+
+export function shippingCharge(cents) {
+  if (cents >= FREE_AT) return 'Shipping Free';
+  return 'Shipping ' + formatCents(SHIPPING_CENTS);
 }
 
 function boot() {
@@ -110,6 +116,7 @@ function boot() {
       qty.className = 'bag-qty';
       var minus = document.createElement('button');
       minus.type = 'button';
+      minus.className = 'bag-qty-btn';
       minus.textContent = '−';
       minus.setAttribute('aria-label', 'Decrease ' + product.name);
       minus.disabled = line.quantity <= 1;
@@ -123,6 +130,7 @@ function boot() {
       amount.textContent = String(line.quantity);
       var plus = document.createElement('button');
       plus.type = 'button';
+      plus.className = 'bag-qty-btn';
       plus.textContent = '+';
       plus.setAttribute('aria-label', 'Increase ' + product.name);
       plus.disabled = line.quantity >= 20;
@@ -150,7 +158,19 @@ function boot() {
     });
     var cents = subtotal();
     if (sub) sub.textContent = 'Subtotal ' + formatCents(cents);
-    if (progress) progress.textContent = shippingProgress(cents);
+    var ship = root.querySelector('[data-bag-shipping]');
+    if (ship) ship.textContent = shippingCharge(cents);
+    if (progress) {
+      var label = progress.querySelector('[data-bag-progress-label]');
+      var bar = progress.querySelector('[data-bag-progress-bar]');
+      var free = cents >= FREE_AT;
+      progress.classList.toggle('is-free', free);
+      if (label) label.textContent = shippingProgress(cents);
+      if (bar) {
+        var pct = Math.max(0, Math.min(100, (cents / FREE_AT) * 100));
+        bar.style.width = pct + '%';
+      }
+    }
   }
 
   function wireAdd() {
@@ -164,9 +184,25 @@ function boot() {
       button.className = 'button';
       button.setAttribute('data-add-bag', '');
       button.textContent = 'Add to bag';
+      var addedTimer = 0;
       button.addEventListener('click', function () {
         if (!add(slug, selectedSize(checkout))) return;
         button.textContent = 'Added';
+        var note = button.parentNode.querySelector('[data-added-note]');
+        if (!note) {
+          note = document.createElement('p');
+          note.className = 'added-note';
+          note.setAttribute('data-added-note', '');
+          var link = document.createElement('a');
+          link.href = 'cart.html';
+          link.textContent = 'View bag';
+          note.append('Added to your bag. ', link);
+          checkout.insertAdjacentElement('afterend', note);
+        }
+        clearTimeout(addedTimer);
+        addedTimer = setTimeout(function () {
+          button.textContent = 'Add to bag';
+        }, 2000);
       });
       checkout.parentNode.insertBefore(button, checkout);
     });

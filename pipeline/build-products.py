@@ -46,8 +46,14 @@ def esc(s):
 
 
 
+# US Oyster totes have a front shot only. The old Back frame is the white AU blank.
+FRONT_ONLY = {'halawa', 'sit-el-kul', 'gather-grow', 'early-light'}
+
+
 def frames_for(slug, manifest):
     angs = manifest.get(slug, {}).get('angles', [])
+    if slug in FRONT_ONLY:
+        angs = [a for a in angs if str(a.get('angle', '')).strip().lower() != 'back']
     if not angs:
         return []
     ordered = order_angles(angs)
