@@ -16,7 +16,8 @@ const { chromium } = require('playwright');
 const fs = require('fs');
 
 const BASE = process.argv[2] || 'http://127.0.0.1:8090';
-const SITE = '/Users/georgezikry/.hermes/profiles/habibicrafts/workspace/habibi-crafts-site/site';
+const path = require('path');
+const SITE = process.env.HABIBI_SITE || path.join(__dirname, '..', 'site');
 
 const DEGREES = {
   front: 0, 'front view': 0, default: 0,

@@ -10,8 +10,8 @@
 # Stop after the sync to write subtitles for anything new, then re-run.
 set -euo pipefail
 
-WS="/Users/georgezikry/.hermes/profiles/habibicrafts/workspace"
-cd "$WS"
+ROOT="${HABIBI_ROOT:-$(cd "$(dirname "$0")/.." && pwd)}"
+cd "$(dirname "$0")"
 
 echo "== 1. sync catalogue from Printful =="
 python3 sync-printful.py --write
@@ -43,7 +43,7 @@ python3 check-asset-version.py
 
 echo
 echo "== 7. verify locally =="
-echo "   start: (cd habibi-crafts-site/site && python3 -m http.server 8090)"
+echo "   start: (cd ${ROOT}/site && python3 -m http.server 8090)"
 for t in verify-viewer verify-smooth verify-slider verify-label-sync verify-hover verify-viewer-size verify-visible; do
   printf '   %-22s ' "$t"
   node "$t.js" http://127.0.0.1:8090 2>&1 | tail -1
@@ -55,21 +55,21 @@ cat <<'EOF'
    - node shoot-newhome.js http://127.0.0.1:8090  then view shots/newhome-*.png
    - confirm the new product's design is fully visible in its grid thumbnail
      and that the viewer opens on a side where the artwork shows
-   - product pages use "Notify me" while checkout is off
+   - product pages use Add to bag while checkout is off. Stickers and hats stay browse-only.
 
 == 9. deploy ==
    - bump ASSET_V in ALL THREE builders (build-products, build-shop, build-home),
      then update the hand-written pages so they agree:
        python3 - <<'PY'
        import os,re
-       S='/Users/georgezikry/.hermes/profiles/habibicrafts/workspace/habibi-crafts-site/site'
+       S=os.path.abspath('site')
        for f in os.listdir(S):
            if f.endswith('.html'):
                p=os.path.join(S,f); s=open(p).read()
                open(p,'w').write(re.sub(r'\?v=\d+','?v=NEW',s))
        PY
    - run check-asset-version.py; it must pass before pushing
-   - git add -A && git commit && git push origin HEAD:main
+   - git push the branch you are on. Pushing main publishes the site.
    - watch the deploy-porkbun workflow, then:
        node verify-live.js
        node verify-assets.js

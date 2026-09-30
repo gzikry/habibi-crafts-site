@@ -13,13 +13,10 @@ Reads:  site/product-catalog.json, pf-angles/manifest.json, product-rank.json
 Writes: site/index.html
 """
 import json, os
-import sys as _sys
-_sys.path.insert(0, '/Users/georgezikry/.hermes/profiles/habibicrafts/workspace')
-from pfangles import order as order_angles
+from root import money, repo_root, site_dir
 
-
-WS = '/Users/georgezikry/.hermes/profiles/habibicrafts/workspace'
-SITE = f'{WS}/habibi-crafts-site/site'
+WS = repo_root()
+SITE = site_dir()
 ANGLES = f'{WS}/pf-angles'
 RANK = f'{WS}/product-rank.json'
 BASE = 'https://habibicraftsco.com'
@@ -42,6 +39,9 @@ def esc(s):
 
 
 def frames_for(slug, manifest):
+    import sys
+    sys.path.insert(0, repo_root())
+    from pfangles import order as order_angles
     angs = manifest.get(slug, {}).get('angles', [])
     if not angs:
         return []
@@ -87,7 +87,7 @@ def pcard(p, frames, manifest):
     return f'''<a class="pcard reveal" href="product-{p['slug']}.html" data-category="{p['category']}">
   <div class="pcard-media"><img class="mockup" src="{src}" alt="{esc(p['name'])}" width="800" height="800" loading="lazy" decoding="async"></div>
   <div class="pcard-title">{esc(p['name'])}</div>
-  <div class="pcard-price">${p['price']}</div>
+  <div class="pcard-price">{money(p['price'])}</div>
 </a>'''
 
 
@@ -114,6 +114,11 @@ def filter_bar():
 
 
 def main():
+    if os.environ.get('HABIBI_FULL_REBUILD') != '1':
+        from prices import apply_launch_copy
+        apply_launch_copy(SITE)
+        print('patched launch prices into the existing pages')
+        return
     catalog = json.load(open(f'{SITE}/product-catalog.json'))
     manifest_path = f'{ANGLES}/manifest.json'
     manifest = json.load(open(manifest_path)) if os.path.exists(manifest_path) else {}
@@ -189,6 +194,7 @@ def main():
 <header class="site-header">
   <nav class="nav" aria-label="Primary navigation">
     <a class="brand" href="index.html" aria-current="page"><img src="assets/logo-nav-white.png" alt="Habibi Crafts Co" width="213" height="93"></a>
+    <a class="nav-bag" href="cart.html" aria-label="Bag — checkout isn’t open"><span class="nav-bag-label">Bag</span><span class="nav-bag-badge" hidden>0</span></a>
     <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-menu" aria-label="Open menu"><span></span></button>
     <div class="nav-links" id="primary-menu">
       <a href="shop.html">Shop</a>
@@ -238,8 +244,8 @@ def main():
 <footer class="site-footer">
   <div class="footer-grid">
     <div>
-      <div class="footer-brand">Habibi Crafts Co</div>
-      <p class="footer-copy">Mugs, tees, totes, onesies, and prints.</p>
+      <div class="footer-brand"><img src="assets/logo-nav-white.png" alt="Habibi Crafts Co" width="213" height="93"></div>
+      <p class="footer-copy">Our small business. All kinds of crafts.</p>
     </div>
     <div>
       <div class="footer-title">Shop</div>

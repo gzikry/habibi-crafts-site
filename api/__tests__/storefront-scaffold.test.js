@@ -31,11 +31,20 @@ describe('commerce scaffold stays off and chrome is branded', () => {
   it('PDP checkout control is browsing-mode, not a gray Notify me button', () => {
     const mug = read('site/product-ya-aini.html');
     const tee = read('site/product-khalas-habibi.html');
-    assert.match(mug, /Browsing only · Checkout opens soon/);
+    assert.match(mug, /Add to bag/);
+    assert.match(mug, /data-add-to-bag/);
+    assert.match(mug, /data-price-cents="1499"/);
     assert.match(mug, /Nothing is charged/);
-    assert.match(mug, /browse-mode/);
+    assert.ok(mug.includes('$14.99'));
     assert.doesNotMatch(mug, />Notify me</);
+    assert.equal(mug.includes('$25'), false);
+    const sticker = read('site/product-make-something-sticker.html');
+    assert.match(sticker, /Browsing only · Checkout opens soon/);
+    assert.doesNotMatch(sticker, /data-add-to-bag/);
     assert.match(tee, /data-size-picker/);
+    assert.ok(tee.includes('<div class="product-price">$24.99</div>'));
+    assert.ok(tee.includes('"price":"24.99"'));
+    assert.equal(tee.includes('$24.90'), false);
     assert.match(tee, /aria-pressed="true"/);
     assert.match(read('site/product-ya-teta.html'), /data-size-picker/);
     assert.match(read('site/checkout.js'), /Browsing only · Checkout opens soon/);
@@ -58,6 +67,7 @@ describe('commerce scaffold stays off and chrome is branded', () => {
     assert.match(faq, /Not every box/);
     assert.match(faq, /Apparel, totes, and hats may include a small thank-you card/);
     assert.match(faq, /Mugs, stickers, and prints get a packing-slip note only/);
+    assert.ok(faq.includes('Prints $23.99. Stickers $5.99. Dad hats $29.99.'));
     assert.doesNotMatch(faq, /Printful/i);
   });
 

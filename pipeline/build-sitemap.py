@@ -7,8 +7,9 @@ in image search.
 """
 import json, os
 from datetime import date
+from root import site_dir
 
-SITE = '/Users/georgezikry/.hermes/profiles/habibicrafts/workspace/habibi-crafts-site/site'
+SITE = site_dir()
 BASE = 'https://habibicraftsco.com'
 TODAY = date.today().isoformat()
 

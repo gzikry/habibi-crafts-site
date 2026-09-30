@@ -20,10 +20,10 @@ Output: workspace/product-rank.json
 """
 import json, os, sys, time, urllib.error, urllib.request
 from datetime import datetime, timezone
+from root import printful_token, repo_root, site_dir
 
-WS = '/Users/georgezikry/.hermes/profiles/habibicrafts/workspace'
-ENV = '/Users/georgezikry/.hermes/profiles/habibicrafts/.env'
-SITE = f'{WS}/habibi-crafts-site/site'
+WS = repo_root()
+SITE = site_dir()
 STORE = '18687336'
 UA = ('Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 '
       '(KHTML, like Gecko) Chrome/120.0 Safari/537.36')
@@ -31,10 +31,7 @@ OUT = f'{WS}/product-rank.json'
 
 
 def token():
-    for line in open(ENV):
-        if line.startswith('PRINTFUL_API_TOKEN='):
-            return line.split('=', 1)[1].strip()
-    raise SystemExit('PRINTFUL_API_TOKEN missing in profile .env')
+    return printful_token()
 
 
 TOKEN = token()

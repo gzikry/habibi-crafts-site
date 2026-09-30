@@ -26,16 +26,23 @@ upscaled and visibly soft, and was the original cause of cropped-looking mug
 artwork. Aspect ratio is reported separately because fit-mode letterboxes.
 """
 import json, os, re, sys, time, urllib.error, urllib.request
+from root import launch_cents, money, printful_token, repo_root, site_dir
 
-WS = '/Users/georgezikry/.hermes/profiles/habibicrafts/workspace'
-ENV = '/Users/georgezikry/.hermes/profiles/habibicrafts/.env'
-SITE = f'{WS}/habibi-crafts-site/site'
+WS = repo_root()
+SITE = site_dir()
 STORE = '18687336'
 UA = ('Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 '
       '(KHTML, like Gecko) Chrome/120.0 Safari/537.36')
 
 # Printful catalogue product id -> storefront category
-CATEGORY = {19: 'mugs', 71: 'tees', 641: 'totes', 308: 'baby', 1: 'prints'}
+CATEGORY = {19: 'mugs', 71: 'tees', 367: 'totes', 308: 'baby', 1: 'prints'}
+
+SLUG_BY_SYNC_ID = {
+    476520279: 'gather-grow',
+    476520353: 'early-light',
+    476520375: 'sit-el-kul',
+    476520396: 'halawa',
+}
 
 # A product is only published to the storefront if it is on this list.
 #
@@ -60,10 +67,7 @@ SUFFIX = re.compile(r'[-_](mug|tee|tees|tote|onesie|baby|poster|print|wall|appar
 
 
 def token():
-    for line in open(ENV):
-        if line.startswith('PRINTFUL_API_TOKEN='):
-            return line.split('=', 1)[1].strip()
-    raise SystemExit('PRINTFUL_API_TOKEN missing in profile .env')
+    return printful_token()
 
 
 TOKEN = token()
@@ -172,7 +176,9 @@ def main():
         title = re.sub(r'\s+[—-]\s+.*$', '', sp['name']).strip()
 
         prev = by_id.get(pid)
-        if prev:
+        if pid in SLUG_BY_SYNC_ID:
+            slug = SLUG_BY_SYNC_ID[pid]
+        elif prev:
             slug = prev['slug']
         else:
             pf_file = next((f for f in variant['files'] if f['type'] != 'preview'), None)
@@ -209,7 +215,7 @@ def main():
                     f'(Printful wants {min_dpi}+) — it will look soft')
 
         entry = {'slug': slug, 'name': name, 'category': category,
-                 'price': round(float(variant['retail_price'])), 'printful_id': pid}
+                 'price': launch_cents()[category], 'printful_id': pid}
         sub = (prev or {}).get('subtitle') or (by_slug.get(slug) or {}).get('subtitle')
         if sub:
             entry['subtitle'] = sub
@@ -240,13 +246,24 @@ def main():
     spec_path = f'{WS}/printful-spec.json'
     json.dump(specs, open(spec_path, 'w'), indent=2)
 
+    seen = {e['slug'] for e in entries}
+    cents = launch_cents()
+    for prev in existing:
+        if prev.get('printful_id') or prev['slug'] in seen:
+            continue
+        kept = dict(prev)
+        if kept.get('category') in cents:
+            kept['price'] = cents[kept['category']]
+        entries.append(kept)
+        seen.add(kept['slug'])
+
     order = {e['slug']: i for i, e in enumerate(existing)}
     entries.sort(key=lambda e: (order.get(e['slug'], len(order)), e['slug']))
     json.dump(entries, open(f'{WS}/printful-sync.json', 'w'), indent=2)
     print(f'{len(entries)} products for the storefront '
           f'({len(listing["result"])} in Printful)')
     for e in entries:
-        print(f"  {e['slug']:<16} {e['category']:<7} ${e['price']:<3} {e['name']}")
+        print(f"  {e['slug']:<16} {e['category']:<7} {money(e['price']):<8} {e['name']}")
 
     if skipped:
         print('\nnot on the storefront (catalogue product not sold here):')

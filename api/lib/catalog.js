@@ -17,6 +17,8 @@ export const LIVE_SLUGS = [
   'ya-habayeb',
   'halawa',
   'sit-el-kul',
+  'early-light',
+  'gather-grow',
   'ya-teta',
   'amoura',
   'beit-el-hobb',

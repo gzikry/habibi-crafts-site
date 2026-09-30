@@ -88,17 +88,24 @@
 <main id="main">
   <section class="catalog-head"><div class="shell">
     <p class="hold-kicker">Bag</p>
-    <h1>Your bag is empty.</h1>
-    <p class="lede">Checkout isn’t open yet. You can browse the shop — nothing is charged.</p>
+    <h1 id="bag-title">Your bag is empty.</h1>
+    <p class="lede" id="bag-lede">Checkout isn’t open yet. Nothing is charged.</p>
   </div></section>
-  <section class="section tight"><div class="shell">
-    <div class="hold-panel">
-      <p>This is a holding page, not a working cart. We aren’t taking orders, and the bag stays empty on purpose.</p>
-      <p>When checkout opens, you’ll add pieces here. Until then, have a look around.</p>
+  <section class="section tight"><div class="shell bag-shell">
+    <div id="bag-empty" class="hold-panel">
+      <p>Nothing in the bag yet.</p>
       <div class="actions">
         <a class="button" href="shop.html">Shop all</a>
-        <a class="button secondary" href="checkout.html">Checkout</a>
       </div>
+    </div>
+    <div id="bag-lines" hidden></div>
+    <div id="bag-summary" class="bag-summary" hidden>
+      <p id="bag-subtotal"></p>
+      <p id="bag-shipping"></p>
+      <div class="actions">
+        <button class="button browse-mode" type="button" disabled data-checkout data-bag-checkout id="bag-checkout" aria-disabled="true">Browsing only · Checkout opens soon</button>
+      </div>
+      <p class="checkout-note">Nothing is charged.</p>
     </div>
   </div></section>
 </main>

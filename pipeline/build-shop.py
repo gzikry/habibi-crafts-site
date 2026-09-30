@@ -8,13 +8,10 @@ together. Product cards carry their angle frames so app.js can preview them
 on hover.
 """
 import json, os
-import sys as _sys
-_sys.path.insert(0, '/Users/georgezikry/.hermes/profiles/habibicrafts/workspace')
-from pfangles import order as order_angles
+from root import launch_cents, money, repo_root, site_dir
 
-
-SITE = '/Users/georgezikry/.hermes/profiles/habibicrafts/workspace/habibi-crafts-site/site'
-ANGLES = '/Users/georgezikry/.hermes/profiles/habibicrafts/workspace/pf-angles'
+SITE = site_dir()
+ANGLES = os.path.join(repo_root(), 'pf-angles')
 BASE = 'https://habibicraftsco.com'
 # Every local asset URL carries this, and it must be bumped on each deploy:
 # Porkbun's CDN caches by full URL, so an unchanged URL keeps serving the
@@ -22,12 +19,13 @@ BASE = 'https://habibicraftsco.com'
 ASSET_V = '10'
 
 
+CENTS = launch_cents()
 CATS = [
-    ('mugs',    'Mugs',    '11 oz white glossy. $18.',                       'Six to choose from.'),
-    ('tees',    'Tees',    'Unisex, S through XL. $32.',                     'Printed on the front.'),
-    ('totes',   'Totes',   'Cotton, one size. $34.',                         'One size, cotton.'),
-    ('baby',    'Onesies', 'White, 3–18 months. $28.',                       '3 to 18 months.'),
-    ('prints',  'Prints',  '12 × 16 matte. $24.',                            '12 × 16, matte. Frame not included.'),
+    ('mugs',    'Mugs',    f'11 oz white glossy. {money(CENTS["mugs"])}.',          'Six to choose from.'),
+    ('tees',    'Tees',    f'Unisex, S through XL. {money(CENTS["tees"])}.',        'Printed on the front.'),
+    ('totes',   'Totes',   f'Organic cotton, Oyster, one size. {money(CENTS["totes"])}.', 'One size, organic cotton.'),
+    ('baby',    'Onesies', f'White, 3–18 months. {money(CENTS["baby"])}.',          '3 to 18 months.'),
+    ('prints',  'Prints',  f'12 × 16 matte. {money(CENTS["prints"])}.',             '12 × 16, matte. Frame not included.'),
 ]
 
 
@@ -39,6 +37,9 @@ def esc(s):
 
 
 def frames_for(slug, manifest):
+    import sys
+    sys.path.insert(0, repo_root())
+    from pfangles import order as order_angles
     angs = manifest.get(slug, {}).get('angles', [])
     if not angs:
         return []
@@ -56,7 +57,7 @@ def card(p, manifest):
     return f'''<a class="product-card reveal" href="product-{p['slug']}.html" data-category="{p['category']}"{preview}>
   <div class="product-media"><img class="mockup" src="assets/mockups/{p['slug']}.png?v=8" alt="{esc(p['name'])}" width="800" height="800" loading="lazy" decoding="async"></div>
   <div class="product-copy">
-    <div class="product-row"><h3>{esc(p['name'])}</h3><span class="price">${p['price']}</span></div>
+    <div class="product-row"><h3>{esc(p['name'])}</h3><span class="price">{money(p['price'])}</span></div>
   </div>
 </a>'''
 
@@ -67,6 +68,7 @@ def nav(current, prefix=''):
     return f'''<header class="site-header">
   <nav class="nav" aria-label="Primary navigation">
     <a class="brand" href="index.html"><img src="assets/logo-nav-white.png" alt="Habibi Crafts Co" width="213" height="93"></a>
+    <a class="nav-bag" href="cart.html" aria-label="Bag — checkout isn’t open"><span class="nav-bag-label">Bag</span><span class="nav-bag-badge" hidden>0</span></a>
     <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-menu" aria-label="Open menu"><span></span></button>
     <div class="nav-links" id="primary-menu">
       <a href="shop.html"{cls('shop.html')}>Shop</a>
@@ -164,6 +166,11 @@ def item_list(products):
 
 
 def main():
+    if os.environ.get('HABIBI_FULL_REBUILD') != '1':
+        from prices import apply_launch_copy
+        apply_launch_copy(SITE)
+        print('patched launch prices into the existing pages')
+        return
     catalog = json.load(open(f'{SITE}/product-catalog.json'))
     manifest = json.load(open(f'{ANGLES}/manifest.json'))
 
@@ -188,13 +195,13 @@ def main():
                "mainEntity": item_list(catalog)}
     shop = '\n'.join([
         head('Shop | Habibi Crafts Co',
-             'Mugs $18, tees $32, totes $34, onesies $28, prints $24. Made after you order.',
+             'Mugs, tees, totes, onesies, and prints. Free US shipping on orders $39 and up. $6.99 flat below that.',
              f'{BASE}/shop.html', f'{BASE}/assets/mockups/ya-aini.png', shop_ld),
         nav('shop.html'),
         '<main id="main">',
         f'''  <section class="catalog-head"><div class="shell">
     <h1>The shop</h1>
-    <p class="lede">Everything we make, in one place. Prices include the piece; shipping is added at checkout.</p>
+    <p class="lede">Everything listed, plus the types coming next. Free US shipping on orders $39 and up. $6.99 flat below that.</p>
     {filter_bar('shop.html')}
   </div></section>''',
         '\n'.join(groups),

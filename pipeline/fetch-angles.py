@@ -21,9 +21,9 @@ Run:  python3 fetch-angles.py            # all, skipping done
 Output: workspace/pf-angles/<slug>/<angle>.png + manifest.json
 """
 import json, os, re, sys, time, urllib.error, urllib.request
+from root import printful_token, repo_root
 
-WS = '/Users/georgezikry/.hermes/profiles/habibicrafts/workspace'
-ENV = '/Users/georgezikry/.hermes/profiles/habibicrafts/.env'
+WS = repo_root()
 OUT = f'{WS}/pf-angles'
 STORE = '18687336'
 UA = ('Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 '
@@ -56,10 +56,7 @@ def log(m):
 
 
 def token():
-    for line in open(ENV):
-        if line.startswith('PRINTFUL_API_TOKEN='):
-            return line.split('=', 1)[1].strip()
-    raise SystemExit('PRINTFUL_API_TOKEN missing')
+    return printful_token()
 
 
 TOKEN = token()

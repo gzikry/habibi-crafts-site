@@ -8,6 +8,7 @@ import {
   retrieveCheckoutSession,
   verifyStripeSignature
 } from './stripe.js';
+import { shippingOptionForSubtotal } from './shipping.js';
 import { shippingFromStripeSession, validateCheckoutInput, validateShipping } from './validator.js';
 
 function envFrom(requestEnv) {
@@ -75,6 +76,7 @@ export async function handleCheckout(request, requestEnv, fetchImpl = fetch) {
     cancelUrl: `${config.appOrigin}/?checkout=cancelled`,
     customerEmail: body.contact_email,
     idempotencyKey: body.idempotency_key,
+    shipping: shippingOptionForSubtotal(computedTotal),
     metadata: {
       idempotency_key: body.idempotency_key,
       cart: encodeCartMetadata(resolved)

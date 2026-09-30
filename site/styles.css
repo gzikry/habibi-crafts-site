@@ -792,3 +792,19 @@ html.js-reveal .reveal.visible{opacity:1;transform:none}
   .footer-bottom{display:block;padding:14px 20px 18px}
   .footer-bottom span{display:block;margin-top:4px}
 }
+.bag-shell{max-width:40rem;margin:0 auto}
+.bag-line{
+  display:grid;grid-template-columns:72px 1fr auto;gap:14px;align-items:center;
+  padding:14px 0;border-bottom:1px solid var(--line);
+}
+.bag-line img{width:72px;height:72px;object-fit:contain;background:var(--sand);border-radius:10px}
+.bag-line h2{font-size:18px;margin:0}
+.bag-size,.bag-each{margin:2px 0 0;color:var(--muted);font-size:13.5px}
+.bag-actions{display:flex;flex-direction:column;align-items:flex-end;gap:8px}
+.bag-qty{display:flex;align-items:center;gap:8px}
+.bag-qty button,.bag-remove{
+  min-width:32px;min-height:32px;border:1px solid var(--line);border-radius:8px;background:var(--paper);
+}
+.bag-remove{padding:4px 10px;font-size:13px}
+.bag-summary{margin-top:18px}
+.bag-summary p{margin:0 0 8px}

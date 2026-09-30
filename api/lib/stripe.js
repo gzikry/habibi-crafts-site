@@ -48,7 +48,7 @@ export async function verifyStripeSignature(rawBody, header, secret, nowSeconds 
   return { ok: true, timestamp };
 }
 
-export function encodeStripeCheckoutBody({ lineItems, successUrl, cancelUrl, customerEmail, metadata, idempotencyKey }) {
+export function encodeStripeCheckoutBody({ lineItems, successUrl, cancelUrl, customerEmail, metadata, idempotencyKey, shipping }) {
   const params = new URLSearchParams();
   params.set('mode', 'payment');
   params.set('success_url', successUrl);
@@ -57,6 +57,16 @@ export function encodeStripeCheckoutBody({ lineItems, successUrl, cancelUrl, cus
   params.append('shipping_address_collection[allowed_countries][0]', 'US');
   if (customerEmail) params.set('customer_email', customerEmail);
   if (idempotencyKey) params.set('client_reference_id', String(idempotencyKey).slice(0, 200));
+  if (shipping) {
+    params.set('shipping_options[0][shipping_rate_data][type]', 'fixed_amount');
+    params.set('shipping_options[0][shipping_rate_data][fixed_amount][amount]', String(shipping.amount));
+    params.set('shipping_options[0][shipping_rate_data][fixed_amount][currency]', 'usd');
+    params.set('shipping_options[0][shipping_rate_data][display_name]', shipping.displayName);
+    params.set('shipping_options[0][shipping_rate_data][delivery_estimate][minimum][unit]', 'business_day');
+    params.set('shipping_options[0][shipping_rate_data][delivery_estimate][minimum][value]', '4');
+    params.set('shipping_options[0][shipping_rate_data][delivery_estimate][maximum][unit]', 'business_day');
+    params.set('shipping_options[0][shipping_rate_data][delivery_estimate][maximum][value]', '6');
+  }
 
   lineItems.forEach((item, index) => {
     params.set(`line_items[${index}][quantity]`, String(item.quantity));

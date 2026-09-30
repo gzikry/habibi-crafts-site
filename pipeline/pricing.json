@@ -1,11 +1,13 @@
 {
   "locked_at": "2026-08-31",
   "currency": "USD",
-  "status": "working prices — drafts only, not on site, not published",
+  "status": "launch prices, 2026-09-30",
   "shipping": {
-    "model": "charge Printful US first-item shipping at checkout",
-    "free_us_shipping": false,
-    "notes": "Mugs and posters usually ship in a separate box from apparel/totes. Free US shipping is promo-only or $75+ cart later — not launch."
+    "model": "one US rate from the merchandise subtotal",
+    "free_us_at_cents": 3900,
+    "standard_us_cents": 699,
+    "free_label": "Free US shipping",
+    "standard_label": "Standard US shipping"
   },
   "rules": {
     "same_phrase_same_price": true,
@@ -14,55 +16,174 @@
   },
   "by_type": {
     "mug_11oz": {
-      "retail": "18.00",
+      "retail": "14.99",
       "printful_base": "6.07",
       "us_first_item_ship": "6.69",
       "catalog_product_id": 19,
-      "variant_ids": [1320]
+      "variant_ids": [
+        1320
+      ],
+      "retail_cents": 1499
     },
     "tee_s_xl": {
-      "retail": "32.00",
+      "retail": "24.99",
       "printful_base": "11.92",
       "us_first_item_ship": "4.95",
       "catalog_product_id": 71,
-      "variant_ids": [14682, 14683, 14684, 14685]
+      "variant_ids": [
+        14682,
+        14683,
+        14684,
+        14685
+      ],
+      "retail_cents": 2499
     },
     "tote": {
-      "retail": "34.00",
+      "retail": "31.99",
       "printful_base": "17.50",
       "us_first_item_ship": "4.69",
-      "catalog_product_id": 641,
-      "variant_ids": [16289]
+      "catalog_product_id": 367,
+      "variant_ids": [
+        10458
+      ],
+      "retail_cents": 3199
     },
     "onesie": {
-      "retail": "28.00",
+      "retail": "27.99",
       "printful_base": "13.79",
       "us_first_item_ship": "4.95",
       "catalog_product_id": 308,
-      "variant_ids": [9438, 9439, 9440]
+      "variant_ids": [
+        9438,
+        9439,
+        9440
+      ],
+      "retail_cents": 2799
     },
     "poster_12x16": {
-      "retail": "24.00",
+      "retail": "23.99",
       "printful_base": "11.11",
       "us_first_item_ship": "5.99",
       "catalog_product_id": 1,
-      "variant_ids": [1349]
+      "variant_ids": [
+        1349
+      ],
+      "retail_cents": 2399
+    },
+    "sticker": {
+      "retail": "5.99",
+      "retail_cents": 599
+    },
+    "dad_hat": {
+      "retail": "29.99",
+      "retail_cents": 2999
     }
   },
   "products": [
-    {"name": "Ya Aini — White Glossy Mug", "sync_product_id": 462528261, "type": "mug_11oz", "retail": "18.00"},
-    {"name": "Baladi — White Glossy Mug", "sync_product_id": 462528274, "type": "mug_11oz", "retail": "18.00"},
-    {"name": "Ya Dunia — White Glossy Mug", "sync_product_id": 462528282, "type": "mug_11oz", "retail": "18.00"},
-    {"name": "Jiran — White Glossy Mug", "sync_product_id": 462528284, "type": "mug_11oz", "retail": "18.00"},
-    {"name": "Maamoul — White Glossy Mug", "sync_product_id": 462532463, "type": "mug_11oz", "retail": "18.00"},
-    {"name": "Knafeh Club — White Glossy Mug", "sync_product_id": 462540373, "type": "mug_11oz", "retail": "18.00"},
-    {"name": "Khalas Habibi — Unisex Tee", "sync_product_id": 462532457, "type": "tee_s_xl", "retail": "32.00"},
-    {"name": "Ya Habayeb — Unisex Tee", "sync_product_id": 462540352, "type": "tee_s_xl", "retail": "32.00"},
-    {"name": "Halawa — Cotton Tote", "sync_product_id": 462532459, "type": "tote", "retail": "34.00"},
-    {"name": "Sit El Kul — Cotton Tote", "sync_product_id": 462540360, "type": "tote", "retail": "34.00"},
-    {"name": "Ya Teta — Baby Onesie", "sync_product_id": 462532461, "type": "onesie", "retail": "28.00"},
-    {"name": "Amoura — Baby Onesie", "sync_product_id": 462540363, "type": "onesie", "retail": "28.00"},
-    {"name": "Beit El Hobb — Matte Poster", "sync_product_id": 462532462, "type": "poster_12x16", "retail": "24.00"},
-    {"name": "Dar El Hawa — Matte Poster", "sync_product_id": 462540368, "type": "poster_12x16", "retail": "24.00"}
-  ]
+    {
+      "name": "Ya Aini \u2014 White Glossy Mug",
+      "sync_product_id": 462528261,
+      "type": "mug_11oz",
+      "retail": "14.99"
+    },
+    {
+      "name": "Baladi \u2014 White Glossy Mug",
+      "sync_product_id": 462528274,
+      "type": "mug_11oz",
+      "retail": "14.99"
+    },
+    {
+      "name": "Ya Dunia \u2014 White Glossy Mug",
+      "sync_product_id": 462528282,
+      "type": "mug_11oz",
+      "retail": "14.99"
+    },
+    {
+      "name": "Jiran \u2014 White Glossy Mug",
+      "sync_product_id": 462528284,
+      "type": "mug_11oz",
+      "retail": "14.99"
+    },
+    {
+      "name": "Maamoul \u2014 White Glossy Mug",
+      "sync_product_id": 462532463,
+      "type": "mug_11oz",
+      "retail": "14.99"
+    },
+    {
+      "name": "Knafeh Club \u2014 White Glossy Mug",
+      "sync_product_id": 462540373,
+      "type": "mug_11oz",
+      "retail": "14.99"
+    },
+    {
+      "name": "Khalas Habibi \u2014 Unisex Tee",
+      "sync_product_id": 462532457,
+      "type": "tee_s_xl",
+      "retail": "24.99"
+    },
+    {
+      "name": "Ya Habayeb \u2014 Unisex Tee",
+      "sync_product_id": 462540352,
+      "type": "tee_s_xl",
+      "retail": "24.99"
+    },
+    {
+      "name": "Ya Teta \u2014 Baby Onesie",
+      "sync_product_id": 462532461,
+      "type": "onesie",
+      "retail": "27.99"
+    },
+    {
+      "name": "Amoura \u2014 Baby Onesie",
+      "sync_product_id": 462540363,
+      "type": "onesie",
+      "retail": "27.99"
+    },
+    {
+      "name": "Beit El Hobb \u2014 Matte Poster",
+      "sync_product_id": 462532462,
+      "type": "poster_12x16",
+      "retail": "23.99"
+    },
+    {
+      "name": "Dar El Hawa \u2014 Matte Poster",
+      "sync_product_id": 462540368,
+      "type": "poster_12x16",
+      "retail": "23.99"
+    },
+    {
+      "name": "Halawa \u2014 Organic Cotton Tote",
+      "sync_product_id": 476520396,
+      "type": "tote",
+      "retail": "31.99"
+    },
+    {
+      "name": "Sit El Kul \u2014 Organic Cotton Tote",
+      "sync_product_id": 476520375,
+      "type": "tote",
+      "retail": "31.99"
+    },
+    {
+      "name": "Early Light \u2014 Organic Cotton Tote",
+      "sync_product_id": 476520353,
+      "type": "tote",
+      "retail": "31.99"
+    },
+    {
+      "name": "Gather & Grow \u2014 Organic Cotton Tote",
+      "sync_product_id": 476520279,
+      "type": "tote",
+      "retail": "31.99"
+    }
+  ],
+  "retail_cents": {
+    "mugs": 1499,
+    "tees": 2499,
+    "totes": 3199,
+    "baby": 2799,
+    "prints": 2399,
+    "stickers": 599,
+    "hats": 2999
+  }
 }

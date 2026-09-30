@@ -4,6 +4,7 @@ import { LIVE_SLUGS, catalog, encodeCartMetadata, products, resolveLineItem } fr
 import { readConfig } from '../lib/config.js';
 import { fulfillPaidSession, handleCheckout, handleHealth, handleWebhook } from '../lib/handlers.js';
 import { buildPrintfulItem, buildPrintfulOrderPayload, printfulHeaders } from '../lib/printful.js';
+import { shippingOptionForSubtotal } from '../lib/shipping.js';
 import { encodeStripeCheckoutBody, hmacSha256Hex, verifyStripeSignature } from '../lib/stripe.js';
 import { validateCheckoutInput } from '../lib/validator.js';
 
@@ -16,8 +17,10 @@ const LIVE_SYNC_IDS = {
   'knafeh-club': 462540373,
   'khalas-habibi': 462532457,
   'ya-habayeb': 462540352,
-  halawa: 462532459,
-  'sit-el-kul': 462540360,
+  halawa: 476520396,
+  'sit-el-kul': 476520375,
+  'early-light': 476520353,
+  'gather-grow': 476520279,
   'ya-teta': 462532461,
   amoura: 462540363,
   'beit-el-hobb': 462532462,
@@ -25,7 +28,7 @@ const LIVE_SYNC_IDS = {
 };
 
 describe('catalog contract', () => {
-  it('wires exactly the 14 live products with external ids and sync product ids', () => {
+  it('wires exactly the 16 live products with external ids and sync product ids', () => {
     assert.deepEqual(Object.keys(products), LIVE_SLUGS);
     assert.equal(catalog.printful_store_id, '18687336');
     for (const slug of LIVE_SLUGS) {
@@ -48,7 +51,7 @@ describe('catalog contract', () => {
   });
 
   it('resolves tee and onesie sizes', () => {
-    const tee = resolveLineItem({ slug: 'khalas-habibi', size: 'L', quantity: 1, price_cents: 3200 });
+    const tee = resolveLineItem({ slug: 'khalas-habibi', size: 'L', quantity: 1, price_cents: 2499 });
     assert.equal(tee.external_variant_id, 'habibi-tee-khalas-habibi-l');
     const onesie = resolveLineItem({ slug: 'ya-teta', size: '3-6m', quantity: 2 });
     assert.equal(onesie.external_variant_id, 'habibi-onesie-ya-teta-3-6m');
@@ -82,7 +85,7 @@ describe('Printful v1 order payload', () => {
         {
           slug: 'ya-aini',
           name: 'Ya Aini',
-          price: 1800,
+          price: 1499,
           quantity: 1,
           external_id: 'habibi-mug-ya-aini',
           external_variant_id: 'habibi-mug-ya-aini'
@@ -102,7 +105,7 @@ describe('Printful v1 order payload', () => {
     assert.equal(payload.recipient.email, 'buyer@example.com');
     assert.equal(payload.recipient.state_code, 'CA');
     assert.equal(payload.items[0].external_variant_id, 'habibi-mug-ya-aini');
-    assert.equal(payload.items[0].retail_price, '18.00');
+    assert.equal(payload.items[0].retail_price, '14.99');
     assert.equal('recipients' in payload, false);
     assert.equal('product_id' in payload.items[0], false);
     assert.equal('files' in payload.items[0], false);
@@ -111,7 +114,7 @@ describe('Printful v1 order payload', () => {
   it('prefers sync_variant_id when the local pull has filled it in', () => {
     const item = buildPrintfulItem({
       name: 'Ya Aini',
-      price: 1800,
+      price: 1499,
       quantity: 1,
       sync_variant_id: 999001,
       external_variant_id: 'habibi-mug-ya-aini'
@@ -130,7 +133,7 @@ describe('Printful v1 order payload', () => {
 describe('Stripe helpers', () => {
   it('encodes Checkout Sessions as form fields, not JSON blobs', () => {
     const body = encodeStripeCheckoutBody({
-      lineItems: [{ slug: 'ya-aini', name: 'Ya Aini', price: 1800, quantity: 1, size: 'default' }],
+      lineItems: [{ slug: 'ya-aini', name: 'Ya Aini', price: 1499, quantity: 1, size: 'default' }],
       successUrl: 'https://habibicraftsco.com/?checkout=success',
       cancelUrl: 'https://habibicraftsco.com/?checkout=cancelled',
       customerEmail: 'buyer@example.com',
@@ -138,7 +141,7 @@ describe('Stripe helpers', () => {
       metadata: { cart: '[]' }
     });
     assert.equal(body.get('mode'), 'payment');
-    assert.equal(body.get('line_items[0][price_data][unit_amount]'), '1800');
+    assert.equal(body.get('line_items[0][price_data][unit_amount]'), '1499');
     assert.equal(body.get('shipping_address_collection[allowed_countries][0]'), 'US');
     assert.equal(body.has('line_items'), false);
   });
@@ -170,10 +173,10 @@ describe('HTTP handlers', () => {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify({
-          items: [{ slug: 'ya-aini', quantity: 1, price_cents: 1800 }],
+          items: [{ slug: 'ya-aini', quantity: 1, price_cents: 1499 }],
           contact_email: 'buyer@example.com',
           idempotency_key: 'abc',
-          total_amount_cents: 1800
+          total_amount_cents: 1499
         })
       }),
       { STRIPE_SECRET_KEY: 'sk_test_x', CHECKOUT_ENABLED: 'false' }
@@ -194,7 +197,7 @@ describe('HTTP handlers', () => {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify({
-          items: [{ slug: 'ya-aini', quantity: 1, price_cents: 1800 }],
+          items: [{ slug: 'ya-aini', quantity: 1, price_cents: 1499 }],
           contact_email: 'buyer@example.com',
           idempotency_key: 'abc'
         })
@@ -209,7 +212,7 @@ describe('HTTP handlers', () => {
     const fetchImpl = async (url, init) => {
       assert.match(String(url), /checkout\/sessions/);
       assert.equal(init.headers.Authorization, 'Bearer sk_test_x');
-      assert.match(init.body.toString(), /line_items%5B0%5D%5Bprice_data%5D%5Bunit_amount%5D=1800/);
+      assert.match(init.body.toString(), /line_items%5B0%5D%5Bprice_data%5D%5Bunit_amount%5D=1499/);
       return new Response(JSON.stringify({ id: 'cs_test_1', url: 'https://checkout.stripe.com/c/pay/cs_test_1' }), {
         status: 200,
         headers: { 'content-type': 'application/json' }
@@ -220,10 +223,10 @@ describe('HTTP handlers', () => {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify({
-          items: [{ slug: 'ya-aini', quantity: 1, price_cents: 1800 }],
+          items: [{ slug: 'ya-aini', quantity: 1, price_cents: 1499 }],
           contact_email: 'buyer@example.com',
           idempotency_key: 'abc',
-          total_amount_cents: 1800
+          total_amount_cents: 1499
         })
       }),
       { STRIPE_SECRET_KEY: 'sk_test_x', CHECKOUT_ENABLED: 'true', APP_ORIGIN: 'https://habibicraftsco.com' },
@@ -327,5 +330,134 @@ describe('checkout validator', () => {
     assert.ok(errors.includes('items are required'));
     assert.ok(errors.includes('valid contact_email is required'));
     assert.ok(errors.includes('idempotency_key is required'));
+  });
+});
+
+const enabledEnv = {
+  STRIPE_SECRET_KEY: 'sk_test_x',
+  CHECKOUT_ENABLED: 'true',
+  APP_ORIGIN: 'https://habibicraftsco.com'
+};
+
+function checkoutRequest(items, total) {
+  const body = {
+    items,
+    contact_email: 'buyer@example.com',
+    idempotency_key: 'bag-test'
+  };
+  if (typeof total === 'number') body.total_amount_cents = total;
+  return new Request('https://example.com/api/checkout', {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify(body)
+  });
+}
+
+function stripeOk() {
+  return new Response(JSON.stringify({ id: 'cs_test_bag', url: 'https://checkout.stripe.com/c/pay/cs_test_bag' }), {
+    status: 200,
+    headers: { 'content-type': 'application/json' }
+  });
+}
+
+describe('shipping rate on the Stripe body', () => {
+  it('charges 699 below $39 and 0 at $39', () => {
+    for (const [subtotal, amount, name] of [
+      [3899, '699', 'Standard US shipping'],
+      [3900, '0', 'Free US shipping']
+    ]) {
+      const body = encodeStripeCheckoutBody({
+        lineItems: [{ slug: 'probe', name: 'Probe', price: subtotal, quantity: 1, size: 'default' }],
+        shipping: shippingOptionForSubtotal(subtotal),
+        successUrl: 'https://habibicraftsco.com/?checkout=success',
+        cancelUrl: 'https://habibicraftsco.com/?checkout=cancelled'
+      });
+      assert.equal(body.get('shipping_options[0][shipping_rate_data][type]'), 'fixed_amount');
+      assert.equal(body.get('shipping_options[0][shipping_rate_data][fixed_amount][amount]'), amount);
+      assert.equal(body.get('shipping_options[0][shipping_rate_data][fixed_amount][currency]'), 'usd');
+      assert.equal(body.get('shipping_options[0][shipping_rate_data][display_name]'), name);
+    }
+  });
+
+  it('uses the catalog subtotal for a real cart', async () => {
+    let params;
+    const fetchImpl = async (_url, init) => {
+      params = init.body;
+      return stripeOk();
+    };
+    const response = await handleCheckout(
+      checkoutRequest([{ slug: 'ya-aini', quantity: 1, price_cents: 1499 }], 1499),
+      enabledEnv,
+      fetchImpl
+    );
+    assert.equal(response.status, 200);
+    assert.equal(params.get('line_items[0][price_data][unit_amount]'), '1499');
+    assert.equal(params.get('shipping_options[0][shipping_rate_data][fixed_amount][amount]'), '699');
+    assert.equal(params.get('shipping_options[0][shipping_rate_data][display_name]'), 'Standard US shipping');
+  });
+});
+
+describe('multi-line checkout', () => {
+  it('prices every line from the server catalog and ships free at $39', async () => {
+    let params;
+    const fetchImpl = async (_url, init) => {
+      params = init.body;
+      return stripeOk();
+    };
+    const items = [
+      { slug: 'ya-aini', quantity: 1, price_cents: 1499 },
+      { slug: 'khalas-habibi', size: 'S', quantity: 2, price_cents: 2499 }
+    ];
+    const response = await handleCheckout(checkoutRequest(items, 1499 + 2499 * 2), enabledEnv, fetchImpl);
+    assert.equal(response.status, 200);
+    assert.equal(params.get('line_items[0][quantity]'), '1');
+    assert.equal(params.get('line_items[0][price_data][unit_amount]'), '1499');
+    assert.equal(params.get('line_items[1][quantity]'), '2');
+    assert.equal(params.get('line_items[1][price_data][unit_amount]'), '2499');
+    assert.equal(params.get('line_items[1][price_data][product_data][metadata][size]'), 'S');
+    assert.equal(params.get('shipping_options[0][shipping_rate_data][fixed_amount][amount]'), '0');
+    assert.equal(params.get('shipping_options[0][shipping_rate_data][display_name]'), 'Free US shipping');
+  });
+
+  it('rejects a tampered price on one line', async () => {
+    let called = false;
+    const fetchImpl = async () => {
+      called = true;
+      return stripeOk();
+    };
+    const response = await handleCheckout(
+      checkoutRequest([
+        { slug: 'ya-aini', quantity: 1, price_cents: 1499 },
+        { slug: 'halawa', quantity: 1, price_cents: 3198 }
+      ], 1499 + 3198),
+      enabledEnv,
+      fetchImpl
+    );
+    assert.equal(response.status, 409);
+    const body = await response.json();
+    assert.equal(body.error, 'price mismatch halawa');
+    assert.equal(called, false);
+  });
+
+  it('rejects a quantity above 20', async () => {
+    const response = await handleCheckout(
+      checkoutRequest([{ slug: 'ya-aini', quantity: 21, price_cents: 1499 }], 1499 * 21),
+      enabledEnv,
+      async () => stripeOk()
+    );
+    assert.equal(response.status, 400);
+    const body = await response.json();
+    assert.equal(body.error, 'invalid quantity for ya-aini');
+  });
+
+  it('rejects a slug that is not in the server catalog', async () => {
+    const response = await handleCheckout(
+      checkoutRequest([{ slug: 'craft-club-sticker', quantity: 1, price_cents: 599 }], 599),
+      enabledEnv,
+      async () => stripeOk()
+    );
+    assert.equal(response.status, 400);
+    const body = await response.json();
+    assert.equal(body.error, 'unknown product craft-club-sticker');
   });
 });

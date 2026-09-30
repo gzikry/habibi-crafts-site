@@ -19,10 +19,11 @@ Run:  python3 publish-assets.py
 Output: modified files under site/assets/, printed report
 """
 import json, os, shutil, subprocess, sys
+from root import repo_root, site_dir
 
-WS = '/Users/georgezikry/.hermes/profiles/habibicrafts/workspace'
+WS = repo_root()
 SRC = f'{WS}/pf-angles'
-SITE = f'{WS}/habibi-crafts-site/site'
+SITE = site_dir()
 ANGLES = f'{SITE}/assets/angles'
 MOCKUPS = f'{SITE}/assets/mockups'
 

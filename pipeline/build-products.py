@@ -13,12 +13,10 @@ Keeping this generator means the 20 product pages stay consistent when
 prices, copy, or angle frames change — edit the JSON, re-run, done.
 """
 import json, os, re, sys
-import sys as _sys
-_sys.path.insert(0, '/Users/georgezikry/.hermes/profiles/habibicrafts/workspace')
-from pfangles import order as order_angles
+from root import launch_cents, money, offer_amount, repo_root, site_dir
 
-SITE = '/Users/georgezikry/.hermes/profiles/habibicrafts/workspace/habibi-crafts-site/site'
-ANGLES = '/Users/georgezikry/.hermes/profiles/habibicrafts/workspace/pf-angles'
+SITE = site_dir()
+ANGLES = os.path.join(repo_root(), 'pf-angles')
 BASE = 'https://habibicraftsco.com'
 # Every local asset URL carries this, and it must be bumped on each deploy:
 # Porkbun's CDN caches by full URL, so an unchanged URL keeps serving the
@@ -27,15 +25,15 @@ ASSET_V = '10'
 
 
 CAT_META = {
-    'mugs':    ('Mug',    'mugs.html',    'Mugs',    '$18', '11 oz · white glossy',
+    'mugs':    ('Mug',    'mugs.html',    'Mugs',    '$14.99', '11 oz · white glossy',
                 [('Size', '11 oz'), ('Finish', 'White glossy'), ('Material', 'Ceramic')]),
-    'tees':    ('Tee',    'tees.html',    'Tees',    '$32', 'Unisex · S through XL',
+    'tees':    ('Tee',    'tees.html',    'Tees',    '$24.99', 'Unisex · S through XL',
                 [('Sizes', 'S, M, L, XL'), ('Fit', 'Unisex'), ('Print', 'Front')]),
-    'totes':   ('Tote',   'totes.html',   'Totes',   '$34', 'Cotton · one size',
-                [('Size', 'One size'), ('Material', 'Cotton'), ('Print', 'Front')]),
-    'baby':    ('Onesie', 'onesies.html', 'Onesies', '$28', '3–6m · 6–12m · 12–18m',
+    'totes':   ('Tote',   'totes.html',   'Totes',   '$31.99', 'Organic cotton · Oyster · one size',
+                [('Size', 'One size'), ('Material', 'Organic cotton'), ('Color', 'Oyster'), ('Print', 'Front')]),
+    'baby':    ('Onesie', 'onesies.html', 'Onesies', '$27.99', '3–6m · 6–12m · 12–18m',
                 [('Sizes', '3–6m, 6–12m, 12–18m'), ('Color', 'White'), ('Print', 'Front')]),
-    'prints':  ('Print',  'prints.html',  'Prints',  '$24', '12 × 16 in · matte',
+    'prints':  ('Print',  'prints.html',  'Prints',  '$23.99', '12 × 16 in · matte',
                 [('Size', '12 × 16 in'), ('Paper', 'Matte'), ('Frame', 'Not included')]),
 }
 
@@ -48,6 +46,8 @@ def esc(s):
 
 
 def frames_for(slug, manifest):
+    sys.path.insert(0, repo_root())
+    from pfangles import order as order_angles
     angs = manifest.get(slug, {}).get('angles', [])
     if not angs:
         return []
@@ -70,7 +70,7 @@ def head(title, desc, slug, kind_label, canonical):
              "offers": {"@type": "Offer",
                         "url": f"{BASE}/product-{slug}.html",
                         "priceCurrency": "USD",
-                        "price": CAT_META[kind_label][3].lstrip('$') + '.00',
+                        "price": offer_amount(launch_cents()[kind_label]),
                         "availability": "https://schema.org/OutOfStock",
                         "itemCondition": "https://schema.org/NewCondition"}},
             {"@type": "BreadcrumbList", "itemListElement": [
@@ -119,6 +119,7 @@ def head(title, desc, slug, kind_label, canonical):
 <header class="site-header">
   <nav class="nav" aria-label="Primary navigation">
     <a class="brand" href="index.html"><img src="assets/logo-nav-white.png" alt="Habibi Crafts Co" width="213" height="93"></a>
+    <a class="nav-bag" href="cart.html" aria-label="Bag — checkout isn’t open"><span class="nav-bag-label">Bag</span><span class="nav-bag-badge" hidden>0</span></a>
     <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-menu" aria-label="Open menu"><span></span></button>
     <div class="nav-links" id="primary-menu">
       <a href="shop.html" aria-current="page">Shop</a>
@@ -178,7 +179,7 @@ def related(catalog, slug, kind, n=3):
         cards.append(f'''<a class="product-card reveal" href="product-{p['slug']}.html" data-category="{p['category']}">
   <div class="product-media"><img class="mockup" src="assets/mockups/{p['slug']}.png?v=8" alt="{esc(p['name'])}" width="800" height="800" loading="lazy" decoding="async"></div>
   <div class="product-copy">
-    <div class="product-row"><h3>{esc(p['name'])}</h3><span class="price">${p['price']}</span></div>
+    <div class="product-row"><h3>{esc(p['name'])}</h3><span class="price">{money(p['price'])}</span></div>
   </div>
 </a>''')
     label = CAT_META[kind][2]
@@ -226,7 +227,45 @@ def footer():
 '''
 
 
+def size_markup(slug, kind, size_line):
+    sizes = {'tees': ['S', 'M', 'L', 'XL'], 'baby': ['3-6m', '6-12m', '12-18m']}.get(kind)
+    if not sizes:
+        return f'<p class="size-line">{size_line}</p>'
+    buttons = ''.join(
+        f'<button type="button" class="size-option" data-size="{size}" aria-pressed="{"true" if i == 0 else "false"}">{size}</button>'
+        for i, size in enumerate(sizes)
+    )
+    return (
+        f'<div class="size-picker" data-size-picker>'
+        f'<p class="size-picker-label" id="size-{slug}">Size</p>'
+        f'<div class="size-options" role="group" aria-labelledby="size-{slug}">{buttons}</div>'
+        f'<p class="size-picker-note">Choosing a size does not start an order. Checkout isn’t open.</p>'
+        f'</div>'
+    )
+
+
+def buy_markup(slug, cents):
+    with open(os.path.join(repo_root(), 'api', 'catalog.json')) as handle:
+        live = set(json.load(handle)['products'])
+    if slug not in live:
+        return (
+            f'<div class="actions"><button class="button browse-mode" type="button" disabled data-checkout '
+            f'data-product-slug="{slug}" aria-disabled="true">Browsing only · Checkout opens soon</button></div>'
+            f'<p class="checkout-note">Nothing is charged.</p>'
+        )
+    return (
+        f'<div class="actions"><button class="button" type="button" data-add-to-bag '
+        f'data-product-slug="{slug}" data-price-cents="{cents}">Add to bag</button></div>'
+        f'<p class="checkout-note">Nothing is charged.</p>'
+    )
+
+
 def main():
+    if os.environ.get('HABIBI_FULL_REBUILD') != '1':
+        from prices import apply_launch_copy
+        apply_launch_copy(SITE)
+        print('patched launch prices into the existing pages')
+        return
     catalog = json.load(open(f'{SITE}/product-catalog.json'))
     man_path = f'{ANGLES}/manifest.json'
     manifest = json.load(open(man_path)) if os.path.exists(man_path) else {}
@@ -235,7 +274,9 @@ def main():
     for p in catalog:
         slug = p['slug']
         kind = p['category']
-        cat, cat_page, cat_name, price, size_line, details = CAT_META[kind]
+        cat, cat_page, cat_name, _listed, size_line, details = CAT_META[kind]
+        cents = int(p['price'])
+        price = money(cents)
         entry = manifest.get(slug, {})
         angs = entry.get('angles', [])
         frames = frames_for(slug, manifest)
@@ -258,8 +299,8 @@ def main():
       <h1>''' + esc(p['name']) + '''</h1>
       <p class="product-subtitle">''' + esc(subtitle) + '''</p>
       <div class="product-price">''' + price + '''</div>
-      <p class="size-line">''' + size_line + '''</p>
-      <div class="actions"><button class="button" type="button" disabled data-checkout data-product-slug="''' + slug + '''" aria-disabled="true">Notify me</button></div>
+      ''' + size_markup(slug, kind, size_line) + '''
+      ''' + buy_markup(slug, cents) + '''
       <div class="detail-list">
         <h2>Details</h2>
         <dl>''' + ''.join(

@@ -10,7 +10,7 @@ from __future__ import annotations
 # viewer from every product page and the homepage. The active pipeline is the
 # one that owns product-catalog.json:
 #
-#   cd ../../workspace && ./add-products.sh
+#   ./pipeline/add-products.sh
 #
 # If you are here to change generated HTML, change that pipeline instead, or
 # delete this guard deliberately once the two builders are reconciled.
@@ -20,7 +20,7 @@ if "--force" not in _sys.argv:
     _sys.exit(
         "refusing to run: this builder strips the angle viewer and overwrites "
         "the hand-written pages.\n"
-        "Use the catalog pipeline (workspace/add-products.sh) instead."
+        "Use the catalog pipeline (pipeline/add-products.sh) instead."
     )
 # Even with --force, never clobber the hand-maintained prose pages: this
 # builder rewrites them without the reviewed copy.
@@ -51,11 +51,11 @@ BY_SLUG = {p["slug"]: p for p in PRODUCTS}
 
 # (category key, heading, price, spec line, collection filename)
 GROUPS = [
-    ("mugs", "Mugs", "$18", "11 oz white glossy.", "mugs.html"),
-    ("tees", "Tees", "$32", "Unisex, S through XL.", "tees.html"),
-    ("totes", "Totes", "$34", "Cotton. One size.", "totes.html"),
-    ("baby", "Onesies", "$28", "White. 3–6m, 6–12m, 12–18m.", "onesies.html"),
-    ("prints", "Prints", "$24", "12 × 16 matte. Frame not included.", "prints.html"),
+    ("mugs", "Mugs", "$14.99", "11 oz white glossy.", "mugs.html"),
+    ("tees", "Tees", "$24.99", "Unisex, S through XL.", "tees.html"),
+    ("totes", "Totes", "$31.99", "Cotton. One size.", "totes.html"),
+    ("baby", "Onesies", "$27.99", "White. 3–6m, 6–12m, 12–18m.", "onesies.html"),
+    ("prints", "Prints", "$23.99", "12 × 16 matte. Frame not included.", "prints.html"),
 ]
 
 # Live featured pieces only. Intentional mix: mug, tee, tote, print.
@@ -482,7 +482,7 @@ for p in PRODUCTS:
                     "@type": "Offer",
                     "url": f"https://habibicraftsco.com/product-{p['slug']}.html",
                     "priceCurrency": "USD",
-                    "price": f"{p['price']:.2f}",
+                    "price": f"{p['price'] / 100:.2f}",
                     "availability": "https://schema.org/OutOfStock",
                     "itemCondition": "https://schema.org/NewCondition",
                 },
@@ -588,7 +588,7 @@ faqs = [
     ("What about the onesies?", "White. 3–6 months, 6–12 months, and 12–18 months."),
     ("What about the totes?", "Cotton. One size."),
     ("Are the prints framed?", "No. 12 × 16 inches, matte paper. Frame not included."),
-    ("How much are they?", "Mugs $18. Tees $32. Totes $34. Onesies $28. Prints $24."),
+    ("How much are they?", "Mugs $14.99. Tees $24.99. Totes $31.99. Onesies $27.99. Prints $23.99. Stickers $5.99. Dad hats $29.99."),
     ("How does shipping work?", "We’re not taking orders yet. When we open, pieces print after you order, then they ship. Details will be on the shipping page."),
     ("How do I reach you?", "We haven’t posted a public email or phone yet. When we do, it will be on the contact page."),
 ]
