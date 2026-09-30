@@ -18,10 +18,11 @@ Entry point: `add-products.sh` runs, in order:
 
 ## Notes
 
-- Paths are still absolute to the Mac workspace (`WS=/Users/georgezikry/.hermes/profiles/habibicrafts/workspace`).
-  Running from this folder needs those paths parameterised first; that is intentionally not changed in this commit.
-- No secrets are stored here. The Printful API token is read at runtime from the
-  profile `.env` (`PRINTFUL_API_TOKEN=`), which is not in the repo.
+- Paths come from the script location. `HABIBI_ROOT` overrides the repo root.
+- No secrets are stored here. Sync, fetch, and rank read `PRINTFUL_API_TOKEN` from
+  the environment, or from the file named by `HABIBI_ENV_FILE`. Do not commit that file.
+- `site/product-catalog.json` stores `price` in cents. Builders print `$24.99` from that number.
+- Catalogue product 367 is a tote. Sync ids 471226874, 471225102, 462540360, and 462532459 are retired and skipped.
 - Steps 7-9 of `add-products.sh` call local verification scripts (`verify-*.js`,
   `shoot-newhome.js`) that are not part of this commit.
 - Working prices (`pricing.json`) are not included; no builder reads it.

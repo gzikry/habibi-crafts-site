@@ -13,12 +13,11 @@ Keeping this generator means the 20 product pages stay consistent when
 prices, copy, or angle frames change — edit the JSON, re-run, done.
 """
 import json, os, re, sys
-import sys as _sys
-_sys.path.insert(0, '/Users/georgezikry/.hermes/profiles/habibicrafts/workspace')
 from pfangles import order as order_angles
+from root import angles_dir, cents_decimal, format_cents, site_dir
 
-SITE = '/Users/georgezikry/.hermes/profiles/habibicrafts/workspace/habibi-crafts-site/site'
-ANGLES = '/Users/georgezikry/.hermes/profiles/habibicrafts/workspace/pf-angles'
+SITE = site_dir()
+ANGLES = angles_dir()
 BASE = 'https://habibicraftsco.com'
 # Every local asset URL carries this, and it must be bumped on each deploy:
 # Porkbun's CDN caches by full URL, so an unchanged URL keeps serving the
@@ -27,15 +26,15 @@ ASSET_V = '10'
 
 
 CAT_META = {
-    'mugs':    ('Mug',    'mugs.html',    'Mugs',    '$18', '11 oz · white glossy',
+    'mugs':    ('Mug',    'mugs.html',    'Mugs',    '11 oz · white glossy',
                 [('Size', '11 oz'), ('Finish', 'White glossy'), ('Material', 'Ceramic')]),
-    'tees':    ('Tee',    'tees.html',    'Tees',    '$32', 'Unisex · S through XL',
+    'tees':    ('Tee',    'tees.html',    'Tees',    'Unisex · S through XL',
                 [('Sizes', 'S, M, L, XL'), ('Fit', 'Unisex'), ('Print', 'Front')]),
-    'totes':   ('Tote',   'totes.html',   'Totes',   '$34', 'Cotton · one size',
+    'totes':   ('Tote',   'totes.html',   'Totes',   'Cotton · one size',
                 [('Size', 'One size'), ('Material', 'Cotton'), ('Print', 'Front')]),
-    'baby':    ('Onesie', 'onesies.html', 'Onesies', '$28', '3–6m · 6–12m · 12–18m',
+    'baby':    ('Onesie', 'onesies.html', 'Onesies', '3–6m · 6–12m · 12–18m',
                 [('Sizes', '3–6m, 6–12m, 12–18m'), ('Color', 'White'), ('Print', 'Front')]),
-    'prints':  ('Print',  'prints.html',  'Prints',  '$24', '12 × 16 in · matte',
+    'prints':  ('Print',  'prints.html',  'Prints',  '12 × 16 in · matte',
                 [('Size', '12 × 16 in'), ('Paper', 'Matte'), ('Frame', 'Not included')]),
 }
 
@@ -56,7 +55,7 @@ def frames_for(slug, manifest):
             for a in ordered]
 
 
-def head(title, desc, slug, kind_label, canonical):
+def head(title, desc, slug, kind_label, canonical, price_cents):
     og = f'{BASE}/assets/mockups/{slug}.png'
     ld = {
         "@context": "https://schema.org",
@@ -70,7 +69,7 @@ def head(title, desc, slug, kind_label, canonical):
              "offers": {"@type": "Offer",
                         "url": f"{BASE}/product-{slug}.html",
                         "priceCurrency": "USD",
-                        "price": CAT_META[kind_label][3].lstrip('$') + '.00',
+                        "price": cents_decimal(price_cents),
                         "availability": "https://schema.org/OutOfStock",
                         "itemCondition": "https://schema.org/NewCondition"}},
             {"@type": "BreadcrumbList", "itemListElement": [
@@ -110,6 +109,7 @@ def head(title, desc, slug, kind_label, canonical):
 <script type="application/ld+json">{json.dumps(ld, separators=(",", ":"))}</script>
 <script src="public-config.js?v={ASSET_V}"></script>
 <script defer src="analytics.js?v={ASSET_V}"></script>
+<script defer src="bag.js?v={ASSET_V}"></script>
 <script defer src="checkout.js?v={ASSET_V}"></script>
 <script defer src="spin.js?v={ASSET_V}"></script>
 <script defer src="app.js?v={ASSET_V}"></script>
@@ -178,7 +178,7 @@ def related(catalog, slug, kind, n=3):
         cards.append(f'''<a class="product-card reveal" href="product-{p['slug']}.html" data-category="{p['category']}">
   <div class="product-media"><img class="mockup" src="assets/mockups/{p['slug']}.png?v=8" alt="{esc(p['name'])}" width="800" height="800" loading="lazy" decoding="async"></div>
   <div class="product-copy">
-    <div class="product-row"><h3>{esc(p['name'])}</h3><span class="price">${p['price']}</span></div>
+    <div class="product-row"><h3>{esc(p['name'])}</h3><span class="price">{format_cents(p['price'])}</span></div>
   </div>
 </a>''')
     label = CAT_META[kind][2]
@@ -227,15 +227,18 @@ def footer():
 
 
 def main():
-    catalog = json.load(open(f'{SITE}/product-catalog.json'))
-    man_path = f'{ANGLES}/manifest.json'
+    catalog = json.load(open(SITE / 'product-catalog.json'))
+    man_path = ANGLES / 'manifest.json'
     manifest = json.load(open(man_path)) if os.path.exists(man_path) else {}
     built, missing = [], []
 
     for p in catalog:
         slug = p['slug']
         kind = p['category']
-        cat, cat_page, cat_name, price, size_line, details = CAT_META[kind]
+        if kind not in CAT_META:
+            continue
+        cat, cat_page, cat_name, size_line, details = CAT_META[kind]
+        price = format_cents(p['price'])
         entry = manifest.get(slug, {})
         angs = entry.get('angles', [])
         frames = frames_for(slug, manifest)
@@ -248,7 +251,7 @@ def main():
         canonical = f"{BASE}/product-{slug}.html"
 
         html = '\n'.join([
-            head(p['name'], desc, slug, kind, canonical),
+            head(p['name'], desc, slug, kind, canonical, p['price']),
             '<main id="main">',
             '  <div class="shell product-page">',
             viewer(slug, frames, p['name'], kind),
@@ -273,7 +276,7 @@ def main():
             '</main>',
             footer(),
         ])
-        open(f'{SITE}/product-{slug}.html', 'w').write(html)
+        open(SITE / f'product-{slug}.html', 'w').write(html)
         built.append(slug)
 
     print(f'Built {len(built)} product pages')

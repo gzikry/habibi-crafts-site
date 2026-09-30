@@ -13,15 +13,14 @@ Reads:  site/product-catalog.json, pf-angles/manifest.json, product-rank.json
 Writes: site/index.html
 """
 import json, os
-import sys as _sys
-_sys.path.insert(0, '/Users/georgezikry/.hermes/profiles/habibicrafts/workspace')
 from pfangles import order as order_angles
+from root import angles_dir, format_cents, repo_root, site_dir
 
 
-WS = '/Users/georgezikry/.hermes/profiles/habibicrafts/workspace'
-SITE = f'{WS}/habibi-crafts-site/site'
-ANGLES = f'{WS}/pf-angles'
-RANK = f'{WS}/product-rank.json'
+ROOT = repo_root()
+SITE = site_dir()
+ANGLES = angles_dir()
+RANK = ROOT / 'product-rank.json'
 BASE = 'https://habibicraftsco.com'
 # Every local asset URL carries this, and it must be bumped on each deploy:
 # Porkbun's CDN caches by full URL, so an unchanged URL keeps serving the
@@ -87,7 +86,7 @@ def pcard(p, frames, manifest):
     return f'''<a class="pcard reveal" href="product-{p['slug']}.html" data-category="{p['category']}">
   <div class="pcard-media"><img class="mockup" src="{src}" alt="{esc(p['name'])}" width="800" height="800" loading="lazy" decoding="async"></div>
   <div class="pcard-title">{esc(p['name'])}</div>
-  <div class="pcard-price">${p['price']}</div>
+  <div class="pcard-price">{format_cents(p['price'])}</div>
 </a>'''
 
 
@@ -114,8 +113,8 @@ def filter_bar():
 
 
 def main():
-    catalog = json.load(open(f'{SITE}/product-catalog.json'))
-    manifest_path = f'{ANGLES}/manifest.json'
+    catalog = json.load(open(SITE / 'product-catalog.json'))
+    manifest_path = ANGLES / 'manifest.json'
     manifest = json.load(open(manifest_path)) if os.path.exists(manifest_path) else {}
 
     by_slug = {p['slug']: p for p in catalog}
@@ -180,6 +179,7 @@ def main():
 <script type="application/ld+json">{json.dumps(ld, separators=(",", ":"))}</script>
 <script src="public-config.js?v={ASSET_V}"></script>
 <script defer src="analytics.js?v={ASSET_V}"></script>
+<script defer src="bag.js?v={ASSET_V}"></script>
 <script defer src="checkout.js?v={ASSET_V}"></script>
 <script defer src="spin.js?v={ASSET_V}"></script>
 <script defer src="app.js?v={ASSET_V}"></script>
@@ -268,7 +268,7 @@ def main():
 </body>
 </html>
 '''
-    open(f'{SITE}/index.html', 'w').write(html)
+    open(SITE / 'index.html', 'w').write(html)
     print(f'index.html written ({len(products)} products, hero {hero_slug}, '
           f'{len(hero_frames)} frames, band after {BAND_AFTER})')
 

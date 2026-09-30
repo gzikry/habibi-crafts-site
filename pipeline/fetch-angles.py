@@ -21,10 +21,10 @@ Run:  python3 fetch-angles.py            # all, skipping done
 Output: workspace/pf-angles/<slug>/<angle>.png + manifest.json
 """
 import json, os, re, sys, time, urllib.error, urllib.request
+from root import angles_dir, printful_token, repo_root
 
-WS = '/Users/georgezikry/.hermes/profiles/habibicrafts/workspace'
-ENV = '/Users/georgezikry/.hermes/profiles/habibicrafts/.env'
-OUT = f'{WS}/pf-angles'
+ROOT = repo_root()
+OUT = str(angles_dir())
 STORE = '18687336'
 UA = ('Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 '
       '(KHTML, like Gecko) Chrome/120.0 Safari/537.36')
@@ -34,7 +34,7 @@ UA = ('Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 '
 def load_jobs():
     # printful-spec.json, not printful-sync.json: the latter is the storefront
     # catalogue and carries no catalogue ids or print areas.
-    path = f'{WS}/printful-spec.json'
+    path = str(ROOT / 'printful-spec.json')
     if not os.path.exists(path):
         raise SystemExit(f'{path} missing — run sync-printful.py --write first')
     spec = json.load(open(path))
@@ -55,21 +55,11 @@ def log(m):
     print(m, flush=True)
 
 
-def token():
-    for line in open(ENV):
-        if line.startswith('PRINTFUL_API_TOKEN='):
-            return line.split('=', 1)[1].strip()
-    raise SystemExit('PRINTFUL_API_TOKEN missing')
-
-
-TOKEN = token()
-
-
 def pf(method, path, payload=None, retries=5, pace=True):
     for a in range(retries):
         data = json.dumps(payload).encode() if payload else None
         req = urllib.request.Request(f'https://api.printful.com{path}', data=data, method=method)
-        req.add_header('Authorization', f'Bearer {TOKEN}')
+        req.add_header('Authorization', f'Bearer {printful_token()}')
         req.add_header('X-PF-Store-Id', STORE)
         req.add_header('Content-Type', 'application/json')
         try:

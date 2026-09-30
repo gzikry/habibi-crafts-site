@@ -26,16 +26,18 @@ upscaled and visibly soft, and was the original cause of cropped-looking mug
 artwork. Aspect ratio is reported separately because fit-mode letterboxes.
 """
 import json, os, re, sys, time, urllib.error, urllib.request
+from root import (
+    EXCLUDED_SYNC_IDS, cents_from_retail, format_cents, printful_token, repo_root, site_dir,
+)
 
-WS = '/Users/georgezikry/.hermes/profiles/habibicrafts/workspace'
-ENV = '/Users/georgezikry/.hermes/profiles/habibicrafts/.env'
-SITE = f'{WS}/habibi-crafts-site/site'
+ROOT = repo_root()
+SITE = site_dir()
 STORE = '18687336'
 UA = ('Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 '
       '(KHTML, like Gecko) Chrome/120.0 Safari/537.36')
 
 # Printful catalogue product id -> storefront category
-CATEGORY = {19: 'mugs', 71: 'tees', 641: 'totes', 308: 'baby', 1: 'prints'}
+CATEGORY = {19: 'mugs', 71: 'tees', 367: 'totes', 641: 'totes', 308: 'baby', 1: 'prints'}
 
 # A product is only published to the storefront if it is on this list.
 #
@@ -59,21 +61,11 @@ SUFFIX = re.compile(r'[-_](mug|tee|tees|tote|onesie|baby|poster|print|wall|appar
                     re.IGNORECASE)
 
 
-def token():
-    for line in open(ENV):
-        if line.startswith('PRINTFUL_API_TOKEN='):
-            return line.split('=', 1)[1].strip()
-    raise SystemExit('PRINTFUL_API_TOKEN missing in profile .env')
-
-
-TOKEN = token()
-
-
 def pf(path, retries=4):
     last = None
     for a in range(retries):
         req = urllib.request.Request(f'https://api.printful.com{path}')
-        req.add_header('Authorization', f'Bearer {TOKEN}')
+        req.add_header('Authorization', f'Bearer {printful_token()}')
         req.add_header('X-PF-Store-Id', STORE)
         req.add_header('User-Agent', UA)
         try:
@@ -140,7 +132,7 @@ def effective_dpi(actual_w, nominal_w, nominal_dpi):
 
 def main():
     write = '--write' in sys.argv
-    catalog_path = f'{SITE}/product-catalog.json'
+    catalog_path = SITE / 'product-catalog.json'
     existing = json.load(open(catalog_path)) if os.path.exists(catalog_path) else []
     by_id = {e['printful_id']: e for e in existing}
     by_slug = {e['slug']: e for e in existing}
@@ -154,6 +146,9 @@ def main():
 
     for sp in listing['result']:
         pid = sp['id']
+        if pid in EXCLUDED_SYNC_IDS:
+            skipped.append(f'{sp["name"]} (retired sync product {pid})')
+            continue
         detail = pf(f'/store/products/{pid}')
         if '__error' in detail:
             problems.append(f'{pid}: {detail["__body"][:80]}')
@@ -209,8 +204,11 @@ def main():
                     f'(Printful wants {min_dpi}+) — it will look soft')
 
         entry = {'slug': slug, 'name': name, 'category': category,
-                 'price': round(float(variant['retail_price'])), 'printful_id': pid}
-        sub = (prev or {}).get('subtitle') or (by_slug.get(slug) or {}).get('subtitle')
+                 'price': cents_from_retail(variant['retail_price']), 'printful_id': pid}
+        kept = prev or by_slug.get(slug) or {}
+        if 'purchasable' in kept:
+            entry['purchasable'] = kept['purchasable']
+        sub = kept.get('subtitle')
         if sub:
             entry['subtitle'] = sub
         else:
@@ -237,16 +235,16 @@ def main():
     # Order the catalogue to match the storefront's curated sequence, then
     # append anything new. Sorting purely by name would reshuffle every grid
     # and produce a large diff each time nothing actually changed.
-    spec_path = f'{WS}/printful-spec.json'
+    spec_path = ROOT / 'printful-spec.json'
     json.dump(specs, open(spec_path, 'w'), indent=2)
 
     order = {e['slug']: i for i, e in enumerate(existing)}
     entries.sort(key=lambda e: (order.get(e['slug'], len(order)), e['slug']))
-    json.dump(entries, open(f'{WS}/printful-sync.json', 'w'), indent=2)
+    json.dump(entries, open(ROOT / 'printful-sync.json', 'w'), indent=2)
     print(f'{len(entries)} products for the storefront '
           f'({len(listing["result"])} in Printful)')
     for e in entries:
-        print(f"  {e['slug']:<16} {e['category']:<7} ${e['price']:<3} {e['name']}")
+        print(f"  {e['slug']:<16} {e['category']:<7} {format_cents(e['price']):<8} {e['name']}")
 
     if skipped:
         print('\nnot on the storefront (catalogue product not sold here):')

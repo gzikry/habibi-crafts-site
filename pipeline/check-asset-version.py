@@ -11,13 +11,15 @@ a fixed viewer shipped but the old one stayed live.
 Run before deploying: python3 check-asset-version.py
 """
 import os, re, sys
+from root import repo_root, site_dir
 
-G = '/Users/georgezikry/.hermes/profiles/habibicrafts/workspace'
-SITE = f'{G}/habibi-crafts-site/site'
+ROOT = repo_root()
+SITE = site_dir()
+PIPE = ROOT / 'pipeline'
 BUILDERS = ('build-products.py', 'build-shop.py', 'build-home.py')
 
 # references that must use the constant
-ASSETS = ('styles.css', 'app.js', 'spin.js', 'checkout.js', 'analytics.js',
+ASSETS = ('styles.css', 'app.js', 'spin.js', 'checkout.js', 'bag.js', 'analytics.js',
           'public-config.js')
 
 failures = []
@@ -25,7 +27,7 @@ failures = []
 # --- the builders must not contain a literal version -----------------------
 versions = {}
 for g in BUILDERS:
-    s = open(f'{G}/{g}').read()
+    s = open(PIPE / g).read()
     m = re.search(r"^ASSET_V = '(\d+)'", s, re.M)
     if not m:
         failures.append(f'{g}: no ASSET_V constant')

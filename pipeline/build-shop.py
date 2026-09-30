@@ -8,13 +8,12 @@ together. Product cards carry their angle frames so app.js can preview them
 on hover.
 """
 import json, os
-import sys as _sys
-_sys.path.insert(0, '/Users/georgezikry/.hermes/profiles/habibicrafts/workspace')
 from pfangles import order as order_angles
+from root import angles_dir, format_cents, site_dir
 
 
-SITE = '/Users/georgezikry/.hermes/profiles/habibicrafts/workspace/habibi-crafts-site/site'
-ANGLES = '/Users/georgezikry/.hermes/profiles/habibicrafts/workspace/pf-angles'
+SITE = site_dir()
+ANGLES = angles_dir()
 BASE = 'https://habibicraftsco.com'
 # Every local asset URL carries this, and it must be bumped on each deploy:
 # Porkbun's CDN caches by full URL, so an unchanged URL keeps serving the
@@ -23,12 +22,19 @@ ASSET_V = '10'
 
 
 CATS = [
-    ('mugs',    'Mugs',    '11 oz white glossy. $18.',                       'Six to choose from.'),
-    ('tees',    'Tees',    'Unisex, S through XL. $32.',                     'Printed on the front.'),
-    ('totes',   'Totes',   'Cotton, one size. $34.',                         'One size, cotton.'),
-    ('baby',    'Onesies', 'White, 3–18 months. $28.',                       '3 to 18 months.'),
-    ('prints',  'Prints',  '12 × 16 matte. $24.',                            '12 × 16, matte. Frame not included.'),
+    ('mugs',    'Mugs',    '11 oz white glossy. {price}.',                   'Six to choose from.'),
+    ('tees',    'Tees',    'Unisex, S through XL. {price}.',                 'Printed on the front.'),
+    ('totes',   'Totes',   'Cotton, one size. {price}.',                     'One size, cotton.'),
+    ('baby',    'Onesies', 'White, 3–18 months. {price}.',                   '3 to 18 months.'),
+    ('prints',  'Prints',  '12 × 16 matte. {price}.',                        '12 × 16, matte. Frame not included.'),
 ]
+
+
+def category_price(catalog, kind):
+    cents = {p['price'] for p in catalog if p['category'] == kind}
+    if len(cents) != 1:
+        raise SystemExit(f'{kind} prices diverged: {sorted(cents)}')
+    return format_cents(next(iter(cents)))
 
 
 def esc(s):
@@ -56,7 +62,7 @@ def card(p, manifest):
     return f'''<a class="product-card reveal" href="product-{p['slug']}.html" data-category="{p['category']}"{preview}>
   <div class="product-media"><img class="mockup" src="assets/mockups/{p['slug']}.png?v=8" alt="{esc(p['name'])}" width="800" height="800" loading="lazy" decoding="async"></div>
   <div class="product-copy">
-    <div class="product-row"><h3>{esc(p['name'])}</h3><span class="price">${p['price']}</span></div>
+    <div class="product-row"><h3>{esc(p['name'])}</h3><span class="price">{format_cents(p['price'])}</span></div>
   </div>
 </a>'''
 
@@ -139,6 +145,7 @@ def head(title, desc, canonical, og_image, ld):
 <script type="application/ld+json">{json.dumps(ld, separators=(",", ":"))}</script>
 <script src="public-config.js?v={ASSET_V}"></script>
 <script defer src="analytics.js?v={ASSET_V}"></script>
+<script defer src="bag.js?v={ASSET_V}"></script>
 <script defer src="checkout.js?v={ASSET_V}"></script>
 <script defer src="spin.js?v={ASSET_V}"></script>
 <script defer src="app.js?v={ASSET_V}"></script>
@@ -164,12 +171,16 @@ def item_list(products):
 
 
 def main():
-    catalog = json.load(open(f'{SITE}/product-catalog.json'))
-    manifest = json.load(open(f'{ANGLES}/manifest.json'))
+    catalog = json.load(open(SITE / 'product-catalog.json'))
+    manifest_path = ANGLES / 'manifest.json'
+    manifest = json.load(open(manifest_path)) if os.path.exists(manifest_path) else {}
+    priced = []
+    for kind, label, meta, blurb in CATS:
+        priced.append((kind, label, meta.format(price=category_price(catalog, kind)), blurb))
 
     # ---- shop.html: every product, grouped by category ----
     groups = []
-    for kind, label, _, blurb in CATS:
+    for kind, label, _, blurb in priced:
         items = [p for p in catalog if p['category'] == kind]
         if not items:
             continue
@@ -188,13 +199,13 @@ def main():
                "mainEntity": item_list(catalog)}
     shop = '\n'.join([
         head('Shop | Habibi Crafts Co',
-             'Mugs $18, tees $32, totes $34, onesies $28, prints $24. Made after you order.',
+             'Made after you order. Free US shipping on orders $39 and up. $6.99 flat below that.',
              f'{BASE}/shop.html', f'{BASE}/assets/mockups/ya-aini.png', shop_ld),
         nav('shop.html'),
         '<main id="main">',
         f'''  <section class="catalog-head"><div class="shell">
     <h1>The shop</h1>
-    <p class="lede">Everything we make, in one place. Prices include the piece; shipping is added at checkout.</p>
+    <p class="lede">Everything we make, in one place. Free US shipping on orders $39 and up. $6.99 flat below that.</p>
     {filter_bar('shop.html')}
   </div></section>''',
         '\n'.join(groups),
@@ -202,10 +213,10 @@ def main():
         foot(),
         '</body>\n</html>\n',
     ])
-    open(f'{SITE}/shop.html', 'w').write(shop)
+    open(SITE / 'shop.html', 'w').write(shop)
 
     # ---- category pages ----
-    for kind, label, meta, blurb in CATS:
+    for kind, label, meta, blurb in priced:
         items = [p for p in catalog if p['category'] == kind]
         ld = {"@context": "https://schema.org", "@type": "CollectionPage",
               "name": f"{label} — Habibi Crafts Co", "url": f"{BASE}/{kind}.html",
@@ -228,7 +239,7 @@ def main():
             foot(),
             '</body>\n</html>\n',
         ])
-        open(f'{SITE}/{kind}.html', 'w').write(page)
+        open(SITE / f'{kind}.html', 'w').write(page)
 
     print(f'shop.html + {len(CATS)} category pages written from {len(catalog)} products')
 

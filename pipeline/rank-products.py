@@ -20,30 +20,20 @@ Output: workspace/product-rank.json
 """
 import json, os, sys, time, urllib.error, urllib.request
 from datetime import datetime, timezone
+from root import printful_token, repo_root, site_dir
 
-WS = '/Users/georgezikry/.hermes/profiles/habibicrafts/workspace'
-ENV = '/Users/georgezikry/.hermes/profiles/habibicrafts/.env'
-SITE = f'{WS}/habibi-crafts-site/site'
+ROOT = repo_root()
+SITE = site_dir()
 STORE = '18687336'
 UA = ('Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 '
       '(KHTML, like Gecko) Chrome/120.0 Safari/537.36')
-OUT = f'{WS}/product-rank.json'
-
-
-def token():
-    for line in open(ENV):
-        if line.startswith('PRINTFUL_API_TOKEN='):
-            return line.split('=', 1)[1].strip()
-    raise SystemExit('PRINTFUL_API_TOKEN missing in profile .env')
-
-
-TOKEN = token()
+OUT = ROOT / 'product-rank.json'
 
 
 def pf(path, retries=3):
     for a in range(retries):
         req = urllib.request.Request(f'https://api.printful.com{path}')
-        req.add_header('Authorization', f'Bearer {TOKEN}')
+        req.add_header('Authorization', f'Bearer {printful_token()}')
         req.add_header('X-PF-Store-Id', STORE)
         req.add_header('User-Agent', UA)
         try:
