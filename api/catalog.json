@@ -1,7 +1,7 @@
 {
   "currency": "USD",
   "printful_store_id": "18687336",
-  "notes": "Live storefront SKUs only. Ignored Printful drafts stay ignored. Fall SKUs are not listed. sync_variant_id is filled by scripts/printful-pull-variants.js on a machine that has PRINTFUL_API_TOKEN — never commit the token.",
+  "notes": "Live storefront SKUs only. Ignored Printful drafts stay ignored. Fall SKUs are not listed. sync_variant_id is filled by scripts/printful-pull-variants.js on a machine that has PRINTFUL_API_TOKEN \u2014 never commit the token.",
   "products": {
     "ya-aini": {
       "external_id": "habibi-mug-ya-aini",
@@ -9,9 +9,12 @@
       "printful_product_id": 462528261,
       "type": "mug",
       "name": "Ya Aini",
-      "price": 1800,
+      "price": 1499,
       "default_variant": "default",
-      "attributes": { "capacity": "11 oz", "finish": "white glossy" },
+      "attributes": {
+        "capacity": "11 oz",
+        "finish": "white glossy"
+      },
       "variants": {
         "default": {
           "external_variant_id": "habibi-mug-ya-aini",
@@ -26,9 +29,12 @@
       "printful_product_id": 462528274,
       "type": "mug",
       "name": "Baladi",
-      "price": 1800,
+      "price": 1499,
       "default_variant": "default",
-      "attributes": { "capacity": "11 oz", "finish": "white glossy" },
+      "attributes": {
+        "capacity": "11 oz",
+        "finish": "white glossy"
+      },
       "variants": {
         "default": {
           "external_variant_id": "habibi-mug-baladi",
@@ -43,9 +49,12 @@
       "printful_product_id": 462528282,
       "type": "mug",
       "name": "Ya Dunia",
-      "price": 1800,
+      "price": 1499,
       "default_variant": "default",
-      "attributes": { "capacity": "11 oz", "finish": "white glossy" },
+      "attributes": {
+        "capacity": "11 oz",
+        "finish": "white glossy"
+      },
       "variants": {
         "default": {
           "external_variant_id": "habibi-mug-ya-dunia",
@@ -60,9 +69,12 @@
       "printful_product_id": 462528284,
       "type": "mug",
       "name": "Jiran",
-      "price": 1800,
+      "price": 1499,
       "default_variant": "default",
-      "attributes": { "capacity": "11 oz", "finish": "white glossy" },
+      "attributes": {
+        "capacity": "11 oz",
+        "finish": "white glossy"
+      },
       "variants": {
         "default": {
           "external_variant_id": "habibi-mug-jiran",
@@ -77,9 +89,12 @@
       "printful_product_id": 462532463,
       "type": "mug",
       "name": "Maamoul",
-      "price": 1800,
+      "price": 1499,
       "default_variant": "default",
-      "attributes": { "capacity": "11 oz", "finish": "white glossy" },
+      "attributes": {
+        "capacity": "11 oz",
+        "finish": "white glossy"
+      },
       "variants": {
         "default": {
           "external_variant_id": "habibi-mug-maamoul",
@@ -94,9 +109,12 @@
       "printful_product_id": 462540373,
       "type": "mug",
       "name": "Knafeh Club",
-      "price": 1800,
+      "price": 1499,
       "default_variant": "default",
-      "attributes": { "capacity": "11 oz", "finish": "white glossy" },
+      "attributes": {
+        "capacity": "11 oz",
+        "finish": "white glossy"
+      },
       "variants": {
         "default": {
           "external_variant_id": "habibi-mug-knafeh-club",
@@ -112,14 +130,34 @@
       "catalog_product_id": 71,
       "type": "tee",
       "name": "Khalas Habibi",
-      "price": 3200,
+      "price": 2499,
       "default_variant": "M",
-      "attributes": { "fit": "unisex", "color": "Natural", "sizes": "S-XL" },
+      "attributes": {
+        "fit": "unisex",
+        "color": "Natural",
+        "sizes": "S-XL"
+      },
       "variants": {
-        "S": { "external_variant_id": "habibi-tee-khalas-habibi-s", "catalog_variant_id": 14682, "sync_variant_id": null },
-        "M": { "external_variant_id": "habibi-tee-khalas-habibi-m", "catalog_variant_id": 14683, "sync_variant_id": null },
-        "L": { "external_variant_id": "habibi-tee-khalas-habibi-l", "catalog_variant_id": 14684, "sync_variant_id": null },
-        "XL": { "external_variant_id": "habibi-tee-khalas-habibi-xl", "catalog_variant_id": 14685, "sync_variant_id": null }
+        "S": {
+          "external_variant_id": "habibi-tee-khalas-habibi-s",
+          "catalog_variant_id": 14682,
+          "sync_variant_id": null
+        },
+        "M": {
+          "external_variant_id": "habibi-tee-khalas-habibi-m",
+          "catalog_variant_id": 14683,
+          "sync_variant_id": null
+        },
+        "L": {
+          "external_variant_id": "habibi-tee-khalas-habibi-l",
+          "catalog_variant_id": 14684,
+          "sync_variant_id": null
+        },
+        "XL": {
+          "external_variant_id": "habibi-tee-khalas-habibi-xl",
+          "catalog_variant_id": 14685,
+          "sync_variant_id": null
+        }
       }
     },
     "ya-habayeb": {
@@ -129,47 +167,121 @@
       "catalog_product_id": 71,
       "type": "tee",
       "name": "Ya Habayeb",
-      "price": 3200,
+      "price": 2499,
       "default_variant": "M",
-      "attributes": { "fit": "unisex", "color": "Natural", "sizes": "S-XL" },
+      "attributes": {
+        "fit": "unisex",
+        "color": "Natural",
+        "sizes": "S-XL"
+      },
       "variants": {
-        "S": { "external_variant_id": "habibi-tee-ya-habayeb-s", "catalog_variant_id": 14682, "sync_variant_id": null },
-        "M": { "external_variant_id": "habibi-tee-ya-habayeb-m", "catalog_variant_id": 14683, "sync_variant_id": null },
-        "L": { "external_variant_id": "habibi-tee-ya-habayeb-l", "catalog_variant_id": 14684, "sync_variant_id": null },
-        "XL": { "external_variant_id": "habibi-tee-ya-habayeb-xl", "catalog_variant_id": 14685, "sync_variant_id": null }
-      }
-    },
-    "halawa": {
-      "external_id": "habibi-tote-halawa",
-      "sync_product_id": 462532459,
-      "printful_product_id": 462532459,
-      "type": "tote",
-      "name": "Halawa",
-      "price": 3400,
-      "default_variant": "default",
-      "attributes": { "material": "cotton", "size": "one size" },
-      "variants": {
-        "default": {
-          "external_variant_id": "habibi-tote-halawa",
-          "catalog_variant_id": 16289,
+        "S": {
+          "external_variant_id": "habibi-tee-ya-habayeb-s",
+          "catalog_variant_id": 14682,
+          "sync_variant_id": null
+        },
+        "M": {
+          "external_variant_id": "habibi-tee-ya-habayeb-m",
+          "catalog_variant_id": 14683,
+          "sync_variant_id": null
+        },
+        "L": {
+          "external_variant_id": "habibi-tee-ya-habayeb-l",
+          "catalog_variant_id": 14684,
+          "sync_variant_id": null
+        },
+        "XL": {
+          "external_variant_id": "habibi-tee-ya-habayeb-xl",
+          "catalog_variant_id": 14685,
           "sync_variant_id": null
         }
       }
     },
-    "sit-el-kul": {
-      "external_id": "habibi-tote-sit-el-kul",
-      "sync_product_id": 462540360,
-      "printful_product_id": 462540360,
+    "halawa": {
+      "external_id": "habibi-tote-halawa-us",
+      "sync_product_id": 476520396,
+      "printful_product_id": 476520396,
+      "catalog_product_id": 367,
       "type": "tote",
-      "name": "Sit El Kul",
-      "price": 3400,
+      "name": "Halawa",
+      "price": 3199,
       "default_variant": "default",
-      "attributes": { "material": "cotton", "size": "one size" },
+      "attributes": {
+        "material": "organic cotton",
+        "color": "Oyster",
+        "size": "one size"
+      },
       "variants": {
         "default": {
-          "external_variant_id": "habibi-tote-sit-el-kul",
-          "catalog_variant_id": 16289,
-          "sync_variant_id": null
+          "external_variant_id": "habibi-tote-halawa-us-oyster",
+          "catalog_variant_id": 10458,
+          "sync_variant_id": 5526428371
+        }
+      }
+    },
+    "sit-el-kul": {
+      "external_id": "habibi-tote-sit-el-kul-us",
+      "sync_product_id": 476520375,
+      "printful_product_id": 476520375,
+      "catalog_product_id": 367,
+      "type": "tote",
+      "name": "Sit El Kul",
+      "price": 3199,
+      "default_variant": "default",
+      "attributes": {
+        "material": "organic cotton",
+        "color": "Oyster",
+        "size": "one size"
+      },
+      "variants": {
+        "default": {
+          "external_variant_id": "habibi-tote-sit-el-kul-us-oyster",
+          "catalog_variant_id": 10458,
+          "sync_variant_id": 5526428309
+        }
+      }
+    },
+    "gather-grow": {
+      "external_id": "habibi-tote-gather-grow-us",
+      "sync_product_id": 476520279,
+      "printful_product_id": 476520279,
+      "catalog_product_id": 367,
+      "type": "tote",
+      "name": "Gather & Grow",
+      "price": 3199,
+      "default_variant": "default",
+      "attributes": {
+        "material": "organic cotton",
+        "color": "Oyster",
+        "size": "one size"
+      },
+      "variants": {
+        "default": {
+          "external_variant_id": "habibi-tote-gather-grow-us-oyster",
+          "catalog_variant_id": 10458,
+          "sync_variant_id": 5526427676
+        }
+      }
+    },
+    "early-light": {
+      "external_id": "habibi-tote-early-light-us",
+      "sync_product_id": 476520353,
+      "printful_product_id": 476520353,
+      "catalog_product_id": 367,
+      "type": "tote",
+      "name": "Early Light",
+      "price": 3199,
+      "default_variant": "default",
+      "attributes": {
+        "material": "organic cotton",
+        "color": "Oyster",
+        "size": "one size"
+      },
+      "variants": {
+        "default": {
+          "external_variant_id": "habibi-tote-early-light-us-oyster",
+          "catalog_variant_id": 10458,
+          "sync_variant_id": 5526428256
         }
       }
     },
@@ -180,13 +292,28 @@
       "catalog_product_id": 308,
       "type": "onesie",
       "name": "Ya Teta",
-      "price": 2800,
+      "price": 2799,
       "default_variant": "6-12m",
-      "attributes": { "color": "white", "sizes": "3-6m, 6-12m, 12-18m" },
+      "attributes": {
+        "color": "white",
+        "sizes": "3-6m, 6-12m, 12-18m"
+      },
       "variants": {
-        "3-6m": { "external_variant_id": "habibi-onesie-ya-teta-3-6m", "catalog_variant_id": 9438, "sync_variant_id": null },
-        "6-12m": { "external_variant_id": "habibi-onesie-ya-teta-6-12m", "catalog_variant_id": 9439, "sync_variant_id": null },
-        "12-18m": { "external_variant_id": "habibi-onesie-ya-teta-12-18m", "catalog_variant_id": 9440, "sync_variant_id": null }
+        "3-6m": {
+          "external_variant_id": "habibi-onesie-ya-teta-3-6m",
+          "catalog_variant_id": 9438,
+          "sync_variant_id": null
+        },
+        "6-12m": {
+          "external_variant_id": "habibi-onesie-ya-teta-6-12m",
+          "catalog_variant_id": 9439,
+          "sync_variant_id": null
+        },
+        "12-18m": {
+          "external_variant_id": "habibi-onesie-ya-teta-12-18m",
+          "catalog_variant_id": 9440,
+          "sync_variant_id": null
+        }
       }
     },
     "amoura": {
@@ -196,13 +323,28 @@
       "catalog_product_id": 308,
       "type": "onesie",
       "name": "Amoura",
-      "price": 2800,
+      "price": 2799,
       "default_variant": "6-12m",
-      "attributes": { "color": "white", "sizes": "3-6m, 6-12m, 12-18m" },
+      "attributes": {
+        "color": "white",
+        "sizes": "3-6m, 6-12m, 12-18m"
+      },
       "variants": {
-        "3-6m": { "external_variant_id": "habibi-onesie-amoura-3-6m", "catalog_variant_id": 9438, "sync_variant_id": null },
-        "6-12m": { "external_variant_id": "habibi-onesie-amoura-6-12m", "catalog_variant_id": 9439, "sync_variant_id": null },
-        "12-18m": { "external_variant_id": "habibi-onesie-amoura-12-18m", "catalog_variant_id": 9440, "sync_variant_id": null }
+        "3-6m": {
+          "external_variant_id": "habibi-onesie-amoura-3-6m",
+          "catalog_variant_id": 9438,
+          "sync_variant_id": null
+        },
+        "6-12m": {
+          "external_variant_id": "habibi-onesie-amoura-6-12m",
+          "catalog_variant_id": 9439,
+          "sync_variant_id": null
+        },
+        "12-18m": {
+          "external_variant_id": "habibi-onesie-amoura-12-18m",
+          "catalog_variant_id": 9440,
+          "sync_variant_id": null
+        }
       }
     },
     "beit-el-hobb": {
@@ -211,9 +353,12 @@
       "printful_product_id": 462532462,
       "type": "poster",
       "name": "Beit El Hobb",
-      "price": 2400,
+      "price": 2399,
       "default_variant": "default",
-      "attributes": { "size": "12x16", "paper": "matte" },
+      "attributes": {
+        "size": "12x16",
+        "paper": "matte"
+      },
       "variants": {
         "default": {
           "external_variant_id": "habibi-print-beit-el-hobb",
@@ -228,9 +373,12 @@
       "printful_product_id": 462540368,
       "type": "poster",
       "name": "Dar El Hawa",
-      "price": 2400,
+      "price": 2399,
       "default_variant": "default",
-      "attributes": { "size": "12x16", "paper": "matte" },
+      "attributes": {
+        "size": "12x16",
+        "paper": "matte"
+      },
       "variants": {
         "default": {
           "external_variant_id": "habibi-print-dar-el-hawa",

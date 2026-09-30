@@ -27,10 +27,11 @@
 <link rel="icon" type="image/png" href="/assets/logo.png">
 <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
 <meta name="referrer" content="strict-origin-when-cross-origin">
-<link rel="stylesheet" href="styles.css?v=16">
+<link rel="stylesheet" href="styles.css?v=18">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"Checkout — Habibi Crafts Co","url":"https://habibicraftsco.com/checkout.html","description":"Checkout isn’t open yet. Nothing is charged."}</script>
 <script src="public-config.js?v=11"></script>
 <script defer src="analytics.js?v=10"></script>
+<script type="module" src="bag.js?v=15"></script>
 <script defer src="checkout.js?v=12"></script>
 <script defer src="app.js?v=12"></script>
 </head>
@@ -40,7 +41,7 @@
   <nav class="nav" aria-label="Primary navigation">
     <a class="brand" href="index.html"><img src="assets/logo-nav-white.png" alt="Habibi Crafts Co" width="213" height="93"></a>
     <div class="nav-end">
-      <a class="nav-bag" href="cart.html" aria-label="Bag — checkout isn’t open"><svg class="nav-bag-icon" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"><path d="M6.4 8h11.2l1.1 12.2A1.2 1.2 0 0 1 17.5 21.5H6.5a1.2 1.2 0 0 1-1.2-1.3L6.4 8z"/><path d="M9 8V6.8A3 3 0 0 1 15 6.8V8"/></svg><span class="nav-bag-label">Bag</span><span class="nav-bag-badge" hidden>0</span></a>
+      <a class="nav-bag" href="cart.html" aria-label="Bag — checkout isn’t open"><span class="nav-bag-mark"><svg class="nav-bag-icon" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"><path d="M6.4 8h11.2l1.1 12.2A1.2 1.2 0 0 1 17.5 21.5H6.5a1.2 1.2 0 0 1-1.2-1.3L6.4 8z"/><path d="M9 8V6.8A3 3 0 0 1 15 6.8V8"/></svg><span class="nav-bag-badge" hidden>0</span></span><span class="nav-bag-label">Bag</span></a>
       <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-menu" aria-label="Open menu"><span></span></button>
     </div>
     <div class="nav-links" id="primary-menu">

@@ -56,7 +56,7 @@ button{background:none;border:0;padding:0;font:inherit;color:inherit;cursor:poin
 .brand{display:flex;align-items:center;line-height:0}
 .brand img{width:118px;height:auto}
 .nav-links{display:flex;align-items:center;gap:28px;margin-left:auto}
-.nav-end{display:flex;align-items:center;gap:2px;flex-shrink:0}
+.nav-end{display:flex;align-items:center;gap:8px;flex-shrink:0}
 .nav-mobile-only{display:none}
 .nav-bag{
   display:inline-flex;align-items:center;gap:7px;
@@ -64,9 +64,10 @@ button{background:none;border:0;padding:0;font:inherit;color:inherit;cursor:poin
   position:relative;font-size:13px;font-weight:550;
 }
 .nav-bag:hover,.nav-bag[aria-current=page]{color:#fff}
+.nav-bag-mark{position:relative;display:inline-flex;flex:none}
 .nav-bag-icon{display:block;flex-shrink:0}
 .nav-bag-badge{
-  position:absolute;top:3px;right:2px;
+  position:absolute;top:-5px;right:-4px;
   min-width:16px;height:16px;padding:0 4px;
   border-radius:999px;background:var(--mustard);color:var(--charcoal);
   font-size:10px;font-weight:700;line-height:16px;text-align:center;
@@ -102,16 +103,17 @@ button{background:none;border:0;padding:0;font:inherit;color:inherit;cursor:poin
 }
 .nav-shop-label:first-child{margin-top:0}
 .menu-toggle{
-  display:none;width:44px;height:44px;color:#fff;position:relative;
+  display:none;width:44px;height:44px;color:#fff;position:relative;flex:none;
 }
 .menu-toggle span,.menu-toggle::before,.menu-toggle::after{
-  content:"";position:absolute;width:18px;height:1.5px;background:currentColor;border-radius:2px;
+  content:"";position:absolute;left:50%;top:50%;width:18px;height:1.5px;margin-left:-9px;
+  background:currentColor;border-radius:2px;transform:translateY(-50%);
 }
-.menu-toggle::before{transform:translateY(-5px)}
-.menu-toggle::after{transform:translateY(5px)}
+.menu-toggle::before{transform:translateY(calc(-50% - 6px))}
+.menu-toggle::after{transform:translateY(calc(-50% + 6px))}
 .menu-toggle[aria-expanded=true] span{opacity:0}
-.menu-toggle[aria-expanded=true]::before{transform:rotate(45deg)}
-.menu-toggle[aria-expanded=true]::after{transform:rotate(-45deg)}
+.menu-toggle[aria-expanded=true]::before{transform:translateY(-50%) rotate(45deg)}
+.menu-toggle[aria-expanded=true]::after{transform:translateY(-50%) rotate(-45deg)}
 
 .trust-strip{border-bottom:1px solid var(--line)}
 .trust-chips{
@@ -489,25 +491,43 @@ button{background:none;border:0;padding:0;font:inherit;color:inherit;cursor:poin
 .hold-panel p{font-size:15.5px;line-height:1.65;color:var(--muted);margin:0 0 14px}
 .hold-panel p:last-child{margin-bottom:0}
 .hold-panel .actions{margin-top:8px}
+.bag-line{display:flex;gap:14px;align-items:center;padding:16px 0;border-bottom:1px solid var(--line)}
+.bag-line img{width:72px;height:72px;object-fit:cover;border-radius:8px;background:var(--sand);flex:none}
+.bag-line-copy{flex:1;min-width:0}
+.bag-line-copy h2{font-size:18px;font-family:var(--serif);font-weight:600}
+.bag-line-copy p{color:var(--muted);font-size:14px;margin-top:2px}
+.bag-line-total{font-size:15px;white-space:nowrap;text-align:right}
+.bag-qty{display:flex;align-items:center;gap:8px;margin-top:8px}
+.bag-qty-btn{width:44px;height:44px;border:1px solid var(--line);border-radius:8px;background:var(--paper)}
+.bag-qty-btn:disabled{opacity:.4}
+.bag-remove{border:0;background:none;color:var(--muted);font-size:13px;text-decoration:underline;padding:8px 4px}
+.bag-summary{margin-top:18px}
+.bag-subtotal{font-size:20px;text-align:right}
+.bag-ship-cost{margin-top:4px;font-size:15px;text-align:right}
+.bag-ship{margin:8px 0 14px}
+.bag-ship p{font-size:14px;color:var(--charcoal)}
+.bag-ship.is-free p{color:var(--maroon)}
+.bag-ship-track{height:3px;margin-top:8px;border-radius:2px;background:rgba(125,46,33,.16);overflow:hidden}
+.bag-ship-track span{display:block;height:100%;width:0;background:#7d2e21;border-radius:2px}
+.bag-keep{display:inline-block;margin-top:14px;font-size:14px;color:var(--maroon);text-decoration:underline}
+.added-note{flex-basis:100%;margin:0;font-size:14px;line-height:1.4}
+.added-note a{color:var(--maroon);text-decoration:underline}
+.bag [data-add-bag],.actions [data-add-bag]{margin-bottom:8px}
 .hold-kicker{
   font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
   color:var(--maroon);margin-bottom:10px;
 }
-.sample-order{
+.order-summary{
   margin:18px 0 8px;padding:16px 0 0;border-top:1px solid var(--line);
 }
-.sample-order h2{
+.order-summary h2{
   font-family:var(--sans);font-size:11px;font-weight:700;letter-spacing:.1em;
   text-transform:uppercase;color:var(--maroon);margin:0 0 12px;
 }
-.sample-order dl{display:grid;gap:8px;margin:0}
-.sample-order div{display:flex;justify-content:space-between;gap:16px;font-size:14px}
-.sample-order dt{color:var(--muted)}
-.sample-order dd{margin:0;font-weight:500;text-align:right}
-.sample-banner{
-  margin:0 0 16px;padding:10px 12px;border-radius:10px;
-  background:var(--sand);color:var(--charcoal);font-size:13.5px;line-height:1.45;
-}
+.order-summary dl{display:grid;gap:8px;margin:0}
+.order-summary div{display:flex;justify-content:space-between;gap:16px;font-size:14px}
+.order-summary dt{color:var(--muted)}
+.order-summary dd{margin:0;font-weight:500;text-align:right}
 
 .legal-shell,.faq-list,.editorial{max-width:38rem}
 .legal-shell{padding:28px 0 56px;margin-inline:auto;width:min(38rem,calc(100% - 48px))}
@@ -634,6 +654,7 @@ html.js-reveal .reveal.visible{opacity:1;transform:none}
 .spin-stage{
   position:absolute;inset:0 0 56px;display:grid;place-items:center;
 }
+.spin:not(.has-frames) .spin-stage{inset:0}
 /* The artwork is never rotated, scaled or skewed: any 3D transform on a flat
    product still shears the print. Frames change, the image does not.
    The second image is the crossfade overlay: as `pos` moves between frame 2
