@@ -5,6 +5,8 @@ node_modules
 .env
 .env.*
 !.env.example
+pf-angles/
+shots/
 api/catalog.variants.generated.json
 *.log
 .DS_Store

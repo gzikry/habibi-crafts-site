@@ -27,20 +27,25 @@
 <link rel="icon" type="image/png" href="/assets/logo.png">
 <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
 <meta name="referrer" content="strict-origin-when-cross-origin">
-<link rel="stylesheet" href="styles.css?v=14">
+<link rel="stylesheet" href="styles.css?v=18">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"CollectionPage","name":"Journals — Habibi Crafts Co","url":"https://habibicraftsco.com/journals.html","description":"A notebook from the shop. We'll put it here when the first one is ready."}</script>
-<script src="public-config.js?v=10"></script>
+<script src="public-config.js?v=11"></script>
 <script defer src="analytics.js?v=10"></script>
-<script defer src="checkout.js?v=11"></script>
-<script defer src="app.js?v=11"></script>
+<script type="module" src="bag.js?v=15"></script>
+<script defer src="checkout.js?v=12"></script>
+<script defer src="app.js?v=12"></script>
 </head>
 <body>
 <a class="skip-link" href="#main">Skip to content</a>
 <header class="site-header">
   <nav class="nav" aria-label="Primary navigation">
     <a class="brand" href="index.html"><img src="assets/logo-nav-white.png" alt="Habibi Crafts Co" width="213" height="93"></a>
-    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-menu" aria-label="Open menu"><span></span></button>
+    <div class="nav-end">
+      <a class="nav-bag" href="cart.html" aria-label="Bag — checkout isn’t open"><span class="nav-bag-mark"><svg class="nav-bag-icon" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"><path d="M6.4 8h11.2l1.1 12.2A1.2 1.2 0 0 1 17.5 21.5H6.5a1.2 1.2 0 0 1-1.2-1.3L6.4 8z"/><path d="M9 8V6.8A3 3 0 0 1 15 6.8V8"/></svg><span class="nav-bag-badge" hidden>0</span></span><span class="nav-bag-label">Bag</span></a>
+      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-menu" aria-label="Open menu"><span></span></button>
+    </div>
     <div class="nav-links" id="primary-menu">
+      <a class="nav-mobile-only" href="shop.html">Shop all</a>
       <details class="nav-shop">
         <summary aria-current="page">Shop</summary>
         <div class="nav-shop-menu">
@@ -66,6 +71,8 @@
       </details>
       <a href="about.html">About</a>
       <a href="faq.html">FAQ</a>
+      <a class="nav-mobile-only" href="shipping.html">Shipping</a>
+      <a class="nav-mobile-only" href="contact.html">Contact</a>
     </div>
   </nav>
 </header>
@@ -82,12 +89,12 @@
 <main id="main">
   <section class="catalog-head"><div class="shell">
     <h1>Journals</h1>
-    <p class="lede">Coming next. Nothing listed yet.</p>
+    <p class="lede">Coming next. Nothing listed yet. Check back.</p>
     <nav class="filter-bar" aria-label="Shop by collection"><a class="filter-button" href="shop.html">All</a><a class="filter-button" href="mugs.html">Mugs</a><a class="filter-button" href="tees.html">Tees</a><a class="filter-button" href="totes.html">Totes</a><a class="filter-button" href="onesies.html">Onesies</a><a class="filter-button" href="prints.html">Prints</a><a class="filter-button" href="stickers.html">Stickers</a><a class="filter-button" href="hats.html">Hats</a></nav><nav class="filter-bar filter-soon" aria-label="Coming next"><a class="filter-button soon" href="sweatshirts.html">Sweatshirts</a><a class="filter-button soon" href="long-sleeves.html">Long sleeves</a><a class="filter-button soon" href="beanies.html">Beanies</a><a class="filter-button soon" href="hoodies.html">Hoodies</a><a class="filter-button soon" href="youth-tees.html">Youth tees</a><a class="filter-button soon" href="coasters.html">Coasters</a><a class="filter-button soon" href="journals.html" aria-current="page">Journals</a><a class="filter-button soon" href="aprons.html">Aprons</a></nav>
   </div></section>
   <section class="section tight"><div class="shell"><div class="coming-copy">
     <p>A notebook from the shop. We'll put it here when the first one is ready.</p>
-    <p>We're a husband-and-wife craft shop. What's in the shop now is the first batch — mugs, tees, totes, onesies, prints, stickers, and dad hats. We'll add journals here when we have a real piece to show, not a placeholder.</p>
+    <p>We're a husband-and-wife craft shop. The shop has mugs, tees, totes, onesies, prints, stickers, and dad hats. Journals are coming soon.</p>
     <p>Checkout isn't open. Nothing on this page is for sale.</p>
     <div class="actions">
       <a class="button" href="shop.html">See what's listed</a>
@@ -99,8 +106,8 @@
 <footer class="site-footer">
   <div class="footer-grid">
     <div>
-      <div class="footer-brand">Habibi Crafts Co</div>
-      <p class="footer-copy">A husband-and-wife craft shop in California.</p>
+      <a class="footer-brand" href="index.html"><img src="assets/logo-nav-white.png" alt="Habibi Crafts Co" width="213" height="93"></a>
+      <p class="footer-copy">Our small business. All kinds of crafts.</p>
     </div>
     <div>
       <div class="footer-title">Shop</div>

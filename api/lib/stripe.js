@@ -48,7 +48,19 @@ export async function verifyStripeSignature(rawBody, header, secret, nowSeconds 
   return { ok: true, timestamp };
 }
 
-export function encodeStripeCheckoutBody({ lineItems, successUrl, cancelUrl, customerEmail, metadata, idempotencyKey }) {
+export const FREE_US_SHIPPING_AT_CENTS = 3900;
+export const STANDARD_US_SHIPPING_CENTS = 699;
+
+export function shippingRateForSubtotal(subtotalCents) {
+  const free = subtotalCents >= FREE_US_SHIPPING_AT_CENTS;
+  return {
+    amount: free ? 0 : STANDARD_US_SHIPPING_CENTS,
+    currency: 'usd',
+    displayName: free ? 'Free US shipping' : 'Standard US shipping'
+  };
+}
+
+export function encodeStripeCheckoutBody({ lineItems, successUrl, cancelUrl, customerEmail, metadata, idempotencyKey, shipping }) {
   const params = new URLSearchParams();
   params.set('mode', 'payment');
   params.set('success_url', successUrl);
@@ -69,6 +81,18 @@ export function encodeStripeCheckoutBody({ lineItems, successUrl, cancelUrl, cus
 
   for (const [key, value] of Object.entries(metadata || {})) {
     if (value != null) params.set(`metadata[${key}]`, String(value));
+  }
+
+  if (shipping) {
+    const prefix = 'shipping_options[0][shipping_rate_data]';
+    params.set(`${prefix}[type]`, 'fixed_amount');
+    params.set(`${prefix}[fixed_amount][amount]`, String(shipping.amount));
+    params.set(`${prefix}[fixed_amount][currency]`, shipping.currency || 'usd');
+    params.set(`${prefix}[display_name]`, shipping.displayName);
+    params.set(`${prefix}[delivery_estimate][minimum][unit]`, 'business_day');
+    params.set(`${prefix}[delivery_estimate][minimum][value]`, '4');
+    params.set(`${prefix}[delivery_estimate][maximum][unit]`, 'business_day');
+    params.set(`${prefix}[delivery_estimate][maximum][value]`, '6');
   }
   return params;
 }

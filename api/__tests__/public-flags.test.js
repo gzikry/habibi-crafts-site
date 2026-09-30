@@ -14,6 +14,7 @@ describe('public flags stay off and invent no secrets', () => {
   it('public-config defaults checkout and ads off with an empty publisher id', () => {
     const source = read('site/public-config.js');
     assert.match(source, /CHECKOUT_ENABLED:\s*false/);
+    assert.match(source, /HABIBI_CHECKOUT_ENABLED\s*=\s*false/);
     assert.match(source, /ADSENSE_ENABLED:\s*false/);
     assert.match(source, /ADSENSE_PUBLISHER_ID:\s*''/);
     assert.doesNotMatch(source, /ca-pub-\d/);

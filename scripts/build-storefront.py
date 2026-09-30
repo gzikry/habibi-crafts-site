@@ -10,7 +10,7 @@ from __future__ import annotations
 # viewer from every product page and the homepage. The active pipeline is the
 # one that owns product-catalog.json:
 #
-#   cd ../../workspace && ./add-products.sh
+#   pipeline/add-products.sh
 #
 # If you are here to change generated HTML, change that pipeline instead, or
 # delete this guard deliberately once the two builders are reconciled.
@@ -20,7 +20,7 @@ if "--force" not in _sys.argv:
     _sys.exit(
         "refusing to run: this builder strips the angle viewer and overwrites "
         "the hand-written pages.\n"
-        "Use the catalog pipeline (workspace/add-products.sh) instead."
+        "Use the catalog pipeline (pipeline/add-products.sh) instead."
     )
 # Even with --force, never clobber the hand-maintained prose pages: this
 # builder rewrites them without the reviewed copy.
@@ -49,13 +49,20 @@ catalog = json.loads(
 PRODUCTS = catalog["products"]
 BY_SLUG = {p["slug"]: p for p in PRODUCTS}
 
+def label_for(category: str) -> str:
+    labels = sorted({p["priceLabel"] for p in PRODUCTS if p["category"] == category})
+    if len(labels) != 1:
+        raise SystemExit(f"{category} prices diverged: {labels}")
+    return labels[0]
+
+
 # (category key, heading, price, spec line, collection filename)
 GROUPS = [
-    ("mugs", "Mugs", "$18", "11 oz white glossy.", "mugs.html"),
-    ("tees", "Tees", "$32", "Unisex, S through XL.", "tees.html"),
-    ("totes", "Totes", "$34", "Cotton. One size.", "totes.html"),
-    ("baby", "Onesies", "$28", "White. 3–6m, 6–12m, 12–18m.", "onesies.html"),
-    ("prints", "Prints", "$24", "12 × 16 matte. Frame not included.", "prints.html"),
+    ("mugs", "Mugs", label_for("mugs"), "11 oz white glossy.", "mugs.html"),
+    ("tees", "Tees", label_for("tees"), "Unisex, S through XL.", "tees.html"),
+    ("totes", "Totes", label_for("totes"), "Cotton. One size.", "totes.html"),
+    ("baby", "Onesies", label_for("baby"), "White. 3–6m, 6–12m, 12–18m.", "onesies.html"),
+    ("prints", "Prints", label_for("prints"), "12 × 16 matte. Frame not included.", "prints.html"),
 ]
 
 # Live featured pieces only. Intentional mix: mug, tee, tote, print.
@@ -158,12 +165,13 @@ def nav(current: str, prefix: str = "") -> str:
 
 
 def footer(prefix: str = "") -> str:
+    # LOCKED George 2026-09-02 — do not rewrite without YES.
     kind_links = "\n        ".join(f'<a href="{prefix}{page}">{title}</a>' for _, title, _, _, page in GROUPS)
     return f"""<footer class="site-footer">
   <div class="footer-grid">
     <div>
-      <div class="footer-brand">Habibi Crafts Co</div>
-      <p class="footer-copy">A husband-and-wife shop.</p>
+      <a class="footer-brand" href="{prefix}index.html"><img src="{prefix}assets/logo-nav-white.png" alt="Habibi Crafts Co" width="213" height="93"></a>
+      <p class="footer-copy">Our small business. All kinds of crafts.</p>
     </div>
     <div>
       <div class="footer-title">Shop</div>
@@ -336,20 +344,22 @@ home_ld = {
     ],
 }
 
+# LOCKED George 2026-09-02 — do not rewrite without YES.
 write(
     "index.html",
     wrap(
         page_head(
             "Habibi Crafts Co",
-            "A husband-and-wife shop. Mugs, tees, totes, onesies, and prints.",
+            "Our small business. We make all kinds of crafts. Printed after you order.",
             "https://habibicraftsco.com/",
             extra_ld=[home_ld],
         ),
         "home",
         f"""  <section class="shop-intro">
     <div class="shell">
-      <h1>Habibi Crafts Co</h1>
-      <p class="lede">We’re a husband-and-wife shop.</p>
+      <div class="eyebrow">Habibi Crafts Co · California</div>
+      <h1>Our small business</h1>
+      <p class="lede">We make all kinds of crafts. Gifts for weddings, bachelor and bachelorette parties, and whoever you’re shopping for.</p>
     </div>
   </section>
   <section class="section tight" id="shop-by-collection" aria-labelledby="shop-by-collection-heading">
@@ -371,7 +381,7 @@ write(
     </div>
   </section>
   <section class="section tight" id="shop-note"><div class="shell shop-note reveal">
-    <p>Once we open, pieces print after you order. We’ll keep adding.</p>
+    <p>This is our small business. We design the pieces. They’re printed after you order.</p>
     <a class="text-link" href="about.html">About</a>
   </div></section>""",
     ),
@@ -538,12 +548,14 @@ for p in PRODUCTS:
     )
 
 # --- about ---
+# LOCKED George 2026-09-02 — do not rewrite without YES.
+# Hand-written site/about.html is also in _PROS so this builder cannot wipe it.
 write(
     "about.html",
     wrap(
         page_head(
             "About | Habibi Crafts Co",
-            "A husband-and-wife shop in California. We design mugs, tees, totes, onesies, and prints.",
+            "Our small business. We make all kinds of crafts. Printed after you order.",
             "https://habibicraftsco.com/about.html",
             extra_ld=[
                 {
@@ -557,14 +569,17 @@ write(
             ],
         ),
         "about",
-        """  <section class="policy-head"><div class="shell">
+        """  <!-- LOCKED George 2026-09-02 — do not rewrite without YES. -->
+  <section class="policy-head"><div class="shell">
     <h1>About</h1>
-    <p class="lede">A husband-and-wife shop in California.</p>
+    <p class="lede">Our small business.</p>
   </div></section>
   <article class="editorial shell">
-    <p>We're a husband and wife, and this is our shop. We design mugs, tees, totes, onesies, prints, and whatever else we take on next.</p>
-    <p>What's here now is a first batch. We'll keep adding.</p>
-    <p>Thanks for stopping by.</p>
+    <p>We’re a husband and wife. This is our small business.</p>
+    <p>We make all kinds of crafts — gifts for weddings, bachelor and bachelorette parties, and everyday.</p>
+    <p>What’s in the shop now is just the start. More as we add it.</p>
+    <p>We design the pieces. They’re printed after you order.</p>
+    <p>Thanks for supporting our small business.</p>
   </article>""",
     ),
 )
@@ -580,8 +595,8 @@ faqs = [
     ("What about the onesies?", "White. 3–6 months, 6–12 months, and 12–18 months."),
     ("What about the totes?", "Cotton. One size."),
     ("Are the prints framed?", "No. 12 × 16 inches, matte paper. Frame not included."),
-    ("How much are they?", "Mugs $18. Tees $32. Totes $34. Onesies $28. Prints $24."),
-    ("How does shipping work?", "We’re not taking orders yet. When we open, pieces print after you order, then they ship. Details will be on the shipping page."),
+    ("How much are they?", f"Mugs {label_for('mugs')}. Tees {label_for('tees')}. Totes {label_for('totes')}. Onesies {label_for('baby')}. Prints {label_for('prints')}."),
+    ("How does shipping work?", "Free US shipping on orders $39 and up. $6.99 flat below that. Checkout isn’t open yet."),
     ("How do I reach you?", "We haven’t posted a public email or phone yet. When we do, it will be on the contact page."),
 ]
 faq_html = "".join(

@@ -9,9 +9,18 @@
     nav.classList.toggle('open',open);
   }
 
+  function revealMobileShop(open){
+    if(!nav||!open) return;
+    if(!window.matchMedia('(max-width:900px)').matches) return;
+    var shop=nav.querySelector('.nav-shop');
+    if(shop) shop.open=true;
+  }
+
   if(toggle&&nav){
     toggle.addEventListener('click',function(){
-      setMenu(toggle.getAttribute('aria-expanded')!=='true');
+      var open=toggle.getAttribute('aria-expanded')!=='true';
+      setMenu(open);
+      revealMobileShop(open);
     });
     nav.addEventListener('click',function(e){
       if(e.target.closest('a')) setMenu(false);
@@ -40,14 +49,6 @@
     updateHeader();
   }
 
-  // Reveal-on-scroll. Content is visible by default in CSS; we only opt into
-  // the hidden state once we know JS can reveal it again, so a broken script
-  // can never leave products invisible.
-  //
-  // A scroll-driven check is used rather than IntersectionObserver: the
-  // observer samples at frame boundaries and skips elements during a fast
-  // fling, leaving cards permanently hidden. A direct rect test is exact and
-  // only runs over the handful of .reveal nodes on the page.
   var reveals = document.querySelectorAll('.reveal');
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -64,7 +65,6 @@
       for (var i = 0; i < pending.length; i++) {
         var el = pending[i];
         var r = el.getBoundingClientRect();
-        // reveal once any part has entered the viewport (or passed above it)
         if (r.top < vh - 30 && r.bottom > -200) {
           el.classList.add('visible');
         } else {
@@ -92,9 +92,6 @@
     setTimeout(sweep, 1800);
   }
 
-  // Grid hover preview: cycle a product card through its other angles while
-  // the pointer is over it, so the shop grid hints at the 360 viewer on the
-  // product page without loading a viewer per card.
   if(window.matchMedia('(hover:hover)').matches && !reduceMotion){
     Array.prototype.forEach.call(document.querySelectorAll('.product-card[data-preview]'),function(card){
       var img=card.querySelector('img.mockup');
@@ -125,4 +122,14 @@
       card.addEventListener('focusout',stop);
     });
   }
+
+  Array.prototype.forEach.call(document.querySelectorAll('[data-size-picker]'),function(picker){
+    picker.addEventListener('click',function(e){
+      var btn=e.target.closest('[data-size]');
+      if(!btn||!picker.contains(btn)) return;
+      Array.prototype.forEach.call(picker.querySelectorAll('[data-size]'),function(option){
+        option.setAttribute('aria-pressed',option===btn?'true':'false');
+      });
+    });
+  });
 })();
