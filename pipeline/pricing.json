@@ -1,0 +1,68 @@
+{
+  "locked_at": "2026-08-31",
+  "currency": "USD",
+  "status": "working prices — drafts only, not on site, not published",
+  "shipping": {
+    "model": "charge Printful US first-item shipping at checkout",
+    "free_us_shipping": false,
+    "notes": "Mugs and posters usually ship in a separate box from apparel/totes. Free US shipping is promo-only or $75+ cart later — not launch."
+  },
+  "rules": {
+    "same_phrase_same_price": true,
+    "tee_2xl_plus": "+3.00 when those sizes are added",
+    "mug_15oz": "22.00 if added"
+  },
+  "by_type": {
+    "mug_11oz": {
+      "retail": "18.00",
+      "printful_base": "6.07",
+      "us_first_item_ship": "6.69",
+      "catalog_product_id": 19,
+      "variant_ids": [1320]
+    },
+    "tee_s_xl": {
+      "retail": "32.00",
+      "printful_base": "11.92",
+      "us_first_item_ship": "4.95",
+      "catalog_product_id": 71,
+      "variant_ids": [14682, 14683, 14684, 14685]
+    },
+    "tote": {
+      "retail": "34.00",
+      "printful_base": "17.50",
+      "us_first_item_ship": "4.69",
+      "catalog_product_id": 641,
+      "variant_ids": [16289]
+    },
+    "onesie": {
+      "retail": "28.00",
+      "printful_base": "13.79",
+      "us_first_item_ship": "4.95",
+      "catalog_product_id": 308,
+      "variant_ids": [9438, 9439, 9440]
+    },
+    "poster_12x16": {
+      "retail": "24.00",
+      "printful_base": "11.11",
+      "us_first_item_ship": "5.99",
+      "catalog_product_id": 1,
+      "variant_ids": [1349]
+    }
+  },
+  "products": [
+    {"name": "Ya Aini — White Glossy Mug", "sync_product_id": 462528261, "type": "mug_11oz", "retail": "18.00"},
+    {"name": "Baladi — White Glossy Mug", "sync_product_id": 462528274, "type": "mug_11oz", "retail": "18.00"},
+    {"name": "Ya Dunia — White Glossy Mug", "sync_product_id": 462528282, "type": "mug_11oz", "retail": "18.00"},
+    {"name": "Jiran — White Glossy Mug", "sync_product_id": 462528284, "type": "mug_11oz", "retail": "18.00"},
+    {"name": "Maamoul — White Glossy Mug", "sync_product_id": 462532463, "type": "mug_11oz", "retail": "18.00"},
+    {"name": "Knafeh Club — White Glossy Mug", "sync_product_id": 462540373, "type": "mug_11oz", "retail": "18.00"},
+    {"name": "Khalas Habibi — Unisex Tee", "sync_product_id": 462532457, "type": "tee_s_xl", "retail": "32.00"},
+    {"name": "Ya Habayeb — Unisex Tee", "sync_product_id": 462540352, "type": "tee_s_xl", "retail": "32.00"},
+    {"name": "Halawa — Cotton Tote", "sync_product_id": 462532459, "type": "tote", "retail": "34.00"},
+    {"name": "Sit El Kul — Cotton Tote", "sync_product_id": 462540360, "type": "tote", "retail": "34.00"},
+    {"name": "Ya Teta — Baby Onesie", "sync_product_id": 462532461, "type": "onesie", "retail": "28.00"},
+    {"name": "Amoura — Baby Onesie", "sync_product_id": 462540363, "type": "onesie", "retail": "28.00"},
+    {"name": "Beit El Hobb — Matte Poster", "sync_product_id": 462532462, "type": "poster_12x16", "retail": "24.00"},
+    {"name": "Dar El Hawa — Matte Poster", "sync_product_id": 462540368, "type": "poster_12x16", "retail": "24.00"}
+  ]
+}
