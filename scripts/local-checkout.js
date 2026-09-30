@@ -12,7 +12,7 @@ const checkout = await fetch(`${base}/api/checkout`, {
   method: 'POST',
   headers: { 'content-type': 'application/json' },
   body: JSON.stringify({
-    items: [{ slug: 'ya-aini', quantity: 1, price_cents: 1800 }],
+    items: [{ slug: 'ya-aini', quantity: 1, price_cents: 1499 }],
     contact_email: 'buyer@example.com',
     idempotency_key: 'local-checkout'
   })

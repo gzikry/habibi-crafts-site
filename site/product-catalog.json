@@ -3,202 +3,228 @@
     "slug": "ya-aini",
     "name": "Ya Aini",
     "category": "mugs",
-    "price": 18,
+    "price": 1499,
     "printful_id": 462528261,
-    "subtitle": "11 oz mug."
+    "subtitle": "11 oz mug.",
+    "purchasable": true
   },
   {
     "slug": "baladi",
     "name": "Baladi",
     "category": "mugs",
-    "price": 18,
+    "price": 1499,
     "printful_id": 462528274,
-    "subtitle": "11 oz mug."
+    "subtitle": "11 oz mug.",
+    "purchasable": true
   },
   {
     "slug": "ya-dunia",
     "name": "Ya Dunia",
     "category": "mugs",
-    "price": 18,
+    "price": 1499,
     "printful_id": 462528282,
-    "subtitle": "11 oz mug."
+    "subtitle": "11 oz mug.",
+    "purchasable": true
   },
   {
     "slug": "jiran",
     "name": "Jiran",
     "category": "mugs",
-    "price": 18,
+    "price": 1499,
     "printful_id": 462528284,
-    "subtitle": "11 oz mug."
+    "subtitle": "11 oz mug.",
+    "purchasable": true
   },
   {
     "slug": "maamoul",
     "name": "Maamoul",
     "category": "mugs",
-    "price": 18,
+    "price": 1499,
     "printful_id": 462532463,
-    "subtitle": "11 oz mug."
+    "subtitle": "11 oz mug.",
+    "purchasable": true
   },
   {
     "slug": "knafeh-club",
     "name": "Knafeh Club",
     "category": "mugs",
-    "price": 18,
+    "price": 1499,
     "printful_id": 462540373,
-    "subtitle": "11 oz mug."
+    "subtitle": "11 oz mug.",
+    "purchasable": true
   },
   {
     "slug": "morning-ritual",
     "name": "Morning Ritual",
     "category": "mugs",
-    "price": 18,
+    "price": 1499,
     "printful_id": 471225077,
-    "subtitle": "11 oz mug."
+    "subtitle": "11 oz mug.",
+    "purchasable": false
   },
   {
     "slug": "khalas-habibi",
     "name": "Khalas Habibi",
     "category": "tees",
-    "price": 32,
+    "price": 2499,
     "printful_id": 462532457,
-    "subtitle": "Unisex tee."
+    "subtitle": "Unisex tee.",
+    "purchasable": true
   },
   {
     "slug": "ya-habayeb",
     "name": "Ya Habayeb",
     "category": "tees",
-    "price": 32,
+    "price": 2499,
     "printful_id": 462540352,
-    "subtitle": "Unisex tee."
+    "subtitle": "Unisex tee.",
+    "purchasable": true
   },
   {
     "slug": "warm-embrace",
     "name": "Warm Embrace",
     "category": "tees",
-    "price": 32,
+    "price": 2499,
     "printful_id": 471226873,
-    "subtitle": "Unisex tee."
+    "subtitle": "Unisex tee.",
+    "purchasable": false
   },
   {
     "slug": "halawa",
     "name": "Halawa",
     "category": "totes",
-    "price": 34,
-    "printful_id": 462532459,
-    "subtitle": "Cotton tote."
+    "price": 3199,
+    "printful_id": 476520396,
+    "subtitle": "Cotton tote.",
+    "purchasable": true
   },
   {
     "slug": "sit-el-kul",
     "name": "Sit El Kul",
     "category": "totes",
-    "price": 34,
-    "printful_id": 462540360,
-    "subtitle": "Cotton tote."
+    "price": 3199,
+    "printful_id": 476520375,
+    "subtitle": "Cotton tote.",
+    "purchasable": true
   },
   {
     "slug": "early-light",
     "name": "Early Light",
     "category": "totes",
-    "price": 34,
-    "printful_id": 471225102,
-    "subtitle": "Cotton tote."
+    "price": 3199,
+    "printful_id": 476520353,
+    "subtitle": "Cotton tote.",
+    "purchasable": true
   },
   {
     "slug": "gather-grow",
     "name": "Gather & Grow",
     "category": "totes",
-    "price": 34,
-    "printful_id": 471226874,
-    "subtitle": "Cotton tote."
+    "price": 3199,
+    "printful_id": 476520279,
+    "subtitle": "Cotton tote.",
+    "purchasable": true
   },
   {
     "slug": "ya-teta",
     "name": "Ya Teta",
     "category": "baby",
-    "price": 28,
+    "price": 2799,
     "printful_id": 462532461,
-    "subtitle": "Baby onesie."
+    "subtitle": "Baby onesie.",
+    "purchasable": true
   },
   {
     "slug": "amoura",
     "name": "Amoura",
     "category": "baby",
-    "price": 28,
+    "price": 2799,
     "printful_id": 462540363,
-    "subtitle": "Baby onesie."
+    "subtitle": "Baby onesie.",
+    "purchasable": true
   },
   {
     "slug": "garden-gate",
     "name": "Garden Gate",
     "category": "baby",
-    "price": 28,
+    "price": 2799,
     "printful_id": 471225103,
-    "subtitle": "Baby onesie."
+    "subtitle": "Baby onesie.",
+    "purchasable": false
   },
   {
     "slug": "beit-el-hobb",
     "name": "Beit El Hobb",
     "category": "prints",
-    "price": 24,
+    "price": 2399,
     "printful_id": 462532462,
-    "subtitle": "12 \u00d7 16 print."
+    "subtitle": "12 \u00d7 16 print.",
+    "purchasable": true
   },
   {
     "slug": "dar-el-hawa",
     "name": "Dar El Hawa",
     "category": "prints",
-    "price": 24,
+    "price": 2399,
     "printful_id": 462540368,
-    "subtitle": "12 \u00d7 16 print."
+    "subtitle": "12 \u00d7 16 print.",
+    "purchasable": true
   },
   {
     "slug": "starlight",
     "name": "Starlight",
     "category": "prints",
-    "price": 24,
+    "price": 2399,
     "printful_id": 471225105,
-    "subtitle": "12 \u00d7 16 print."
+    "subtitle": "12 \u00d7 16 print.",
+    "purchasable": false
   },
   {
     "slug": "craft-club-sticker",
     "name": "Craft Club",
     "category": "stickers",
-    "price": 6,
-    "subtitle": "Vinyl sticker."
+    "price": 599,
+    "subtitle": "Vinyl sticker.",
+    "purchasable": false
   },
   {
     "slug": "make-something-sticker",
     "name": "Make Something",
     "category": "stickers",
-    "price": 6,
-    "subtitle": "Vinyl sticker."
+    "price": 599,
+    "subtitle": "Vinyl sticker.",
+    "purchasable": false
   },
   {
     "slug": "leaf-season-sticker",
     "name": "Leaf Season",
     "category": "stickers",
-    "price": 6,
-    "subtitle": "Vinyl sticker."
+    "price": 599,
+    "subtitle": "Vinyl sticker.",
+    "purchasable": false
   },
   {
     "slug": "habibi-crafts-hat",
     "name": "Habibi Crafts",
     "category": "hats",
-    "price": 30,
-    "subtitle": "Unstructured dad hat."
+    "price": 2999,
+    "subtitle": "Unstructured dad hat.",
+    "purchasable": false
   },
   {
     "slug": "make-something-hat",
     "name": "Make Something",
     "category": "hats",
-    "price": 30,
-    "subtitle": "Unstructured dad hat."
+    "price": 2999,
+    "subtitle": "Unstructured dad hat.",
+    "purchasable": false
   },
   {
     "slug": "leaf-season-hat",
     "name": "Leaf Season",
     "category": "hats",
-    "price": 30,
-    "subtitle": "Unstructured dad hat."
+    "price": 2999,
+    "subtitle": "Unstructured dad hat.",
+    "purchasable": false
   }
 ]

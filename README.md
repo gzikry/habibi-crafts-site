@@ -18,7 +18,7 @@ Static storefront for a husband-and-wife shop in California.
 - Shared design system in `site/styles.css`
 - Mobile menu and reduced-motion-aware reveal behavior in `site/app.js`
 - Checkout stays off: `window.HABIBI_CHECKOUT_ENABLED = false` and `HABIBI_PUBLIC_CONFIG.CHECKOUT_ENABLED = false` in `site/public-config.js`
-- Working launch prices shown: mugs $18, tees $32, totes $34, onesies $28, 12 × 16 prints $24
+- Launch prices: mugs $14.99, tees $24.99, totes $31.99, onesies $27.99, prints $23.99, stickers $5.99, dad hats $29.99. Free US shipping on orders $39 and up, $6.99 flat below.
 - Current live products use local mockups on the static storefront; checkout still off
 
 ## SEO foundation
