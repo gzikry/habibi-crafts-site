@@ -1,81 +1,52 @@
 #!/usr/bin/env python3
-"""
-Every versioned asset reference must derive from one constant.
+"""Every script and stylesheet reference must use pipeline.chrome.SCRIPT_V.
 
-Porkbun's CDN caches by full URL, so each asset carries ?v=N and the number has
-to move with the code. That only works if the builders interpolate the
-constant everywhere. A hardcoded ?v=8 in the stylesheet and script tags meant
-the browser kept a cached spin.js and styles.css while the images moved on, so
-a fixed viewer shipped but the old one stayed live.
-
-Run before deploying: python3 check-asset-version.py
+Image URLs may carry their own ?v= because frames were published at different
+times. They still have to be versioned.
 """
-import os, re, sys
+import os
+import re
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+
+from chrome import SCRIPT_V
 from root import repo_root, site_dir
 
 ROOT = repo_root()
 SITE = site_dir()
 PIPE = ROOT / 'pipeline'
-BUILDERS = ('build-products.py', 'build-shop.py', 'build-home.py')
-
-# references that must use the constant
-ASSETS = ('styles.css', 'app.js', 'spin.js', 'checkout.js', 'bag.js', 'analytics.js',
-          'public-config.js')
+BUILDERS = (
+    'build-products.py', 'build-shop.py', 'build-home.py', 'build-sitemap.py',
+    'storefront.py', 'chrome.py',
+)
 
 failures = []
 
-# --- the builders must not contain a literal version -----------------------
-versions = {}
-for g in BUILDERS:
-    s = open(PIPE / g).read()
-    m = re.search(r"^ASSET_V = '(\d+)'", s, re.M)
-    if not m:
-        failures.append(f'{g}: no ASSET_V constant')
+for name in BUILDERS:
+    text = (PIPE / name).read_text()
+    for asset in SCRIPT_V:
+        for hit in re.findall(rf'{re.escape(asset)}\?v=(\d+)', text):
+            failures.append(f'{name}: {asset} has a hardcoded ?v={hit}')
+
+print('SCRIPT_V ' + ', '.join(f'{k}={v}' for k, v in SCRIPT_V.items()))
+
+for filename in sorted(os.listdir(SITE)):
+    if not filename.endswith('.html'):
         continue
-    versions[g] = m.group(1)
-    for asset in ASSETS:
-        for hit in re.findall(rf'{re.escape(asset)}\?v=(\d+)', s):
-            failures.append(f'{g}: {asset} has a hardcoded ?v={hit} '
-                            f'(must be ?v={{ASSET_V}})')
-
-if len(set(versions.values())) > 1:
-    failures.append(f'builders disagree on the version: {versions}')
-
-expected = next(iter(versions.values()), None)
-print(f'ASSET_V = {expected} in {", ".join(versions)}')
-
-# --- the built pages must all agree, at the same version -------------------
-seen = {}
-for f in sorted(os.listdir(SITE)):
-    if not f.endswith('.html'):
-        continue
-    html = open(os.path.join(SITE, f)).read()
-    for asset in ASSETS:
-        for v in re.findall(rf'{re.escape(asset)}\?v=(\d+)', html):
-            seen.setdefault(v, []).append(f'{f}:{asset}')
-
-if len(seen) > 1:
-    for v, where in sorted(seen.items()):
-        if v != expected:
-            sample = ', '.join(sorted(set(where))[:3])
-            failures.append(f'{len(where)} reference(s) at ?v={v}, expected {expected} '
-                            f'(e.g. {sample})')
-
-for v, where in sorted(seen.items()):
-    print(f'  built pages: {len(where):>4} reference(s) at ?v={v}')
-
-# --- image URLs must be versioned too --------------------------------------
-for f in sorted(os.listdir(SITE)):
-    if not f.endswith('.html'):
-        continue
-    html = open(os.path.join(SITE, f)).read()
-    for m in re.finditer(r'(?:src|href)="(assets/(?:mockups|angles)/[^"]+\.png)"', html):
-        failures.append(f'{f}: unversioned image {m.group(1)}')
+    html = (SITE / filename).read_text()
+    for asset, expected in SCRIPT_V.items():
+        for found in re.findall(rf'{re.escape(asset)}\?v=(\d+)', html):
+            if found != expected:
+                failures.append(f'{filename}: {asset}?v={found}, expected {expected}')
+    for match in re.finditer(r'(?:src|href)="(assets/(?:mockups|angles)/[^"]+\.png)"', html):
+        failures.append(f'{filename}: unversioned image {match.group(1)}')
 
 if failures:
     print(f'\n{len(failures)} problem(s):')
-    for x in failures[:15]:
-        print(f'  {x}')
+    for item in failures[:20]:
+        print(f'  {item}')
     sys.exit(1)
 
-print('\nall asset references carry one consistent version')
+print('script and stylesheet versions match, and images are versioned')

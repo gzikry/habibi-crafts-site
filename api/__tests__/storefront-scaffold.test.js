@@ -25,7 +25,7 @@ describe('commerce scaffold stays off and chrome is branded', () => {
     }
     assert.match(read('site/order-confirmation.html'), /noindex/);
     assert.match(read('site/order-confirmation.html'), /Your order details will appear here/);
-    assert.doesNotMatch(read('site/order-confirmation.html'), /sample layout|live order API|Static sample/i);
+    assert.doesNotMatch(read('site/order-confirmation.html'), /sample layout|live order API|Static sample|HC-0000/i);
     assert.match(read('site/tracking.html'), /tracking note will/i);
   });
 

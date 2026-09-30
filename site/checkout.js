@@ -1,6 +1,5 @@
 (function () {
   var cfg = window.HABIBI_PUBLIC_CONFIG || {};
-  // Alias stays false with the public config. Either flag can keep purchase off.
   if (typeof window.HABIBI_CHECKOUT_ENABLED !== 'boolean') {
     window.HABIBI_CHECKOUT_ENABLED = cfg.CHECKOUT_ENABLED === true;
   }

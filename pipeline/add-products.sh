@@ -49,7 +49,7 @@ echo "== 7. verify locally =="
 echo "   start: (cd site && python3 -m http.server 8090)"
 for t in verify-viewer verify-smooth verify-slider verify-label-sync verify-hover verify-viewer-size verify-visible; do
   printf '   %-22s ' "$t"
-  node "pipeline/$t.js" http://127.0.0.1:8090 2>&1 | tail -1
+  node "pipeline/$t.cjs" http://127.0.0.1:8090 2>&1 | tail -1
 done
 
 cat <<'EOF'
@@ -58,7 +58,7 @@ cat <<'EOF'
    - node shoot-newhome.js http://127.0.0.1:8090  then view shots/newhome-*.png
    - confirm the new product's design is fully visible in its grid thumbnail
      and that the viewer opens on a side where the artwork shows
-   - product pages use "Notify me" while checkout is off
+   - product pages stay on "Browsing only" while checkout is off
 
 == 9. deploy ==
    - bump ASSET_V in ALL THREE builders (build-products, build-shop, build-home),
@@ -76,5 +76,5 @@ cat <<'EOF'
    - watch the deploy-porkbun workflow, then:
        node verify-live.js
        node verify-assets.js
-       node verify-smooth.js https://habibicraftsco.com
+       node pipeline/verify-smooth.cjs https://habibicraftsco.com
 EOF

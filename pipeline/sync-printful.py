@@ -12,7 +12,7 @@ from Printful, so a new product flows through on its own:
     python3 fetch-angles.py             # collect its viewing angles
     python3 build-products.py && python3 build-shop.py && python3 build-home.py
     python3 build-sitemap.py
-    node verify-viewer.js http://127.0.0.1:8090   # then deploy
+    node pipeline/verify-viewer.cjs http://127.0.0.1:8090   # then deploy
 
 Derived: slug, name, category, price, printful_id, placement, and the print
 file check. NOT derived: `subtitle` — the one human line under the product

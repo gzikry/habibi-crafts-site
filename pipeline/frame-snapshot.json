@@ -1,0 +1,304 @@
+{
+  "frames": {
+    "amoura": [
+      {
+        "file": "amoura/front-view.png",
+        "label": "front view",
+        "v": "11"
+      },
+      {
+        "file": "amoura/back-view.png",
+        "label": "back view",
+        "v": "10"
+      }
+    ],
+    "baladi": [
+      {
+        "file": "baladi/front-view.png",
+        "label": "Front view",
+        "v": "10"
+      },
+      {
+        "file": "baladi/handle-on-right.png",
+        "label": "Handle on Right",
+        "v": "10"
+      },
+      {
+        "file": "baladi/handle-on-left.png",
+        "label": "Handle on Left",
+        "v": "10"
+      }
+    ],
+    "beit-el-hobb": [],
+    "craft-club-sticker": [],
+    "dar-el-hawa": [],
+    "early-light": [
+      {
+        "file": "early-light/handle-on-right.png",
+        "label": "Handle on Right",
+        "v": "14"
+      }
+    ],
+    "garden-gate": [
+      {
+        "file": "garden-gate/front-view.png",
+        "label": "front view",
+        "v": "10"
+      },
+      {
+        "file": "garden-gate/back-view.png",
+        "label": "back view",
+        "v": "10"
+      }
+    ],
+    "gather-grow": [
+      {
+        "file": "gather-grow/handle-on-right.png",
+        "label": "Handle on Right",
+        "v": "14"
+      }
+    ],
+    "habibi-crafts-hat": [],
+    "halawa": [
+      {
+        "file": "halawa/handle-on-right.png",
+        "label": "Handle on Right",
+        "v": "14"
+      }
+    ],
+    "jiran": [
+      {
+        "file": "jiran/front-view.png",
+        "label": "Front view",
+        "v": "10"
+      },
+      {
+        "file": "jiran/handle-on-right.png",
+        "label": "Handle on Right",
+        "v": "10"
+      },
+      {
+        "file": "jiran/handle-on-left.png",
+        "label": "Handle on Left",
+        "v": "10"
+      }
+    ],
+    "khalas-habibi": [
+      {
+        "file": "khalas-habibi/front.png",
+        "label": "Front",
+        "v": "11"
+      },
+      {
+        "file": "khalas-habibi/right.png",
+        "label": "Right",
+        "v": "10"
+      },
+      {
+        "file": "khalas-habibi/back.png",
+        "label": "Back",
+        "v": "10"
+      },
+      {
+        "file": "khalas-habibi/left.png",
+        "label": "Left",
+        "v": "10"
+      }
+    ],
+    "knafeh-club": [
+      {
+        "file": "knafeh-club/front-view.png",
+        "label": "Front view",
+        "v": "10"
+      },
+      {
+        "file": "knafeh-club/handle-on-right.png",
+        "label": "Handle on Right",
+        "v": "10"
+      },
+      {
+        "file": "knafeh-club/handle-on-left.png",
+        "label": "Handle on Left",
+        "v": "10"
+      }
+    ],
+    "leaf-season-hat": [],
+    "leaf-season-sticker": [],
+    "maamoul": [
+      {
+        "file": "maamoul/front-view.png",
+        "label": "Front view",
+        "v": "10"
+      },
+      {
+        "file": "maamoul/handle-on-right.png",
+        "label": "Handle on Right",
+        "v": "10"
+      },
+      {
+        "file": "maamoul/handle-on-left.png",
+        "label": "Handle on Left",
+        "v": "10"
+      }
+    ],
+    "make-something-hat": [],
+    "make-something-sticker": [],
+    "morning-ritual": [
+      {
+        "file": "morning-ritual/front-view.png",
+        "label": "Front view",
+        "v": "10"
+      },
+      {
+        "file": "morning-ritual/handle-on-right.png",
+        "label": "Handle on Right",
+        "v": "10"
+      },
+      {
+        "file": "morning-ritual/handle-on-left.png",
+        "label": "Handle on Left",
+        "v": "10"
+      }
+    ],
+    "sit-el-kul": [
+      {
+        "file": "sit-el-kul/handle-on-right.png",
+        "label": "Handle on Right",
+        "v": "14"
+      }
+    ],
+    "starlight": [],
+    "warm-embrace": [
+      {
+        "file": "warm-embrace/front.png",
+        "label": "Front",
+        "v": "11"
+      },
+      {
+        "file": "warm-embrace/right.png",
+        "label": "Right",
+        "v": "10"
+      },
+      {
+        "file": "warm-embrace/back.png",
+        "label": "Back",
+        "v": "10"
+      },
+      {
+        "file": "warm-embrace/left.png",
+        "label": "Left",
+        "v": "10"
+      }
+    ],
+    "ya-aini": [
+      {
+        "file": "ya-aini/front-view.png",
+        "label": "Front view",
+        "v": "10"
+      },
+      {
+        "file": "ya-aini/handle-on-right.png",
+        "label": "Handle on Right",
+        "v": "10"
+      },
+      {
+        "file": "ya-aini/handle-on-left.png",
+        "label": "Handle on Left",
+        "v": "10"
+      }
+    ],
+    "ya-dunia": [
+      {
+        "file": "ya-dunia/front-view.png",
+        "label": "Front view",
+        "v": "10"
+      },
+      {
+        "file": "ya-dunia/handle-on-right.png",
+        "label": "Handle on Right",
+        "v": "10"
+      },
+      {
+        "file": "ya-dunia/handle-on-left.png",
+        "label": "Handle on Left",
+        "v": "10"
+      }
+    ],
+    "ya-habayeb": [
+      {
+        "file": "ya-habayeb/front.png",
+        "label": "Front",
+        "v": "11"
+      },
+      {
+        "file": "ya-habayeb/right.png",
+        "label": "Right",
+        "v": "10"
+      },
+      {
+        "file": "ya-habayeb/back.png",
+        "label": "Back",
+        "v": "10"
+      },
+      {
+        "file": "ya-habayeb/left.png",
+        "label": "Left",
+        "v": "10"
+      }
+    ],
+    "ya-teta": [
+      {
+        "file": "ya-teta/front-view.png",
+        "label": "front view",
+        "v": "11"
+      },
+      {
+        "file": "ya-teta/back-view.png",
+        "label": "back view",
+        "v": "10"
+      }
+    ]
+  },
+  "posters": {
+    "beit-el-hobb": {
+      "file": "beit-el-hobb/handle-on-right.png",
+      "v": "10"
+    },
+    "dar-el-hawa": {
+      "file": "dar-el-hawa/handle-on-right.png",
+      "v": "10"
+    },
+    "starlight": {
+      "file": "starlight/handle-on-right.png",
+      "v": "10"
+    }
+  },
+  "mockups": {
+    "amoura": "9",
+    "baladi": "15",
+    "beit-el-hobb": "15",
+    "craft-club-sticker": "14",
+    "dar-el-hawa": "15",
+    "early-light": "14",
+    "garden-gate": "15",
+    "gather-grow": "14",
+    "habibi-crafts-hat": "14",
+    "halawa": "14",
+    "jiran": "15",
+    "khalas-habibi": "9",
+    "knafeh-club": "15",
+    "leaf-season-hat": "14",
+    "leaf-season-sticker": "14",
+    "maamoul": "15",
+    "make-something-hat": "14",
+    "make-something-sticker": "14",
+    "morning-ritual": "15",
+    "sit-el-kul": "14",
+    "starlight": "15",
+    "warm-embrace": "9",
+    "ya-aini": "15",
+    "ya-dunia": "15",
+    "ya-habayeb": "9",
+    "ya-teta": "9"
+  }
+}

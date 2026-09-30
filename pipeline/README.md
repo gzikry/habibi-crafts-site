@@ -23,6 +23,6 @@ Entry point: `add-products.sh` runs, in order:
   the environment, or from the file named by `HABIBI_ENV_FILE`. Do not commit that file.
 - `site/product-catalog.json` stores `price` in cents. Builders print `$24.99` from that number.
 - Catalogue product 367 is a tote. The sync ids in `retired-totes.json` are retired and skipped.
-- Steps 7-9 of `add-products.sh` call local verification scripts (`verify-*.js`,
-  `shoot-newhome.js`) that are not part of this commit.
+- Steps 7-9 of `add-products.sh` call `pipeline/verify-*.cjs`. Those files are CommonJS because the repo `package.json` is `"type": "module"`.
+- `pf-angles/manifest.json` and `product-rank.json` are not in the repo. Without them, the builders use `pipeline/frame-snapshot.json` and catalog order. `python3 pipeline/check-builder-parity.py` fails if a rebuild would change `site/`.
 - Working prices (`pricing.json`) are not included; no builder reads it.
