@@ -14,7 +14,7 @@ prices, copy, or angle frames change — edit the JSON, re-run, done.
 """
 import json, os, re, sys
 from pfangles import order as order_angles
-from root import angles_dir, cents_decimal, format_cents, site_dir
+from root import angles_dir, cents_decimal, format_cents, site_dir, without_retired_back
 
 SITE = site_dir()
 ANGLES = angles_dir()
@@ -46,14 +46,8 @@ def esc(s):
 
 
 
-# US Oyster totes have a front shot only. The old Back frame is the white AU blank.
-FRONT_ONLY = {'halawa', 'sit-el-kul', 'gather-grow', 'early-light'}
-
-
 def frames_for(slug, manifest):
-    angs = manifest.get(slug, {}).get('angles', [])
-    if slug in FRONT_ONLY:
-        angs = [a for a in angs if str(a.get('angle', '')).strip().lower() != 'back']
+    angs = without_retired_back(slug, manifest.get(slug, {}).get('angles', []))
     if not angs:
         return []
     ordered = order_angles(angs)

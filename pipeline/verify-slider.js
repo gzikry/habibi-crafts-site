@@ -15,7 +15,7 @@ const BASE = process.argv[2] || 'http://127.0.0.1:8090';
   const browser = await chromium.launch();
   let fails = 0;
 
-  for (const slug of ['ya-aini', 'khalas-habibi', 'halawa']) {
+  for (const slug of ['ya-aini', 'khalas-habibi', 'baladi']) {
     const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
     await page.goto(`${BASE}/product-${slug}.html`, { waitUntil: 'domcontentloaded' });
     await page.waitForTimeout(1200);

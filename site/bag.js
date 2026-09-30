@@ -193,11 +193,12 @@ function boot() {
           note = document.createElement('p');
           note.className = 'added-note';
           note.setAttribute('data-added-note', '');
+          note.setAttribute('aria-live', 'polite');
           var link = document.createElement('a');
           link.href = 'cart.html';
           link.textContent = 'View bag';
           note.append('Added to your bag. ', link);
-          checkout.insertAdjacentElement('afterend', note);
+          button.insertAdjacentElement('afterend', note);
         }
         clearTimeout(addedTimer);
         addedTimer = setTimeout(function () {

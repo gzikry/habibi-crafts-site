@@ -64,9 +64,10 @@ button{background:none;border:0;padding:0;font:inherit;color:inherit;cursor:poin
   position:relative;font-size:13px;font-weight:550;
 }
 .nav-bag:hover,.nav-bag[aria-current=page]{color:#fff}
+.nav-bag-mark{position:relative;display:inline-flex;flex:none}
 .nav-bag-icon{display:block;flex-shrink:0}
 .nav-bag-badge{
-  position:absolute;top:3px;right:2px;
+  position:absolute;top:-5px;right:-4px;
   min-width:16px;height:16px;padding:0 4px;
   border-radius:999px;background:var(--mustard);color:var(--charcoal);
   font-size:10px;font-weight:700;line-height:16px;text-align:center;
@@ -516,21 +517,17 @@ button{background:none;border:0;padding:0;font:inherit;color:inherit;cursor:poin
   font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
   color:var(--maroon);margin-bottom:10px;
 }
-.sample-order{
+.order-summary{
   margin:18px 0 8px;padding:16px 0 0;border-top:1px solid var(--line);
 }
-.sample-order h2{
+.order-summary h2{
   font-family:var(--sans);font-size:11px;font-weight:700;letter-spacing:.1em;
   text-transform:uppercase;color:var(--maroon);margin:0 0 12px;
 }
-.sample-order dl{display:grid;gap:8px;margin:0}
-.sample-order div{display:flex;justify-content:space-between;gap:16px;font-size:14px}
-.sample-order dt{color:var(--muted)}
-.sample-order dd{margin:0;font-weight:500;text-align:right}
-.sample-banner{
-  margin:0 0 16px;padding:10px 12px;border-radius:10px;
-  background:var(--sand);color:var(--charcoal);font-size:13.5px;line-height:1.45;
-}
+.order-summary dl{display:grid;gap:8px;margin:0}
+.order-summary div{display:flex;justify-content:space-between;gap:16px;font-size:14px}
+.order-summary dt{color:var(--muted)}
+.order-summary dd{margin:0;font-weight:500;text-align:right}
 
 .legal-shell,.faq-list,.editorial{max-width:38rem}
 .legal-shell{padding:28px 0 56px;margin-inline:auto;width:min(38rem,calc(100% - 48px))}

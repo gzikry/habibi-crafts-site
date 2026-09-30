@@ -5,6 +5,15 @@ from pathlib import Path
 
 EXCLUDED_SYNC_IDS = set(json.loads(Path(__file__).with_name('retired-totes.json').read_text()))
 
+# These totes have a front shot only. A Back frame is the old white blank.
+FRONT_ONLY_SLUGS = frozenset({'halawa', 'sit-el-kul', 'gather-grow', 'early-light'})
+
+
+def without_retired_back(slug, angles):
+    if slug not in FRONT_ONLY_SLUGS:
+        return angles
+    return [a for a in angles if str(a.get('angle', '')).strip().lower() != 'back']
+
 _token = None
 
 

@@ -9,7 +9,7 @@ on hover.
 """
 import json, os
 from pfangles import order as order_angles
-from root import angles_dir, format_cents, site_dir
+from root import angles_dir, format_cents, site_dir, without_retired_back
 
 
 SITE = site_dir()
@@ -45,7 +45,7 @@ def esc(s):
 
 
 def frames_for(slug, manifest):
-    angs = manifest.get(slug, {}).get('angles', [])
+    angs = without_retired_back(slug, manifest.get(slug, {}).get('angles', []))
     if not angs:
         return []
     ordered = order_angles(angs)
