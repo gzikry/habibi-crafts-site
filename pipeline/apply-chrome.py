@@ -9,7 +9,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from chrome import footer, nav, trust
+from chrome import SCRIPT_V, footer, nav, trust
 from storefront import share_image_alt
 from root import site_dir
 
@@ -62,8 +62,9 @@ def refresh(path, prefix=''):
     html = replace_element(html, '<header class="site-header">', nav(prefix=prefix))
     html = replace_element(html, '<div class="trust-strip"', trust(prefix))
     html = replace_element(html, '<footer class="site-footer">', footer(prefix))
-    html = html.replace('styles.css?v=20', 'styles.css?v=22')
-    html = html.replace('styles.css?v=21', 'styles.css?v=22')
+    style_v = SCRIPT_V['styles.css']
+    for old in range(18, int(style_v)):
+        html = html.replace(f'styles.css?v={old}', f'styles.css?v={style_v}')
     html = html.replace('Habibi Crafts Co. Mugs, tees, totes, and more.', share_image_alt)
     html = html.replace('checkout.js?v=12', 'checkout.js?v=13')
     html = html.replace('bag.js?v=15', 'bag.js?v=16')

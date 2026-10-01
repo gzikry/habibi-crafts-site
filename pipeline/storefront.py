@@ -57,6 +57,21 @@ HAT_COLOR = {
     'make-something-hat': 'Black',
 }
 
+# Second PDP shot for apparel. Cards and the home grid stay on the mockup.
+ON_MODEL_V = '1'
+# These three files were replaced, so their cache key moves on its own.
+ON_MODEL_V_OVERRIDE = {
+    'habibi-crafts-hat': '2',
+    'leaf-season-hat': '2',
+    'make-something-hat': '2',
+}
+ON_MODEL = {
+    'tees': 'tee, worn',
+    'hats': 'hat, worn',
+    'baby': 'onesie, worn',
+    'totes': 'tote, carried',
+}
+
 # TODO(George): meaning
 # Transliterated names keep meaning: null until George writes the line.
 # An empty meaning is not rendered.
@@ -120,6 +135,49 @@ def poster_for(slug, frames):
 
 def mockup(slug):
     return f"assets/mockups/{slug}.png?v={SNAPSHOT['mockups'][slug]}"
+
+
+def on_model_for(p):
+    phrase = ON_MODEL.get(p['category'])
+    if not phrase:
+        return None
+    rel = f"assets/on-model/{p['slug']}.jpg"
+    if not (SITE / rel).exists():
+        return None
+    version = ON_MODEL_V_OVERRIDE.get(p['slug'], ON_MODEL_V)
+    return {'src': f'{rel}?v={version}', 'alt': f"{p['name']} {phrase}"}
+
+
+def opening_shot(p, frames):
+    if frames:
+        return frames[0]['src'], art_alt(p)
+    poster = poster_for(p['slug'], frames)
+    if poster:
+        return poster, art_alt(p)
+    return mockup(p['slug']), art_alt(p)
+
+
+def media_with_on_model(p, frames, viewer):
+    photo = on_model_for(p)
+    if not photo:
+        return viewer
+    src, alt = opening_shot(p, frames)
+    group = f"shot-{p['slug']}"
+    return f'''    <div class="product-media-col">
+{viewer}
+      <img class="shot-photo" src="{esc(photo['src'])}" alt="{esc(photo['alt'])}" loading="lazy" decoding="async">
+      <fieldset class="shot-switch">
+        <legend class="sr-only">Product photos</legend>
+        <label class="shot-thumb">
+          <input type="radio" name="{esc(group)}" checked aria-label="{esc(alt)}">
+          <img src="{esc(src)}" alt="" width="800" height="800">
+        </label>
+        <label class="shot-thumb">
+          <input type="radio" name="{esc(group)}" data-shot-photo aria-label="{esc(photo['alt'])}">
+          <img src="{esc(photo['src'])}" alt="" width="800" height="800" loading="lazy" decoding="async">
+        </label>
+      </fieldset>
+    </div>'''
 
 
 def prices(catalog):
@@ -673,9 +731,10 @@ def write_products(out_dir, manifest=None):
 {scripts(include_spin=not gallery)}
 </head>'''
         gap = '\n' if gallery else '\n\n'
+        viewer = media_with_on_model(p, frames, viewer_for(p, frames))
         main = f'''<main id="main">
   <div class="shell product-page">
-{viewer_for(p, frames)}
+{viewer}
     <div class="product-meta">
       <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="index.html">Home</a> / <a href="shop.html">Shop</a> / <a href="{filename}">{label}</a></nav>
       <div class="eyebrow">{eyebrow}</div>

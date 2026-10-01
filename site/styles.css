@@ -86,7 +86,7 @@ button{background:none;border:0;padding:0;font:inherit;color:inherit;cursor:poin
 .nav-shop>summary{list-style:none;cursor:pointer;font-family:inherit}
 .nav-shop>summary::-webkit-details-marker{display:none}
 .nav-shop-menu{
-  position:absolute;top:calc(100% + 16px);left:0;z-index:20;
+  position:absolute;top:calc(100% + 16px);right:0;left:auto;z-index:20;
   background:var(--paper);color:var(--charcoal);
   border:1px solid var(--line);border-radius:14px;padding:12px 16px 14px;
   min-width:min(340px,calc(100vw - 32px));
@@ -189,8 +189,11 @@ button{background:none;border:0;padding:0;font:inherit;color:inherit;cursor:poin
   transition:transform .55s cubic-bezier(.2,.7,.2,1);
 }
 .pcard:hover .pcard-media img.mockup{transform:scale(1.035)}
-.pcard:focus-visible{outline:none}
-.pcard:focus-visible .pcard-media{outline:2.5px solid var(--mustard);outline-offset:3px}
+.pcard:focus-visible{outline:none;box-shadow:none}
+.pcard:focus-visible .pcard-media{
+  outline:2px solid var(--maroon);outline-offset:2px;
+  box-shadow:0 0 0 2px var(--mustard);
+}
 /* One listing: type, then name left / price right. Same on shop cards. */
 .pcard-type{
   margin-top:10px;font-size:11px;font-weight:700;letter-spacing:.08em;
@@ -335,8 +338,11 @@ button{background:none;border:0;padding:0;font:inherit;color:inherit;cursor:poin
 .product-row{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
 .product-row h3{font-size:14.5px;letter-spacing:-.005em;line-height:1.3;font-family:var(--sans);font-weight:600}
 .product-card:hover .product-row h3{text-decoration:underline;text-underline-offset:3px}
-.product-card:focus-visible{outline:none}
-.product-card:focus-visible .product-media{outline:2.5px solid var(--mustard);outline-offset:3px}
+.product-card:focus-visible{outline:none;box-shadow:none}
+.product-card:focus-visible .product-media{
+  outline:2px solid var(--maroon);outline-offset:2px;
+  box-shadow:0 0 0 2px var(--mustard);
+}
 .price{font-family:var(--sans);font-size:13.5px;color:var(--muted);font-weight:500;white-space:nowrap}
 
 .gift-paths{padding-top:12px;padding-bottom:8px}
@@ -381,7 +387,8 @@ button{background:none;border:0;padding:0;font:inherit;color:inherit;cursor:poin
 .coming-copy p{font-size:16px;line-height:1.6;color:var(--muted);margin:0 0 14px}
 .coming-copy .actions{margin-top:8px}
 
-.product-page>.product-gallery{
+.product-page>.product-gallery,
+.product-page>.product-media-col>.product-gallery{
   width:100%;max-width:min(560px,100%);margin-inline:auto;
   background:var(--sand);border-radius:clamp(16px,2.2vw,22px);overflow:hidden;
   aspect-ratio:1;
@@ -402,10 +409,47 @@ button{background:none;border:0;padding:0;font:inherit;color:inherit;cursor:poin
    desktop viewports. width:100% is required — every child of .spin is
    absolutely positioned, so without an explicit width the grid item has no
    intrinsic size and collapses to nothing. */
+.product-media-col{min-width:0;width:100%;max-width:min(560px,100%);margin-inline:auto}
+.product-page>.product-media-col>.spin,
+.product-page>.product-media-col>.product-gallery{max-width:none;width:100%;margin-inline:0}
 .product-page>.spin{
   width:100%;max-width:min(560px,100%);margin-inline:auto;
   border-radius:clamp(16px,2.2vw,22px);
 }
+.shot-photo{
+  display:none;width:100%;height:auto;aspect-ratio:1;object-fit:cover;
+  border-radius:14px;border:1px solid var(--line);background:#fff;
+}
+.product-media-col:has(.product-gallery) .shot-photo{
+  border:0;border-radius:clamp(16px,2.2vw,22px);
+}
+.shot-switch{
+  display:flex;gap:8px;margin:10px 0 0;border:0;padding:0;min-width:0;
+}
+.shot-thumb{
+  width:72px;height:72px;flex:none;position:relative;
+  border-radius:12px;border:1px solid var(--line);overflow:hidden;
+  cursor:pointer;background:var(--sand);
+}
+.shot-thumb input{position:absolute;inset:0;margin:0;opacity:0;cursor:pointer}
+.shot-thumb img{width:100%;height:100%;object-fit:contain;display:block}
+.product-media-col:has([data-kind=tees]) .shot-thumb,
+.product-media-col:has([data-kind=baby]) .shot-thumb,
+.product-media-col:has([data-kind=hats]) .shot-thumb{background:var(--sand-warm)}
+.product-media-col:has([data-kind=totes]) .shot-thumb,
+.product-media-col:has([data-kind=prints]) .shot-thumb{background:var(--sand-cool)}
+.shot-thumb:has(input:checked){
+  border-width:2px;border-color:var(--maroon);
+  outline:2px solid #fff;outline-offset:0;
+}
+.shot-thumb:has(input:focus-visible){
+  outline:2px solid var(--maroon);outline-offset:2px;
+  box-shadow:0 0 0 2px var(--mustard);
+}
+.shot-thumb input:focus-visible{outline:none;box-shadow:none}
+.product-media-col:has(input[data-shot-photo]:checked)>.spin,
+.product-media-col:has(input[data-shot-photo]:checked)>.product-gallery{display:none}
+.product-media-col:has(input[data-shot-photo]:checked)>.shot-photo{display:block}
 .breadcrumbs{font-size:12px;color:var(--muted);margin-bottom:18px}
 .breadcrumbs a:hover{color:var(--charcoal)}
 .product-meta{padding-top:4px;position:sticky;top:78px}
@@ -437,8 +481,20 @@ button{background:none;border:0;padding:0;font:inherit;color:inherit;cursor:poin
 .product-trust-links a:hover{text-decoration:underline;text-underline-offset:3px}
 @media(max-width:900px){
   .product-page{grid-template-columns:1fr;padding-top:14px}
-  .product-page>.spin{max-width:100%}
+  .product-page>.spin,
+  .product-page>.product-media-col{max-width:100%}
   .product-meta{position:static;padding-top:0}
+  /* Keep Add to bag on the first screen. The thumbs sit on the image box
+     in the same place whether or not the angle slider is showing. Product
+     art is first, so arrow keys move down the stack. */
+  .product-media-col{position:relative}
+  .shot-switch{
+    position:absolute;left:2px;bottom:4px;z-index:2;margin:0;gap:4px;
+    flex-direction:column;justify-content:flex-end;
+  }
+  .shot-thumb{width:44px;height:44px;border-radius:10px}
+  /* Slider pages: sit above the bar so the handle and the 360° label stay clear. */
+  .product-media-col:has(.spin-controls) .shot-switch{bottom:calc(56px + 8px)}
 }
 .actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
 .button{
@@ -724,9 +780,16 @@ html.js-reveal .reveal.visible{opacity:1;transform:none}
   background:var(--maroon);border:2.5px solid var(--paper);
   box-shadow:0 1px 5px rgba(64,39,23,.3);
 }
-.spin-slider:focus-visible{outline:none}
+.spin-slider:focus-visible{outline:none;box-shadow:none}
 .spin-slider:focus-visible::-webkit-slider-thumb{
-  box-shadow:0 0 0 3px var(--mustard);
+  box-shadow:0 1px 5px rgba(64,39,23,.3),0 0 0 2px var(--mustard),0 0 0 4px var(--maroon);
+}
+.spin-slider:focus-visible::-moz-range-thumb{
+  box-shadow:0 1px 5px rgba(64,39,23,.3),0 0 0 2px var(--mustard),0 0 0 4px var(--maroon);
+}
+.spin-stage:focus-visible{
+  outline:none;
+  box-shadow:inset 0 0 0 2px var(--mustard),inset 0 0 0 4px var(--maroon);
 }
 @media(prefers-reduced-motion:reduce){
   .spin-hint{display:none}
@@ -734,6 +797,8 @@ html.js-reveal .reveal.visible{opacity:1;transform:none}
 }
 @media(max-width:620px){
   .spin{border-radius:12px}
+  .product-media-col:not(:has(.product-gallery)) .shot-photo{border-radius:12px}
+  .product-media-col:has(.spin-controls) .shot-switch{bottom:calc(50px + 8px)}
   .spin-stage{inset:0 0 50px}
   .spin-controls{height:50px;padding:0 13px;gap:9px}
   .spin-end{display:none}
@@ -746,8 +811,9 @@ html.js-reveal .reveal.visible{opacity:1;transform:none}
 }
 
 :focus-visible{
-  outline:2.5px solid var(--mustard);
-  outline-offset:3px;
+  outline:2px solid var(--maroon);
+  outline-offset:2px;
+  box-shadow:0 0 0 2px var(--mustard);
 }
 
 @media(prefers-reduced-motion:reduce){
@@ -770,10 +836,13 @@ html.js-reveal .reveal.visible{opacity:1;transform:none}
   .nav-links a,.nav-shop>summary{padding:12px;font-size:16px;color:var(--charcoal);border-radius:8px}
   .nav-links a[aria-current=page]::after,.nav-shop>summary[aria-current=page]::after{display:none}
   .nav-links a[aria-current=page],.nav-shop>summary[aria-current=page]{background:var(--sand)}
+  .nav-links>a:hover,.nav-links>a[aria-current=page],
+  .nav-shop>summary:hover,.nav-shop[open]>summary,.nav-shop>summary[aria-current=page]{color:var(--charcoal)}
   .nav-shop{width:100%}
+  .nav-shop>summary{text-align:center}
   .nav-shop-menu{
-    position:static;min-width:0;box-shadow:none;border:0;padding:4px 12px 10px;
-    background:transparent;transform:none;
+    position:static;left:auto;right:auto;min-width:0;box-shadow:none;border:0;
+    padding:4px 12px 10px;background:transparent;transform:none;
   }
   .nav-mobile-only{display:block}
   .nav-end{margin-left:auto}

@@ -1,3 +1,4 @@
+import { execFileSync } from 'node:child_process';
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, existsSync } from 'node:fs';
@@ -51,6 +52,16 @@ describe('commerce scaffold stays off and chrome is branded', () => {
     assert.match(read('site/cart.html'), /Opening soon/);
   });
 
+  it('anchors the shop menu to the right edge of Shop', () => {
+    const css = read('site/styles.css');
+    const desktop = css.match(/\.nav-shop-menu\{[^}]+\}/);
+    assert.ok(desktop, 'desktop shop menu rule');
+    assert.match(desktop[0], /right:0/);
+    assert.match(desktop[0], /left:auto/);
+    const mobile = css.slice(css.indexOf('@media(max-width:900px)'));
+    assert.match(mobile, /\.nav-shop-menu\{[^}]*position:static/);
+  });
+
   it('header bag and mobile shop list are on the home chrome', () => {
     const home = read('site/index.html');
     assert.match(home, /class="nav-bag"/);
@@ -79,6 +90,18 @@ describe('commerce scaffold stays off and chrome is branded', () => {
 
   it('locks George 2026-09-02 About copy verbatim', () => {
     const about = read('site/about.html');
+    const locked = execFileSync('git', ['show', '22f9dbc:site/about.html'], {
+      cwd: root,
+      encoding: 'utf8',
+    });
+    const aboveFooter = (html) => html.slice(0, html.indexOf('<footer class="site-footer">'));
+    const footerBlock = (html) => {
+      const start = html.indexOf('<footer class="site-footer">');
+      const end = html.indexOf('</footer>', start) + '</footer>'.length;
+      return html.slice(start, end);
+    };
+    assert.equal(aboveFooter(about), aboveFooter(locked));
+    assert.equal(footerBlock(about), footerBlock(read('site/faq.html')));
     assert.match(about, /LOCKED George 2026-09-02/);
     assert.match(about, />Our small business\.</);
     assert.match(about, /We’re a husband and wife\. This is our small business\./);
