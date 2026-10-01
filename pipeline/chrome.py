@@ -6,7 +6,7 @@ BASE = 'https://habibicraftsco.com'
 # Per-file cache keys on the live pages. bag.js is an ES module, so the tag
 # is type=module. A deferred classic script cannot load it.
 SCRIPT_V = {
-    'styles.css': '21',
+    'styles.css': '22',
     'public-config.js': '11',
     'analytics.js': '10',
     'bag.js': '16',
@@ -15,7 +15,7 @@ SCRIPT_V = {
     'app.js': '12',
 }
 
-# og-share.png is the wordmark and ESTD 2024. Index and shop keep their own alts.
+# og-share.png is the wordmark and ESTD 2024. Home and shop use this alt too.
 SHARE_IMAGE_ALT = 'Habibi Crafts Co wordmark, established 2024'
 
 ORDERS_NOTE = "We're not taking orders yet. You can still add things to your bag."

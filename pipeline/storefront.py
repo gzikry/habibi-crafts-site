@@ -47,7 +47,7 @@ CATS = [
     ('stickers', 'stickers.html', 'stickers', 'Stickers',
      TYPE_DESC['stickers'] + '.', TYPE_DESC['stickers'] + '. {price}.', 'Sticker', 'stickers'),
     ('hats', 'hats.html', 'hats', 'Hats',
-     'Black dad hats.', 'Black. ' + TYPE_DESC['hats'] + '. {price}.', 'Dad hat', 'hats'),
+     'Black dad hats.', 'Black dad hats, unstructured and adjustable, one size. {price}.', 'Dad hat', 'hats'),
 ]
 
 # Photos are black caps. One color until another is actually photographed.
@@ -245,7 +245,7 @@ def write_shop(out_dir, manifest=None):
     head = collection_head(
         'Shop | Habibi Crafts Co', desc, f'{BASE}/shop.html', ld,
         f'{BASE}/assets/og-share.png', '1200', '630',
-        'Habibi Crafts Co. Mugs, tees, totes, onesies, prints, stickers, and hats.',
+        SHARE_IMAGE_ALT,
     )
     sections = []
     for kind, filename, section_id, label, blurb, _lede, _type_name, word in CATS:
@@ -282,7 +282,7 @@ def write_shop(out_dir, manifest=None):
     for kind, filename, _section_id, label, _blurb, lede, _type_name, _word in CATS:
         items = [p for p in catalog if p['category'] == kind]
         visible = lede.format(price=priced[kind])
-        # The hats intro keeps the fit line. Search and social text should not repeat it.
+        # The hats intro is one sentence plus the price. Search and social text stay shorter.
         meta = f'Dad hats, one size. {priced[kind]}.' if kind == 'hats' else visible
         cat_ld = {
             '@context': 'https://schema.org', '@type': 'CollectionPage',
@@ -384,7 +384,7 @@ def write_home(out_dir, manifest=None):
     title = 'Habibi Crafts Co'
     desc = 'A husband-and-wife craft and gift shop in California. Mugs, tees, totes, onesies, prints, stickers, and dad hats, made after you order.'
     og_desc = desc
-    og_alt = 'Habibi Crafts Co. Mugs, tees, totes, onesies, prints, stickers, and hats.'
+    og_alt = SHARE_IMAGE_ALT
     preload = hero_frames[0]['src']
     head = f'''<!doctype html>
 <html lang="en">

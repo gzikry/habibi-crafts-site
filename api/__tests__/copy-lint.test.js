@@ -145,14 +145,17 @@ describe('storefront copy does not regress the live-site review', () => {
       'tracking.html',
       '404.html',
     ];
-    for (const name of named) {
+    for (const name of [...named, 'index.html', 'shop.html']) {
       const html = read(name);
+      const alts = [...html.matchAll(/image:alt" content="([^"]*)"/g)].map((match) => match[1]);
+      assert.ok(alts.length >= 1, name);
+      for (const value of alts) assert.equal(value, alt, name);
       assert.equal(html.includes('Mugs, tees, totes, and more.'), false, name);
-      assert.ok(html.includes(`content="${alt}"`), name);
     }
     assert.ok(read('about.html').includes('mugs, tees, totes, onesies, and prints'));
     assert.ok(read('index.html').includes('Mugs, tees, totes, onesies, prints, stickers, and dad hats'));
-    assert.ok(read('shop.html').includes('Mugs, tees, totes, onesies, prints, stickers, and hats.'));
+    assert.equal(read('shop.html').includes('Mugs, tees, totes, onesies, prints, stickers, and hats.'), false);
+    assert.ok(read('shop.html').includes('dad hats'));
   });
 
   it('does not repeat the hat subtitle in the details rows', () => {
@@ -166,11 +169,12 @@ describe('storefront copy does not regress the live-site review', () => {
   });
 
   it('keeps the hat fit line on the hats intro only', () => {
-    const line = 'Black. Unstructured dad hat, one size adjustable.';
+    const line = 'Black dad hats, unstructured and adjustable, one size.';
     const hats = read('hats.html');
     assert.equal(hats.split(line).length - 1, 1);
-    assert.match(hats, /<p class="lede">Black\. Unstructured dad hat, one size adjustable\. \$29\.99\.<\/p>/);
-    assert.doesNotMatch(hats, /<meta[^>]+Black\. Unstructured dad hat/);
+    assert.match(hats, /<p class="lede">Black dad hats, unstructured and adjustable, one size\. \$29\.99\.<\/p>/);
+    assert.equal(hats.includes('Black. Unstructured dad hat, one size adjustable.'), false);
+    assert.doesNotMatch(hats, /<meta[^>]+Black dad hats, unstructured/);
     assert.equal(read('shop.html').includes(line), false);
     assert.match(read('shop.html'), /id="hats-heading">Hats<\/h2><p>Black dad hats\.<\/p>/);
   });

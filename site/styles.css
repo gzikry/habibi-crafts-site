@@ -170,7 +170,8 @@ button{background:none;border:0;padding:0;font:inherit;color:inherit;cursor:poin
 .shop-head h2{font-size:clamp(21px,2.3vw,27px);letter-spacing:-.025em}
 .grid-plain{
   display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
-  column-gap:clamp(12px,1.8vw,22px);row-gap:clamp(22px,3vw,38px);
+  --grid-gap:clamp(12px,1.8vw,22px);
+  column-gap:var(--grid-gap);row-gap:clamp(22px,3vw,38px);
 }
 .pcard{display:block}
 .pcard-media{
@@ -244,7 +245,7 @@ button{background:none;border:0;padding:0;font:inherit;color:inherit;cursor:poin
 }
 
 @media(max-width:620px){
-  .grid-plain{grid-template-columns:repeat(2,minmax(0,1fr));column-gap:10px;row-gap:22px}
+  .grid-plain{grid-template-columns:repeat(2,minmax(0,1fr));--grid-gap:10px;column-gap:var(--grid-gap);row-gap:22px}
   .pcard-title{font-size:13.5px}
   .pcard-price{font-size:12.5px}
   .shop-head{gap:10px 16px;margin-bottom:16px}
@@ -294,7 +295,7 @@ button{background:none;border:0;padding:0;font:inherit;color:inherit;cursor:poin
   background:var(--paper);border-color:var(--charcoal);color:var(--charcoal);border-style:solid;
 }
 
-.kind-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px}
+.kind-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));--grid-gap:14px;gap:var(--grid-gap)}
 .kind-card{display:block}
 .kind-card-media{
   aspect-ratio:1;display:grid;place-items:center;background:var(--sand);
@@ -309,8 +310,8 @@ button{background:none;border:0;padding:0;font:inherit;color:inherit;cursor:poin
 .kind-card:hover .kind-card-copy h3{text-decoration:underline;text-underline-offset:3px}
 .kind-card-copy p{margin-top:3px;font-size:12.5px;color:var(--muted);line-height:1.4}
 
-.product-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
-.product-grid.two,.product-grid.featured{grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.product-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));--grid-gap:12px;gap:var(--grid-gap)}
+.product-grid.two,.product-grid.featured{grid-template-columns:repeat(2,minmax(0,1fr));--grid-gap:16px;gap:var(--grid-gap)}
 .product-grid.featured .product-copy{padding:12px 2px 4px}
 .product-grid.featured .product-row h3{font-size:18px}
 .product-card{display:block}
@@ -340,7 +341,7 @@ button{background:none;border:0;padding:0;font:inherit;color:inherit;cursor:poin
 
 .gift-paths{padding-top:12px;padding-bottom:8px}
 .gift-grid{
-  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;
+  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));--grid-gap:14px;gap:var(--grid-gap);
 }
 .gift-card{display:block}
 .gift-media{
@@ -363,7 +364,7 @@ button{background:none;border:0;padding:0;font:inherit;color:inherit;cursor:poin
 .gift-card.gift-soon .gift-copy{padding:0}
 .gift-card.gift-soon:hover{border-style:solid;border-color:rgba(36,27,20,.35)}
 
-.soon-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.soon-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));--grid-gap:12px;gap:var(--grid-gap)}
 .soon-card{
   display:block;background:var(--paper);border:1px dashed var(--line);
   border-radius:14px;padding:18px 16px 16px;
@@ -781,12 +782,16 @@ html.js-reveal .reveal.visible{opacity:1;transform:none}
   .product-grid,.product-grid.two,.product-grid.featured,.gift-grid,.grid-plain,.soon-grid{
     grid-template-columns:repeat(2,minmax(0,1fr));
   }
-  /* An odd last card would sit alone. Let it take the row. */
+  /* An odd last card stays one cell wide and sits in the middle of the row. */
   .gift-grid > :last-child:nth-child(odd),
   .grid-plain > :last-child:nth-child(odd),
   .product-grid > :last-child:nth-child(odd),
   .soon-grid > :last-child:nth-child(odd){
     grid-column:1 / -1;
+    justify-self:center;
+    width:calc((100% - var(--grid-gap, 12px)) / 2);
+    max-width:calc((100% - var(--grid-gap, 12px)) / 2);
+    min-width:0;
   }
   .product-page{grid-template-columns:1fr;padding-top:16px}
   .footer-grid{grid-template-columns:1fr 1fr}
@@ -809,9 +814,15 @@ html.js-reveal .reveal.visible{opacity:1;transform:none}
   .section.tight{padding-top:6px;padding-bottom:16px}
   .catalog-head,.policy-head{padding:18px 0 8px}
   .product-grid,.product-grid.two,.product-grid.featured,.kind-grid,.gift-grid,.soon-grid{
-    grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;
+    grid-template-columns:repeat(2,minmax(0,1fr));--grid-gap:8px;gap:var(--grid-gap);
   }
-  .kind-grid > :last-child:nth-child(odd){grid-column:1 / -1}
+  .kind-grid > :last-child:nth-child(odd){
+    grid-column:1 / -1;
+    justify-self:center;
+    width:calc((100% - var(--grid-gap, 8px)) / 2);
+    max-width:calc((100% - var(--grid-gap, 8px)) / 2);
+    min-width:0;
+  }
   .product-row h3,.kind-card-copy h3{font-size:14px}
   .legal-shell{padding:20px 0 40px;width:min(38rem,calc(100% - 28px))}
   .footer-grid{grid-template-columns:1fr;padding:32px 20px 16px}

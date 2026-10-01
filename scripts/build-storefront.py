@@ -353,7 +353,7 @@ write(
             "Our small business. We make all kinds of crafts. Printed after you order.",
             "https://habibicraftsco.com/",
             extra_ld=[home_ld],
-            og_image_alt="Habibi Crafts Co — mugs, tees, totes, onesies, and prints",
+            og_image_alt="Habibi Crafts Co wordmark, established 2024",
         ),
         "home",
         f"""  <section class="shop-intro">
@@ -402,7 +402,7 @@ write(
             "Mugs, tees, totes, onesies, and prints. We’ll keep adding.",
             "https://habibicraftsco.com/shop.html",
             extra_ld=[item_list_ld("https://habibicraftsco.com/shop.html", "Shop Habibi Crafts Co", PRODUCTS)],
-            og_image_alt="Habibi Crafts Co — mugs, tees, totes, onesies, and prints",
+            og_image_alt="Habibi Crafts Co wordmark, established 2024",
         ),
         "shop",
         f"""  <section class="catalog-head"><div class="shell">
