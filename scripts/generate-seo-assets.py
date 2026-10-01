@@ -102,7 +102,7 @@ def draw_tracked(draw: ImageDraw.ImageDraw, text: str, y: int, font, fill, track
 
 
 def write_og_share(logo: Image.Image, dest: Path) -> None:
-    """Cream card, one large wordmark, one tagline, and a small ESTD 2024 line.
+    """Cream card with the wordmark and a small ESTD 2024 line, optically centered.
 
     The wordmark is drawn on a 2x canvas and downsampled so the edges stay sharp.
     """
@@ -113,24 +113,16 @@ def write_og_share(logo: Image.Image, dest: Path) -> None:
     mark = charcoal_wordmark(Image.open(ASSETS / "logo-nav-white.png"))
     fitted = ImageOps.contain(mark, (920 * scale, 300 * scale), Image.Resampling.LANCZOS)
     draw = ImageDraw.Draw(canvas)
-    sans = ImageFont.truetype(SANS, 36 * scale)
     date_font = ImageFont.truetype(SANS, 26 * scale)
-    line = "Mugs, tees, totes, and more."
     established = "ESTD 2024"
-
-    def text_width(text, font):
-        box = draw.textbbox((0, 0), text, font=font)
-        return box[2] - box[0]
-
-    gap = 36 * scale
-    line_h = 48 * scale
-    date_h = 36 * scale
-    block_h = fitted.height + gap + line_h + 18 * scale + date_h
+    date_box = draw.textbbox((0, 0), established, font=date_font)
+    date_h = date_box[3] - date_box[1]
+    # Close the gap the tagline used to occupy, then center the pair.
+    gap = 28 * scale
+    block_h = fitted.height + gap + date_h
     top = (h - block_h) // 2
     canvas.alpha_composite(fitted, ((w - fitted.width) // 2, top))
-    y = top + fitted.height + gap
-    draw.text(((w - text_width(line, sans)) // 2, y), line, font=sans, fill=MUTED)
-    draw_tracked(draw, established, y + line_h + 10 * scale, date_font, MUTED, 8 * scale, w)
+    draw_tracked(draw, established, top + fitted.height + gap - date_box[1], date_font, MUTED, 8 * scale, w)
     final = canvas.resize((1200, 630), Image.Resampling.LANCZOS)
     final.convert("RGB").save(dest, "PNG", optimize=True)
 
