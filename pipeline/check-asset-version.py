@@ -39,7 +39,17 @@ for filename in sorted(os.listdir(SITE)):
     if filename == 'about.html':
         continue
     html = (SITE / filename).read_text()
+    style_hits = re.findall(r'styles\.css\?v=(\d+)', html)
+    expected_style = SCRIPT_V['styles.css']
+    # Redirect stubs have no stylesheet. Every real page has to carry the current key.
+    if 'rel="stylesheet"' in html or 'site-header' in html:
+        if style_hits != [expected_style]:
+            failures.append(
+                f'{filename}: styles.css?v={",".join(style_hits) or "missing"}, expected {expected_style}'
+            )
     for asset, expected in SCRIPT_V.items():
+        if asset == 'styles.css':
+            continue
         for found in re.findall(rf'{re.escape(asset)}\?v=(\d+)', html):
             if found != expected:
                 failures.append(f'{filename}: {asset}?v={found}, expected {expected}')
