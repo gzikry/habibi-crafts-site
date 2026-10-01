@@ -86,7 +86,7 @@ button{background:none;border:0;padding:0;font:inherit;color:inherit;cursor:poin
 .nav-shop>summary{list-style:none;cursor:pointer;font-family:inherit}
 .nav-shop>summary::-webkit-details-marker{display:none}
 .nav-shop-menu{
-  position:absolute;top:calc(100% + 16px);left:0;z-index:20;
+  position:absolute;top:calc(100% + 16px);right:0;left:auto;z-index:20;
   background:var(--paper);color:var(--charcoal);
   border:1px solid var(--line);border-radius:14px;padding:12px 16px 14px;
   min-width:min(340px,calc(100vw - 32px));
@@ -813,8 +813,8 @@ html.js-reveal .reveal.visible{opacity:1;transform:none}
   .nav-links a[aria-current=page],.nav-shop>summary[aria-current=page]{background:var(--sand)}
   .nav-shop{width:100%}
   .nav-shop-menu{
-    position:static;min-width:0;box-shadow:none;border:0;padding:4px 12px 10px;
-    background:transparent;transform:none;
+    position:static;left:auto;right:auto;min-width:0;box-shadow:none;border:0;
+    padding:4px 12px 10px;background:transparent;transform:none;
   }
   .nav-mobile-only{display:block}
   .nav-end{margin-left:auto}

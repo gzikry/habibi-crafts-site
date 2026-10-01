@@ -51,6 +51,16 @@ describe('commerce scaffold stays off and chrome is branded', () => {
     assert.match(read('site/cart.html'), /Opening soon/);
   });
 
+  it('anchors the shop menu to the right edge of Shop', () => {
+    const css = read('site/styles.css');
+    const desktop = css.match(/\.nav-shop-menu\{[^}]+\}/);
+    assert.ok(desktop, 'desktop shop menu rule');
+    assert.match(desktop[0], /right:0/);
+    assert.match(desktop[0], /left:auto/);
+    const mobile = css.slice(css.indexOf('@media(max-width:900px)'));
+    assert.match(mobile, /\.nav-shop-menu\{[^}]*position:static/);
+  });
+
   it('header bag and mobile shop list are on the home chrome', () => {
     const home = read('site/index.html');
     assert.match(home, /class="nav-bag"/);
