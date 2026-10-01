@@ -63,6 +63,7 @@ def refresh(path, prefix=''):
     html = replace_element(html, '<footer class="site-footer">', footer(prefix))
     html = html.replace('styles.css?v=18', 'styles.css?v=19')
     html = html.replace('checkout.js?v=12', 'checkout.js?v=13')
+    html = html.replace('bag.js?v=15', 'bag.js?v=16')
     path.write_text(html)
     print('chrome', path.name)
 

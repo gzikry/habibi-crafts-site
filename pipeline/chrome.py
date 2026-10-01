@@ -9,13 +9,14 @@ SCRIPT_V = {
     'styles.css': '19',
     'public-config.js': '11',
     'analytics.js': '10',
-    'bag.js': '15',
+    'bag.js': '16',
     'checkout.js': '13',
     'spin.js': '11',
     'app.js': '12',
 }
 
 ORDERS_NOTE = "We're not taking orders yet. You can still add things to your bag."
+ORDERS_NOTE_SHORT = "We're not taking orders yet."
 OPENING_SOON = 'Opening soon'
 SHIP_LINE = 'We print it after you order. It usually ships in 2 to 5 days.'
 SHOP_NEXT = "We're working on sweatshirts and a few other things. They'll show up here when they're ready."
@@ -137,7 +138,7 @@ def footer(prefix=''):
   <div class="footer-grid">
     <div>
       <a class="footer-brand" href="{prefix}index.html"><img src="{prefix}assets/logo-nav-white.png" alt="Habibi Crafts Co" width="213" height="93"></a>
-      <p class="footer-copy">Our small business. All kinds of crafts.</p>
+      <p class="footer-copy">All kinds of crafts.</p>
     </div>
     <div>
       <div class="footer-title">Shop</div>

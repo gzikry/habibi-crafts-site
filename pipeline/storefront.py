@@ -12,7 +12,7 @@ from datetime import date
 from pfangles import order as order_angles
 from root import angles_dir, cents_decimal, format_cents, repo_root, site_dir, without_retired_back
 from chrome import (
-    BASE, OPENING_SOON, ORDERS_NOTE, SHIP_LINE, SHOP_NEXT, THIN_PAGES,
+    BASE, ORDERS_NOTE, ORDERS_NOTE_SHORT, SHIP_LINE, SHOP_NEXT, THIN_PAGES,
     esc, filter_bars, icons, json_ld, page_close, page_open, scripts, stylesheet,
 )
 
@@ -64,7 +64,7 @@ NAMED_SLUGS = {
 }
 
 HERO_SLUGS = ['ya-aini', 'khalas-habibi', 'halawa']
-BAND_AFTER = 6
+HOME_ROW = ['ya-aini', 'khalas-habibi', 'halawa', 'ya-teta']
 NL_KINDS = {'stickers', 'hats'}
 
 
@@ -323,19 +323,6 @@ def pcard(p, src):
 </a>'''
 
 
-def home_band():
-    return f'''<section class="band" aria-labelledby="band-heading">
-  <div class="band-copy">
-    <h2 id="band-heading">Made to order</h2>
-    <p>{SHIP_LINE}</p>
-    <a class="band-link" href="about.html">About</a>
-  </div>
-  <div class="band-media">
-    <img class="mockup" src="assets/angles/halawa/handle-on-right.png?v=14" alt="Halawa tote" width="900" height="900" loading="lazy" decoding="async">
-  </div>
-</section>'''
-
-
 def hero_spin(product, frames):
     payload = esc(json.dumps(frames, separators=(',', ':')))
     first = frames[0]
@@ -382,8 +369,7 @@ def write_home(out_dir, manifest=None):
         poster = poster_for(p['slug'], framed)
         return poster or mockup(p['slug'])
 
-    cards = [pcard(p, src_for(p)) for p in products]
-    grid = ''.join(cards[:BAND_AFTER] + [home_band()] + cards[BAND_AFTER:])
+    row = ''.join(pcard(by_slug[slug], src_for(by_slug[slug])) for slug in HOME_ROW)
     ld = {'@context': 'https://schema.org', '@graph': [
         {'@type': ['Store', 'Organization'], '@id': f'{BASE}/#store',
          'name': 'Habibi Crafts Co', 'url': f'{BASE}/',
@@ -476,19 +462,13 @@ def write_home(out_dir, manifest=None):
 
   <section class="section" id="shop" aria-labelledby="shop-heading">
     <div class="shell">
-      <div class="shop-head">
+      <div class="section-head">
         <h2 id="shop-heading">In the shop</h2>
-        <nav class="filter-bar" aria-label="Shop by type"><a class="filter-button" href="shop.html">All</a><a class="filter-button" href="mugs.html">Mugs</a><a class="filter-button" href="tees.html">Tees</a><a class="filter-button" href="totes.html">Totes</a><a class="filter-button" href="onesies.html">Onesies</a><a class="filter-button" href="prints.html">Prints</a><a class="filter-button" href="stickers.html">Stickers</a><a class="filter-button" href="hats.html">Hats</a></nav></div>
-      <div class="grid-plain">{grid}</div>
+        <a class="text-link" href="shop.html">See everything</a>
+      </div>
+      <div class="grid-plain">{row}</div>
     </div>
-  </section>
-
-  <section class="section"><div class="shell">
-    <div class="story-panel reveal">
-      <h2>This is our small business.</h2>
-      <a class="text-link" href="about.html">About</a>
-    </div>
-  </div></section>'''
+  </section>'''
     html = page_open(head, home=True) + '\n' + page_close(main)
     (out_dir / 'index.html').write_text(html)
     print(f'index.html ({len(products)} products)')
@@ -592,7 +572,7 @@ def related(catalog, p):
     cards = join_cards(kind, [product_card(item, []) for item in others])
     grid = 'product-grid two' if kind in NL_KINDS else 'product-grid'
     return f'''  <section class="section tight"><div class="shell">
-    <div class="section-head"><h2>More {word}</h2><a class="text-link" href="{filename}">Shop {word}</a></div>
+    <div class="section-head"><h2>More {word}</h2></div>
     <div class="{grid}">{cards}</div>
   </div></section>'''
 
@@ -646,7 +626,16 @@ def write_products(out_dir, manifest=None):
         subtitle = TYPE_DESC[kind]
         desc = f"{p['name']}. {subtitle}."
         url = f"{BASE}/product-{p['slug']}.html"
-        charge = f'\n      <p class="checkout-note">{ORDERS_NOTE}</p>'
+        if p.get('purchasable') is True:
+            actions = (
+                f'<div class="actions"><button class="button" type="button" data-add-bag '
+                f'data-product-slug="{p["slug"]}">Add to bag</button></div>'
+            )
+            note = ORDERS_NOTE
+        else:
+            actions = ''
+            note = ORDERS_NOTE_SHORT
+        charge = f'\n      <p class="checkout-note">{note}</p>'
         eyebrow = meta[6] if kind != 'hats' else 'Dad hat'
         if kind == 'baby':
             eyebrow = 'Onesie'
@@ -691,7 +680,7 @@ def write_products(out_dir, manifest=None):
       <p class="product-subtitle">{esc(subtitle)}</p>
       <div class="product-price">{format_cents(p['price'])}</div>
       {size_block(p)}
-      <div class="actions"><button class="button browse-mode" type="button" disabled data-checkout data-product-slug="{p['slug']}" aria-disabled="true">{OPENING_SOON}</button></div>{charge}
+      {actions}{charge}
       <div class="detail-list">
         <h2>Details</h2>
         <dl>{details_for(p)}</dl>

@@ -69,29 +69,41 @@ def write_apple_touch(mark: Image.Image, dest: Path) -> None:
     square_on_cream(mark, 180, pad_ratio=0.14).save(dest, "PNG", optimize=True)
 
 
-def write_og_share(logo: Image.Image, mug: Image.Image, dest: Path) -> None:
+def crop_wordmark(logo: Image.Image) -> Image.Image:
+    """Drop the unverified date line under the wordmark."""
+    im = logo.convert("RGBA")
+    _w, h = im.size
+    return im.crop((0, 0, _w, int(h * 270 / 447)))
+
+
+def write_og_share(logo: Image.Image, dest: Path) -> None:
     w, h = 1200, 630
-    logo_rgba = logo.convert("RGBA")
-    panel = logo_rgba.getpixel((0, 0))[:3] + (255,)
     canvas = Image.new("RGBA", (w, h), CREAM)
+    mark = trim_logo(crop_wordmark(logo))
+    fitted = ImageOps.contain(mark, (780, 250), Image.Resampling.LANCZOS)
     draw = ImageDraw.Draw(canvas)
+    serif = ImageFont.truetype(SERIF, 64)
+    sans = ImageFont.truetype(SANS, 36)
+    title = "Habibi Crafts Co"
+    line = "Mugs, tees, totes, and more."
 
-    draw.rectangle((0, 0, 640, h), fill=panel)
-    draw.rectangle((0, 0, w, 16), fill=MAROON)
-    draw.rectangle((0, h - 16, w, h), fill=MAROON)
+    def text_width(text, font):
+        box = draw.textbbox((0, 0), text, font=font)
+        return box[2] - box[0]
 
-    wordmark = ImageOps.contain(logo_rgba, (520, 360), Image.Resampling.LANCZOS)
-    canvas.alpha_composite(wordmark, (60, 70))
-
-    serif = ImageFont.truetype(SERIF, 28)
-    sans = ImageFont.truetype(SANS, 20)
-    draw.text((80, 440), "Habibi Crafts Co", font=serif, fill=CHARCOAL)
-    draw.text((80, 520), "Mugs, tees, totes, and more.", font=sans, fill=MUTED)
-
-    mug_rgba = mug.convert("RGBA")
-    mug_fit = ImageOps.contain(mug_rgba, (500, 500), Image.Resampling.LANCZOS)
-    canvas.alpha_composite(mug_fit, (w - mug_fit.width - 28, (h - mug_fit.height) // 2))
-
+    gap = 36
+    title_h = 76
+    line_h = 48
+    block_h = fitted.height + gap + title_h + 18 + line_h
+    top = (h - block_h) // 2
+    canvas.alpha_composite(fitted, ((w - fitted.width) // 2, top))
+    y = top + fitted.height + gap
+    draw.text(((w - text_width(title, serif)) // 2, y), title, font=serif, fill=CHARCOAL)
+    y += title_h + 8
+    rule_w = 72
+    draw.rectangle(((w - rule_w) // 2, y, (w + rule_w) // 2, y + 3), fill=MAROON)
+    y += 18
+    draw.text(((w - text_width(line, sans)) // 2, y), line, font=sans, fill=MUTED)
     canvas.convert("RGB").save(dest, "PNG", optimize=True)
 
 
@@ -99,11 +111,10 @@ def main() -> None:
     logo = Image.open(ASSETS / "logo.png")
     mark = trim_logo(logo)
     white = Image.open(ASSETS / "logo-nav-white.png")
-    mug = Image.open(ASSETS / "mockups" / "ya-aini.png")
 
     write_ico(white, SITE / "favicon.ico")
     write_apple_touch(mark, ASSETS / "apple-touch-icon.png")
-    write_og_share(logo, mug, ASSETS / "og-share.png")
+    write_og_share(logo, ASSETS / "og-share.png")
     print("wrote", SITE / "favicon.ico")
     print("wrote", ASSETS / "apple-touch-icon.png")
     print("wrote", ASSETS / "og-share.png")

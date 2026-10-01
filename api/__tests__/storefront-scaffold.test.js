@@ -31,15 +31,21 @@ describe('commerce scaffold stays off and chrome is branded', () => {
   it('PDP checkout control is browsing-mode, not a gray Notify me button', () => {
     const mug = read('site/product-ya-aini.html');
     const tee = read('site/product-khalas-habibi.html');
-    assert.match(mug, /Opening soon/);
+    const print = read('site/product-starlight.html');
+    assert.match(mug, /data-add-bag/);
     assert.match(mug, /We're not taking orders yet\. You can still add things to your bag\./);
     assert.match(tee, /We're not taking orders yet\. You can still add things to your bag\./);
-    assert.match(mug, /browse-mode/);
+    assert.match(print, /We're not taking orders yet\./);
+    assert.doesNotMatch(print, /add things to your bag/);
+    assert.doesNotMatch(mug, /Opening soon/);
+    assert.doesNotMatch(mug, /browse-mode/);
+    assert.doesNotMatch(print, /browse-mode/);
     assert.doesNotMatch(mug, />Notify me</);
     assert.match(tee, /data-size-picker/);
     assert.match(tee, /aria-pressed="true"/);
     assert.match(read('site/product-ya-teta.html'), /data-size-picker/);
     assert.match(read('site/checkout.js'), /Opening soon/);
+    assert.match(read('site/cart.html'), /Opening soon/);
   });
 
   it('header bag and mobile shop list are on the home chrome', () => {
@@ -78,8 +84,9 @@ describe('commerce scaffold stays off and chrome is branded', () => {
     assert.match(home, /whoever you’re shopping for/);
     assert.match(home, /What we make/);
     assert.doesNotMatch(home, /Why this exists/);
-    assert.match(home, /This is our small business\./);
-    assert.match(home, /footer-copy">Our small business\. All kinds of crafts\./);
+    assert.doesNotMatch(home, /This is our small business\./);
+    assert.match(home, /footer-copy">All kinds of crafts\./);
+    assert.equal(home.toLowerCase().split('our small business').length - 1, 1);
     assert.match(home, /footer-brand[\s\S]*logo-nav-white\.png/);
     assert.match(read('site/404.html'), /footer-brand[\s\S]*logo-nav-white\.png/);
     assert.match(read('site/cart.html'), /footer-brand[\s\S]*logo-nav-white\.png/);
