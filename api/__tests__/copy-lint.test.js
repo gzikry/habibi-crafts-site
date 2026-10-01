@@ -155,6 +155,16 @@ describe('storefront copy does not regress the live-site review', () => {
     assert.ok(read('shop.html').includes('Mugs, tees, totes, onesies, prints, stickers, and hats.'));
   });
 
+  it('keeps the hat fit line on the hats intro only', () => {
+    const line = 'Black. Unstructured dad hat, one size adjustable.';
+    const hats = read('hats.html');
+    assert.equal(hats.split(line).length - 1, 1);
+    assert.match(hats, /<p class="lede">Black\. Unstructured dad hat, one size adjustable\. \$29\.99\.<\/p>/);
+    assert.doesNotMatch(hats, /<meta[^>]+Black\. Unstructured dad hat/);
+    assert.equal(read('shop.html').includes(line), false);
+    assert.match(read('shop.html'), /id="hats-heading">Hats<\/h2><p>Black dad hats\.<\/p>/);
+  });
+
   it('does not repeat a product on the home page', () => {
     const home = visible(read('index.html'));
     const slugs = [...home.matchAll(/<img\b[^>]*src="[^"]*(?:mockups|angles)\/([a-z0-9-]+)/g)].map((match) => match[1]);

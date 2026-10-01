@@ -44,6 +44,11 @@
         "file": "garden-gate/front-view.png",
         "label": "front view",
         "v": "18"
+      },
+      {
+        "file": "garden-gate/back-view.png",
+        "label": "back view",
+        "v": "10"
       }
     ],
     "gather-grow": [

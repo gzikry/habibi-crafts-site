@@ -47,7 +47,7 @@ CATS = [
     ('stickers', 'stickers.html', 'stickers', 'Stickers',
      TYPE_DESC['stickers'] + '.', TYPE_DESC['stickers'] + '. {price}.', 'Sticker', 'stickers'),
     ('hats', 'hats.html', 'hats', 'Hats',
-     'Black. ' + TYPE_DESC['hats'] + '.', 'Black. ' + TYPE_DESC['hats'] + '. {price}.', 'Dad hat', 'hats'),
+     'Black dad hats.', 'Black. ' + TYPE_DESC['hats'] + '. {price}.', 'Dad hat', 'hats'),
 ]
 
 # Photos are black caps. One color until another is actually photographed.
@@ -281,7 +281,9 @@ def write_shop(out_dir, manifest=None):
 
     for kind, filename, _section_id, label, _blurb, lede, _type_name, _word in CATS:
         items = [p for p in catalog if p['category'] == kind]
-        meta = lede.format(price=priced[kind])
+        visible = lede.format(price=priced[kind])
+        # The hats intro keeps the fit line. Search and social text should not repeat it.
+        meta = f'Dad hats, one size. {priced[kind]}.' if kind == 'hats' else visible
         cat_ld = {
             '@context': 'https://schema.org', '@type': 'CollectionPage',
             'name': f'{label} | Habibi Crafts Co', 'url': f'{BASE}/{filename}',
@@ -299,7 +301,7 @@ def write_shop(out_dir, manifest=None):
         main = f'''<main id="main">
   <section class="catalog-head"><div class="shell">
     <h1>{label}</h1>
-    <p class="lede">{esc(meta)}</p>
+    <p class="lede">{esc(visible)}</p>
     {filter_bars(filename)}
   </div></section>
   <section class="section tight"><div class="shell">
