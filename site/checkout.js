@@ -13,7 +13,7 @@
     button.setAttribute('aria-disabled', 'true');
     button.setAttribute('data-checkout-enabled', 'false');
     button.classList.add('browse-mode');
-    button.textContent = 'Browsing only · Checkout opens soon';
+    button.textContent = 'Opening soon';
   }
 
   document.querySelectorAll('[data-checkout]').forEach(function (button) {

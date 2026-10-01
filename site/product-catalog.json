@@ -6,7 +6,8 @@
     "price": 1499,
     "printful_id": 462528261,
     "subtitle": "11 oz mug.",
-    "purchasable": true
+    "purchasable": true,
+    "meaning": null
   },
   {
     "slug": "baladi",
@@ -15,7 +16,8 @@
     "price": 1499,
     "printful_id": 462528274,
     "subtitle": "11 oz mug.",
-    "purchasable": true
+    "purchasable": true,
+    "meaning": null
   },
   {
     "slug": "ya-dunia",
@@ -24,7 +26,8 @@
     "price": 1499,
     "printful_id": 462528282,
     "subtitle": "11 oz mug.",
-    "purchasable": true
+    "purchasable": true,
+    "meaning": null
   },
   {
     "slug": "jiran",
@@ -33,7 +36,8 @@
     "price": 1499,
     "printful_id": 462528284,
     "subtitle": "11 oz mug.",
-    "purchasable": true
+    "purchasable": true,
+    "meaning": null
   },
   {
     "slug": "maamoul",
@@ -42,7 +46,8 @@
     "price": 1499,
     "printful_id": 462532463,
     "subtitle": "11 oz mug.",
-    "purchasable": true
+    "purchasable": true,
+    "meaning": null
   },
   {
     "slug": "knafeh-club",
@@ -51,7 +56,8 @@
     "price": 1499,
     "printful_id": 462540373,
     "subtitle": "11 oz mug.",
-    "purchasable": true
+    "purchasable": true,
+    "meaning": null
   },
   {
     "slug": "morning-ritual",
@@ -69,7 +75,8 @@
     "price": 2499,
     "printful_id": 462532457,
     "subtitle": "Unisex tee.",
-    "purchasable": true
+    "purchasable": true,
+    "meaning": null
   },
   {
     "slug": "ya-habayeb",
@@ -78,7 +85,8 @@
     "price": 2499,
     "printful_id": 462540352,
     "subtitle": "Unisex tee.",
-    "purchasable": true
+    "purchasable": true,
+    "meaning": null
   },
   {
     "slug": "warm-embrace",
@@ -96,7 +104,8 @@
     "price": 3199,
     "printful_id": 476520396,
     "subtitle": "Cotton tote.",
-    "purchasable": true
+    "purchasable": true,
+    "meaning": null
   },
   {
     "slug": "sit-el-kul",
@@ -105,7 +114,8 @@
     "price": 3199,
     "printful_id": 476520375,
     "subtitle": "Cotton tote.",
-    "purchasable": true
+    "purchasable": true,
+    "meaning": null
   },
   {
     "slug": "early-light",
@@ -132,7 +142,8 @@
     "price": 2799,
     "printful_id": 462532461,
     "subtitle": "Baby onesie.",
-    "purchasable": true
+    "purchasable": true,
+    "meaning": null
   },
   {
     "slug": "amoura",
@@ -141,7 +152,8 @@
     "price": 2799,
     "printful_id": 462540363,
     "subtitle": "Baby onesie.",
-    "purchasable": true
+    "purchasable": true,
+    "meaning": null
   },
   {
     "slug": "garden-gate",
@@ -158,8 +170,9 @@
     "category": "prints",
     "price": 2399,
     "printful_id": 462532462,
-    "subtitle": "12 \u00d7 16 print.",
-    "purchasable": true
+    "subtitle": "12 × 16 print.",
+    "purchasable": true,
+    "meaning": null
   },
   {
     "slug": "dar-el-hawa",
@@ -167,8 +180,9 @@
     "category": "prints",
     "price": 2399,
     "printful_id": 462540368,
-    "subtitle": "12 \u00d7 16 print.",
-    "purchasable": true
+    "subtitle": "12 × 16 print.",
+    "purchasable": true,
+    "meaning": null
   },
   {
     "slug": "starlight",
@@ -176,7 +190,7 @@
     "category": "prints",
     "price": 2399,
     "printful_id": 471225105,
-    "subtitle": "12 \u00d7 16 print.",
+    "subtitle": "12 × 16 print.",
     "purchasable": false
   },
   {

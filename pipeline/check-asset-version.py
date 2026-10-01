@@ -35,6 +35,9 @@ print('SCRIPT_V ' + ', '.join(f'{k}={v}' for k, v in SCRIPT_V.items()))
 for filename in sorted(os.listdir(SITE)):
     if not filename.endswith('.html'):
         continue
+    # about.html is byte-locked, so its cache keys stay on the previous publish.
+    if filename == 'about.html':
+        continue
     html = (SITE / filename).read_text()
     for asset, expected in SCRIPT_V.items():
         for found in re.findall(rf'{re.escape(asset)}\?v=(\d+)', html):

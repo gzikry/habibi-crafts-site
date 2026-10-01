@@ -213,6 +213,9 @@ def main():
             entry['subtitle'] = sub
         else:
             missing_subtitle.append(slug)
+        # TODO(George): meaning
+        if 'meaning' in kept:
+            entry['meaning'] = kept['meaning']
         entries.append(entry)
 
         # spec the angle fetcher and builders need, kept separate from the

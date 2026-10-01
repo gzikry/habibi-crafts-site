@@ -43,12 +43,12 @@
       {
         "file": "garden-gate/front-view.png",
         "label": "front view",
-        "v": "10"
+        "v": "16"
       },
       {
         "file": "garden-gate/back-view.png",
         "label": "back view",
-        "v": "10"
+        "v": "16"
       }
     ],
     "gather-grow": [
@@ -262,25 +262,25 @@
   "posters": {
     "beit-el-hobb": {
       "file": "beit-el-hobb/handle-on-right.png",
-      "v": "10"
+      "v": "16"
     },
     "dar-el-hawa": {
       "file": "dar-el-hawa/handle-on-right.png",
-      "v": "10"
+      "v": "16"
     },
     "starlight": {
       "file": "starlight/handle-on-right.png",
-      "v": "10"
+      "v": "16"
     }
   },
   "mockups": {
     "amoura": "9",
     "baladi": "15",
-    "beit-el-hobb": "15",
+    "beit-el-hobb": "16",
     "craft-club-sticker": "14",
-    "dar-el-hawa": "15",
+    "dar-el-hawa": "16",
     "early-light": "14",
-    "garden-gate": "15",
+    "garden-gate": "16",
     "gather-grow": "14",
     "habibi-crafts-hat": "14",
     "halawa": "14",
@@ -294,7 +294,7 @@
     "make-something-sticker": "14",
     "morning-ritual": "15",
     "sit-el-kul": "14",
-    "starlight": "15",
+    "starlight": "16",
     "warm-embrace": "9",
     "ya-aini": "15",
     "ya-dunia": "15",

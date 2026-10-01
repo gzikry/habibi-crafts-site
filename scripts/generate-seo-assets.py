@@ -85,9 +85,8 @@ def write_og_share(logo: Image.Image, mug: Image.Image, dest: Path) -> None:
 
     serif = ImageFont.truetype(SERIF, 28)
     sans = ImageFont.truetype(SANS, 20)
-    draw.text((80, 430), "A husband-and-wife shop", font=serif, fill=CHARCOAL)
-    draw.text((80, 468), "in California.", font=serif, fill=CHARCOAL)
-    draw.text((80, 520), "Mugs, tees, totes, onesies, and prints.", font=sans, fill=MUTED)
+    draw.text((80, 440), "Habibi Crafts Co", font=serif, fill=CHARCOAL)
+    draw.text((80, 520), "Mugs, tees, totes, and more.", font=sans, fill=MUTED)
 
     mug_rgba = mug.convert("RGBA")
     mug_fit = ImageOps.contain(mug_rgba, (500, 500), Image.Resampling.LANCZOS)

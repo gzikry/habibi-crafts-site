@@ -18,7 +18,6 @@ describe('commerce scaffold stays off and chrome is branded', () => {
       const html = read(`site/${name}`);
       assert.match(html, /site-header/);
       assert.match(html, /Habibi Crafts Co/);
-      assert.match(html, /isn.t open/i);
       assert.doesNotMatch(html, /Printful/i);
       assert.doesNotMatch(html, /mailto:/i);
       assert.doesNotMatch(html, /data-checkout-enabled="true"/);
@@ -32,14 +31,15 @@ describe('commerce scaffold stays off and chrome is branded', () => {
   it('PDP checkout control is browsing-mode, not a gray Notify me button', () => {
     const mug = read('site/product-ya-aini.html');
     const tee = read('site/product-khalas-habibi.html');
-    assert.match(mug, /Browsing only · Checkout opens soon/);
-    assert.match(mug, /Nothing is charged/);
+    assert.match(mug, /Opening soon/);
+    assert.match(mug, /We're not taking orders yet\. You can still add things to your bag\./);
+    assert.match(tee, /We're not taking orders yet\. You can still add things to your bag\./);
     assert.match(mug, /browse-mode/);
     assert.doesNotMatch(mug, />Notify me</);
     assert.match(tee, /data-size-picker/);
     assert.match(tee, /aria-pressed="true"/);
     assert.match(read('site/product-ya-teta.html'), /data-size-picker/);
-    assert.match(read('site/checkout.js'), /Browsing only · Checkout opens soon/);
+    assert.match(read('site/checkout.js'), /Opening soon/);
   });
 
   it('header bag and mobile shop list are on the home chrome', () => {
@@ -51,7 +51,7 @@ describe('commerce scaffold stays off and chrome is branded', () => {
     assert.match(home, /nav-mobile-only" href="contact\.html"/);
     assert.match(home, /href="stickers\.html"/);
     assert.match(home, /href="hats\.html"/);
-    assert.match(home, /href="sweatshirts\.html"/);
+    assert.doesNotMatch(home, /href="sweatshirts\.html"/);
   });
 
   it('FAQ does not promise a thank-you card in every box', () => {
@@ -76,7 +76,8 @@ describe('commerce scaffold stays off and chrome is branded', () => {
     const home = read('site/index.html');
     assert.match(home, />Our small business</);
     assert.match(home, /whoever you’re shopping for/);
-    assert.match(home, /Why this exists/);
+    assert.match(home, /What we make/);
+    assert.doesNotMatch(home, /Why this exists/);
     assert.match(home, /This is our small business\./);
     assert.match(home, /footer-copy">Our small business\. All kinds of crafts\./);
     assert.match(home, /footer-brand[\s\S]*logo-nav-white\.png/);

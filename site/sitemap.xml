@@ -56,54 +56,6 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://habibicraftsco.com/sweatshirts.html</loc>
-    <lastmod>2026-09-18</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://habibicraftsco.com/long-sleeves.html</loc>
-    <lastmod>2026-09-18</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://habibicraftsco.com/beanies.html</loc>
-    <lastmod>2026-09-18</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://habibicraftsco.com/hoodies.html</loc>
-    <lastmod>2026-09-18</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://habibicraftsco.com/youth-tees.html</loc>
-    <lastmod>2026-09-18</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://habibicraftsco.com/coasters.html</loc>
-    <lastmod>2026-09-18</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://habibicraftsco.com/journals.html</loc>
-    <lastmod>2026-09-18</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://habibicraftsco.com/aprons.html</loc>
-    <lastmod>2026-09-18</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
     <loc>https://habibicraftsco.com/about.html</loc>
     <lastmod>2026-09-18</lastmod>
     <changefreq>monthly</changefreq>
@@ -140,7 +92,7 @@
     <priority>0.7</priority>
     <image:image>
       <image:loc>https://habibicraftsco.com/assets/mockups/ya-aini.png</image:loc>
-      <image:title>Ya Aini — Habibi Crafts Co</image:title>
+      <image:title>Ya Aini | Habibi Crafts Co</image:title>
     </image:image>
   </url>
   <url>
@@ -150,7 +102,7 @@
     <priority>0.7</priority>
     <image:image>
       <image:loc>https://habibicraftsco.com/assets/mockups/baladi.png</image:loc>
-      <image:title>Baladi — Habibi Crafts Co</image:title>
+      <image:title>Baladi | Habibi Crafts Co</image:title>
     </image:image>
   </url>
   <url>
@@ -160,7 +112,7 @@
     <priority>0.7</priority>
     <image:image>
       <image:loc>https://habibicraftsco.com/assets/mockups/ya-dunia.png</image:loc>
-      <image:title>Ya Dunia — Habibi Crafts Co</image:title>
+      <image:title>Ya Dunia | Habibi Crafts Co</image:title>
     </image:image>
   </url>
   <url>
@@ -170,7 +122,7 @@
     <priority>0.7</priority>
     <image:image>
       <image:loc>https://habibicraftsco.com/assets/mockups/jiran.png</image:loc>
-      <image:title>Jiran — Habibi Crafts Co</image:title>
+      <image:title>Jiran | Habibi Crafts Co</image:title>
     </image:image>
   </url>
   <url>
@@ -180,7 +132,7 @@
     <priority>0.7</priority>
     <image:image>
       <image:loc>https://habibicraftsco.com/assets/mockups/maamoul.png</image:loc>
-      <image:title>Maamoul — Habibi Crafts Co</image:title>
+      <image:title>Maamoul | Habibi Crafts Co</image:title>
     </image:image>
   </url>
   <url>
@@ -190,7 +142,7 @@
     <priority>0.7</priority>
     <image:image>
       <image:loc>https://habibicraftsco.com/assets/mockups/knafeh-club.png</image:loc>
-      <image:title>Knafeh Club — Habibi Crafts Co</image:title>
+      <image:title>Knafeh Club | Habibi Crafts Co</image:title>
     </image:image>
   </url>
   <url>
@@ -200,7 +152,7 @@
     <priority>0.7</priority>
     <image:image>
       <image:loc>https://habibicraftsco.com/assets/mockups/morning-ritual.png</image:loc>
-      <image:title>Morning Ritual — Habibi Crafts Co</image:title>
+      <image:title>Morning Ritual | Habibi Crafts Co</image:title>
     </image:image>
   </url>
   <url>
@@ -210,7 +162,7 @@
     <priority>0.7</priority>
     <image:image>
       <image:loc>https://habibicraftsco.com/assets/mockups/khalas-habibi.png</image:loc>
-      <image:title>Khalas Habibi — Habibi Crafts Co</image:title>
+      <image:title>Khalas Habibi | Habibi Crafts Co</image:title>
     </image:image>
   </url>
   <url>
@@ -220,7 +172,7 @@
     <priority>0.7</priority>
     <image:image>
       <image:loc>https://habibicraftsco.com/assets/mockups/ya-habayeb.png</image:loc>
-      <image:title>Ya Habayeb — Habibi Crafts Co</image:title>
+      <image:title>Ya Habayeb | Habibi Crafts Co</image:title>
     </image:image>
   </url>
   <url>
@@ -230,7 +182,7 @@
     <priority>0.7</priority>
     <image:image>
       <image:loc>https://habibicraftsco.com/assets/mockups/warm-embrace.png</image:loc>
-      <image:title>Warm Embrace — Habibi Crafts Co</image:title>
+      <image:title>Warm Embrace | Habibi Crafts Co</image:title>
     </image:image>
   </url>
   <url>
@@ -240,7 +192,7 @@
     <priority>0.7</priority>
     <image:image>
       <image:loc>https://habibicraftsco.com/assets/mockups/halawa.png</image:loc>
-      <image:title>Halawa — Habibi Crafts Co</image:title>
+      <image:title>Halawa | Habibi Crafts Co</image:title>
     </image:image>
   </url>
   <url>
@@ -250,7 +202,7 @@
     <priority>0.7</priority>
     <image:image>
       <image:loc>https://habibicraftsco.com/assets/mockups/sit-el-kul.png</image:loc>
-      <image:title>Sit El Kul — Habibi Crafts Co</image:title>
+      <image:title>Sit El Kul | Habibi Crafts Co</image:title>
     </image:image>
   </url>
   <url>
@@ -260,7 +212,7 @@
     <priority>0.7</priority>
     <image:image>
       <image:loc>https://habibicraftsco.com/assets/mockups/early-light.png</image:loc>
-      <image:title>Early Light — Habibi Crafts Co</image:title>
+      <image:title>Early Light | Habibi Crafts Co</image:title>
     </image:image>
   </url>
   <url>
@@ -270,7 +222,7 @@
     <priority>0.7</priority>
     <image:image>
       <image:loc>https://habibicraftsco.com/assets/mockups/gather-grow.png</image:loc>
-      <image:title>Gather &amp; Grow — Habibi Crafts Co</image:title>
+      <image:title>Gather &amp; Grow | Habibi Crafts Co</image:title>
     </image:image>
   </url>
   <url>
@@ -280,7 +232,7 @@
     <priority>0.7</priority>
     <image:image>
       <image:loc>https://habibicraftsco.com/assets/mockups/ya-teta.png</image:loc>
-      <image:title>Ya Teta — Habibi Crafts Co</image:title>
+      <image:title>Ya Teta | Habibi Crafts Co</image:title>
     </image:image>
   </url>
   <url>
@@ -290,7 +242,7 @@
     <priority>0.7</priority>
     <image:image>
       <image:loc>https://habibicraftsco.com/assets/mockups/amoura.png</image:loc>
-      <image:title>Amoura — Habibi Crafts Co</image:title>
+      <image:title>Amoura | Habibi Crafts Co</image:title>
     </image:image>
   </url>
   <url>
@@ -300,7 +252,7 @@
     <priority>0.7</priority>
     <image:image>
       <image:loc>https://habibicraftsco.com/assets/mockups/garden-gate.png</image:loc>
-      <image:title>Garden Gate — Habibi Crafts Co</image:title>
+      <image:title>Garden Gate | Habibi Crafts Co</image:title>
     </image:image>
   </url>
   <url>
@@ -310,7 +262,7 @@
     <priority>0.7</priority>
     <image:image>
       <image:loc>https://habibicraftsco.com/assets/mockups/beit-el-hobb.png</image:loc>
-      <image:title>Beit El Hobb — Habibi Crafts Co</image:title>
+      <image:title>Beit El Hobb | Habibi Crafts Co</image:title>
     </image:image>
   </url>
   <url>
@@ -320,7 +272,7 @@
     <priority>0.7</priority>
     <image:image>
       <image:loc>https://habibicraftsco.com/assets/mockups/dar-el-hawa.png</image:loc>
-      <image:title>Dar El Hawa — Habibi Crafts Co</image:title>
+      <image:title>Dar El Hawa | Habibi Crafts Co</image:title>
     </image:image>
   </url>
   <url>
@@ -330,7 +282,7 @@
     <priority>0.7</priority>
     <image:image>
       <image:loc>https://habibicraftsco.com/assets/mockups/starlight.png</image:loc>
-      <image:title>Starlight — Habibi Crafts Co</image:title>
+      <image:title>Starlight | Habibi Crafts Co</image:title>
     </image:image>
   </url>
   <url>
@@ -340,7 +292,7 @@
     <priority>0.7</priority>
     <image:image>
       <image:loc>https://habibicraftsco.com/assets/mockups/craft-club-sticker.png</image:loc>
-      <image:title>Craft Club — Habibi Crafts Co</image:title>
+      <image:title>Craft Club | Habibi Crafts Co</image:title>
     </image:image>
   </url>
   <url>
@@ -350,7 +302,7 @@
     <priority>0.7</priority>
     <image:image>
       <image:loc>https://habibicraftsco.com/assets/mockups/make-something-sticker.png</image:loc>
-      <image:title>Make Something — Habibi Crafts Co</image:title>
+      <image:title>Make Something | Habibi Crafts Co</image:title>
     </image:image>
   </url>
   <url>
@@ -360,7 +312,7 @@
     <priority>0.7</priority>
     <image:image>
       <image:loc>https://habibicraftsco.com/assets/mockups/leaf-season-sticker.png</image:loc>
-      <image:title>Leaf Season — Habibi Crafts Co</image:title>
+      <image:title>Leaf Season | Habibi Crafts Co</image:title>
     </image:image>
   </url>
   <url>
@@ -370,7 +322,7 @@
     <priority>0.7</priority>
     <image:image>
       <image:loc>https://habibicraftsco.com/assets/mockups/habibi-crafts-hat.png</image:loc>
-      <image:title>Habibi Crafts — Habibi Crafts Co</image:title>
+      <image:title>Habibi Crafts | Habibi Crafts Co</image:title>
     </image:image>
   </url>
   <url>
@@ -380,7 +332,7 @@
     <priority>0.7</priority>
     <image:image>
       <image:loc>https://habibicraftsco.com/assets/mockups/make-something-hat.png</image:loc>
-      <image:title>Make Something — Habibi Crafts Co</image:title>
+      <image:title>Make Something | Habibi Crafts Co</image:title>
     </image:image>
   </url>
   <url>
@@ -390,7 +342,7 @@
     <priority>0.7</priority>
     <image:image>
       <image:loc>https://habibicraftsco.com/assets/mockups/leaf-season-hat.png</image:loc>
-      <image:title>Leaf Season — Habibi Crafts Co</image:title>
+      <image:title>Leaf Season | Habibi Crafts Co</image:title>
     </image:image>
   </url>
 </urlset>
