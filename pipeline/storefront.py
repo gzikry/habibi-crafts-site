@@ -12,39 +12,63 @@ from datetime import date
 from pfangles import order as order_angles
 from root import angles_dir, cents_decimal, format_cents, repo_root, site_dir, without_retired_back
 from chrome import (
-    BASE, esc, filter_bars, icons, json_ld, page_close, page_open, scripts, stylesheet,
+    BASE, ORDERS_NOTE, ORDERS_NOTE_SHORT, SHARE_IMAGE_ALT, SHIP_LINE, SHOP_NEXT, THIN_PAGES,
+    esc, filter_bars, icons, json_ld, page_close, page_open, scripts, stylesheet,
 )
+
+# Hand-written pages use this for og-share.png. Home and shop keep their own alts.
+share_image_alt = SHARE_IMAGE_ALT
 
 ROOT = repo_root()
 SITE = site_dir()
 SNAPSHOT = json.loads((ROOT / 'pipeline' / 'frame-snapshot.json').read_text())
 
 # kind, file, section id, heading, shop blurb, category lede, card type, shop-link word
+TYPE_DESC = {
+    'mugs': '11 oz ceramic mug',
+    'tees': 'Unisex cotton tee',
+    'totes': 'Cotton tote',
+    'baby': 'Baby onesie',
+    'prints': '12 x 16 matte print, frame not included',
+    'stickers': 'Vinyl sticker',
+    'hats': 'Unstructured dad hat, one size adjustable',
+}
 CATS = [
     ('mugs', 'mugs.html', 'mugs', 'Mugs',
-     '11 oz, white glossy.', '11 oz white glossy. {price}.', 'Mug', 'mugs'),
+     TYPE_DESC['mugs'] + '.', TYPE_DESC['mugs'] + '. {price}.', 'Mug', 'mugs'),
     ('tees', 'tees.html', 'tees', 'Tees',
-     'Printed on the front.', 'Unisex, S through XL. {price}.', 'Tee', 'tees'),
+     TYPE_DESC['tees'] + '.', TYPE_DESC['tees'] + '. {price}.', 'Tee', 'tees'),
     ('totes', 'totes.html', 'totes', 'Totes',
-     'One size, cotton.', 'Cotton, one size. {price}.', 'Tote', 'totes'),
+     TYPE_DESC['totes'] + '.', TYPE_DESC['totes'] + '. {price}.', 'Tote', 'totes'),
     ('baby', 'onesies.html', 'baby', 'Onesies',
-     '3 to 18 months.', 'White, 3–18 months. {price}.', 'Onesie', 'onesies'),
+     TYPE_DESC['baby'] + '.', TYPE_DESC['baby'] + '. {price}.', 'Onesie', 'onesies'),
     ('prints', 'prints.html', 'prints', 'Prints',
-     '12 × 16, matte. Frame not included.', '12 × 16 matte. {price}.', 'Print', 'prints'),
+     TYPE_DESC['prints'] + '.', TYPE_DESC['prints'] + '. {price}.', 'Print', 'prints'),
     ('stickers', 'stickers.html', 'stickers', 'Stickers',
-     'Vinyl. {price}.', 'Vinyl stickers. {price}.', 'Sticker', 'stickers'),
+     TYPE_DESC['stickers'] + '.', TYPE_DESC['stickers'] + '. {price}.', 'Sticker', 'stickers'),
     ('hats', 'hats.html', 'hats', 'Hats',
-     'Dad hats. {price}.', 'Unstructured dad hats. {price}.', 'Dad hat', 'hats'),
+     'Black dad hats.', 'Black dad hats, unstructured and adjustable, one size. {price}.', 'Dad hat', 'hats'),
 ]
 
+# Photos are black caps. One color until another is actually photographed.
 HAT_COLOR = {
-    'habibi-crafts-hat': 'Charcoal',
-    'leaf-season-hat': 'Forest',
-    'make-something-hat': 'Maroon',
+    'habibi-crafts-hat': 'Black',
+    'leaf-season-hat': 'Black',
+    'make-something-hat': 'Black',
+}
+
+# TODO(George): meaning
+# Transliterated names keep meaning: null until George writes the line.
+# An empty meaning is not rendered.
+NAMED_SLUGS = {
+    'ya-aini', 'baladi', 'ya-dunia', 'jiran', 'maamoul', 'knafeh-club',
+    'khalas-habibi', 'ya-habayeb', 'halawa', 'sit-el-kul', 'ya-teta', 'amoura',
+    'beit-el-hobb', 'dar-el-hawa',
 }
 
 HERO_SLUGS = ['ya-aini', 'khalas-habibi', 'halawa']
-BAND_AFTER = 6
+# Hero, gift tiles, and this row use different products.
+HOME_ROW = ['ya-dunia', 'khalas-habibi', 'gather-grow', 'ya-teta']
 NL_KINDS = {'stickers', 'hats'}
 
 
@@ -116,6 +140,12 @@ def item_list(products):
     ]}
 
 
+def art_alt(p):
+    if p['category'] == 'hats':
+        return f"{p['name']}, black dad hat"
+    return p['name']
+
+
 def product_card(p, frames):
     preview = ''
     if len(frames) > 1:
@@ -124,7 +154,7 @@ def product_card(p, frames):
     kind = p['category']
     type_name = next(row[6] for row in CATS if row[0] == kind)
     return f'''<a class="product-card reveal" href="product-{p['slug']}.html" data-category="{kind}"{preview}>
-  <div class="product-media"><img class="mockup" src="{mockup(p['slug'])}" alt="{esc(p['name'])}" width="800" height="800" loading="lazy" decoding="async"></div>
+  <div class="product-media"><img class="mockup" src="{mockup(p['slug'])}" alt="{esc(art_alt(p))}" width="800" height="800" loading="lazy" decoding="async"></div>
   <div class="product-copy">
     <div class="product-type">{type_name}</div>
     <div class="product-row"><h3>{esc(p['name'])}</h3><span class="price">{format_cents(p['price'])}</span></div>
@@ -169,22 +199,32 @@ def collection_head(title, desc, canonical, ld, og_image, og_w, og_h, og_alt, in
 </head>'''
 
 
-def coming_next():
-    return '''<section class="section tight shop-section" id="coming-next" aria-labelledby="coming-next-heading">
-  <div class="shell">
-    <div class="section-head">
-      <div><h2 id="coming-next-heading">Coming next</h2><p>We'll list a piece when we have one to show.</p></div>
-    </div>
-    <div class="soon-grid"><a class="soon-card reveal" href="sweatshirts.html"><div class="soon-kicker">Coming next</div><h3>Sweatshirts</h3><p>A warm layer for the shop. We'll list the first batch here when it's ready.</p></a>
-<a class="soon-card reveal" href="long-sleeves.html"><div class="soon-kicker">Coming next</div><h3>Long sleeves</h3><p>Long-sleeve tees are next. No sizes or prices until we have a piece to show.</p></a>
-<a class="soon-card reveal" href="beanies.html"><div class="soon-kicker">Coming next</div><h3>Beanies</h3><p>Knit caps for cooler days. Coming after the dad hats that are already listed.</p></a>
-<a class="soon-card reveal" href="hoodies.html"><div class="soon-kicker">Coming next</div><h3>Hoodies</h3><p>Hoodies are coming soon.</p></a>
-<a class="soon-card reveal" href="youth-tees.html"><div class="soon-kicker">Coming next</div><h3>Youth tees</h3><p>Smaller tees, when we have them. The onesies in the shop are for babies.</p></a>
-<a class="soon-card reveal" href="coasters.html"><div class="soon-kicker">Coming next</div><h3>Coasters</h3><p>A table piece to sit with the mugs. Coming next — not listed yet.</p></a>
-<a class="soon-card reveal" href="journals.html"><div class="soon-kicker">Coming next</div><h3>Journals</h3><p>A notebook from the shop. We'll put it here when the first one is ready.</p></a>
-<a class="soon-card reveal" href="aprons.html"><div class="soon-kicker">Coming next</div><h3>Aprons</h3><p>For the kitchen, with the mugs. Not in the shop yet.</p></a></div>
-  </div>
-</section>'''
+def shop_next_line():
+    return f'''<section class="section tight"><div class="shell">
+    <p class="lede">{SHOP_NEXT}</p>
+  </div></section>'''
+
+
+def write_thin_pages(out_dir):
+    """Static-host redirect. These files stay out of the sitemap."""
+    for filename, label in THIN_PAGES:
+        html = f'''<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{esc(label)} | Habibi Crafts Co</title>
+<meta name="robots" content="noindex,follow">
+<meta http-equiv="refresh" content="0; url=/shop.html">
+<link rel="canonical" href="{BASE}/shop.html">
+</head>
+<body>
+<p><a href="/shop.html">Go to the shop</a></p>
+</body>
+</html>
+'''
+        (out_dir / filename).write_text(html)
+    print(f'{len(THIN_PAGES)} thin pages')
 
 
 def write_shop(out_dir, manifest=None):
@@ -193,7 +233,7 @@ def write_shop(out_dir, manifest=None):
     catalog = json.load(open(SITE / 'product-catalog.json'))
     priced = prices(catalog)
     desc = (
-        f"A husband-and-wife craft shop. Mugs {priced['mugs']}, tees {priced['tees']}, "
+        f"Mugs {priced['mugs']}, tees {priced['tees']}, "
         f"totes {priced['totes']}, onesies {priced['baby']}, prints {priced['prints']}, "
         f"stickers {priced['stickers']}, dad hats {priced['hats']}. Made after you order."
     )
@@ -205,7 +245,7 @@ def write_shop(out_dir, manifest=None):
     head = collection_head(
         'Shop | Habibi Crafts Co', desc, f'{BASE}/shop.html', ld,
         f'{BASE}/assets/og-share.png', '1200', '630',
-        'Habibi Crafts Co — mugs, tees, totes, onesies, and prints',
+        SHARE_IMAGE_ALT,
     )
     sections = []
     for kind, filename, section_id, label, blurb, _lede, _type_name, word in CATS:
@@ -228,11 +268,11 @@ def write_shop(out_dir, manifest=None):
         if 'id="stickers"' in block and body:
             body.append('')
         body.append(block)
-    body.append(coming_next())
+    body.append(shop_next_line())
     main = f'''<main id="main">
   <section class="catalog-head"><div class="shell">
     <h1>The shop</h1>
-    <p class="lede">Everything listed, plus the types coming next. Free US shipping on orders $39 and up. $6.99 flat below that.</p>
+    <p class="lede">Everything in the shop. Free US shipping on orders $39 and up. $6.99 flat below that.</p>
     {filter_bars('shop.html')}
   </div></section>
 ''' + '\n'.join(body)
@@ -241,10 +281,12 @@ def write_shop(out_dir, manifest=None):
 
     for kind, filename, _section_id, label, _blurb, lede, _type_name, _word in CATS:
         items = [p for p in catalog if p['category'] == kind]
-        meta = lede.format(price=priced[kind])
+        visible = lede.format(price=priced[kind])
+        # The hats intro is one sentence plus the price. Search and social text stay shorter.
+        meta = f'Dad hats, one size. {priced[kind]}.' if kind == 'hats' else visible
         cat_ld = {
             '@context': 'https://schema.org', '@type': 'CollectionPage',
-            'name': f'{label} — Habibi Crafts Co', 'url': f'{BASE}/{filename}',
+            'name': f'{label} | Habibi Crafts Co', 'url': f'{BASE}/{filename}',
             'mainEntity': item_list(items),
         }
         og = f'{BASE}/assets/mockups/{items[0]["slug"]}.png'
@@ -259,7 +301,7 @@ def write_shop(out_dir, manifest=None):
         main = f'''<main id="main">
   <section class="catalog-head"><div class="shell">
     <h1>{label}</h1>
-    <p class="lede">{esc(meta)}</p>
+    <p class="lede">{esc(visible)}</p>
     {filter_bars(filename)}
   </div></section>
   <section class="section tight"><div class="shell">
@@ -267,6 +309,7 @@ def write_shop(out_dir, manifest=None):
   </div></section>'''
         html = page_open(head, shop=True) + '\n' + page_close(main)
         (out_dir / filename).write_text(html)
+    write_thin_pages(out_dir)
     print(f'shop.html + {len(CATS)} category pages')
 
 
@@ -274,36 +317,20 @@ def pcard(p, src):
     kind = p['category']
     type_name = next(row[6] for row in CATS if row[0] == kind)
     return f'''<a class="pcard reveal" href="product-{p['slug']}.html" data-category="{kind}">
-  <div class="pcard-media"><img class="mockup" src="{src}" alt="{esc(p['name'])}" width="800" height="800" loading="lazy" decoding="async"></div>
+  <div class="pcard-media"><img class="mockup" src="{src}" alt="{esc(art_alt(p))}" width="800" height="800" loading="lazy" decoding="async"></div>
   <div class="pcard-type">{type_name}</div>
   <div class="pcard-row"><div class="pcard-title">{esc(p['name'])}</div><div class="pcard-price">{format_cents(p['price'])}</div></div>
 </a>'''
-
-
-def home_band():
-    return '''<section class="band" aria-labelledby="band-heading">
-  <div class="band-copy">
-    <div class="band-kicker">Made to order</div>
-    <h2 id="band-heading">Nothing is printed until you ask for it.</h2>
-    <p>We print after you order. Every mug, shirt, tote, sticker, and hat is made after the order comes in. It takes a few days longer than pulling something off a shelf, and it means we can carry this many designs without printing anything nobody wanted.</p>
-    <a class="band-link" href="about.html">How it works</a>
-  </div>
-  <div class="band-media">
-    <img class="mockup" src="assets/angles/gather-grow/handle-on-right.png?v=14" alt="Gather &amp; Grow tote" width="900" height="900" loading="lazy" decoding="async">
-  </div>
-</section>'''
 
 
 def hero_spin(product, frames):
     payload = esc(json.dumps(frames, separators=(',', ':')))
     first = frames[0]
     name = product['name']
-    return f'''        <div class="spin hero-spin" data-spin data-kind="{product['category']}" data-frames="{payload}" data-alt="{esc(name)}" data-autospin>
-          <div class="spin-counter" data-spin-counter>{esc(first['label'])}</div>
+    return f'''        <div class="spin hero-spin" data-spin data-kind="{product['category']}" data-frames="{payload}" data-alt="{esc(name)}">
           <div class="spin-stage" data-spin-stage>
             <img data-spin-image class="mockup" src="{first['src']}" alt="{esc(name)}" width="1200" height="1200" decoding="async" fetchpriority="high">
           </div>
-          <div class="spin-hint" data-spin-hint>Drag to rotate</div>
           <div class="spin-controls">
           <span class="spin-end" aria-hidden="true">360°</span>
           <input class="spin-slider" type="range" data-spin-slider
@@ -340,14 +367,13 @@ def write_home(out_dir, manifest=None):
         poster = poster_for(p['slug'], framed)
         return poster or mockup(p['slug'])
 
-    cards = [pcard(p, src_for(p)) for p in products]
-    grid = ''.join(cards[:BAND_AFTER] + [home_band()] + cards[BAND_AFTER:])
+    row = ''.join(pcard(by_slug[slug], src_for(by_slug[slug])) for slug in HOME_ROW)
     ld = {'@context': 'https://schema.org', '@graph': [
         {'@type': ['Store', 'Organization'], '@id': f'{BASE}/#store',
          'name': 'Habibi Crafts Co', 'url': f'{BASE}/',
          'logo': f'{BASE}/assets/logo.png',
          'image': f'{BASE}/assets/og-share.png',
-         'description': 'A husband-and-wife craft and gift shop in California. Made after you order.',
+         'description': 'A husband-and-wife craft and gift shop in California. Mugs, tees, totes, onesies, prints, stickers, and dad hats, made after you order.',
          'address': {'@type': 'PostalAddress', 'addressRegion': 'CA', 'addressCountry': 'US'},
          'areaServed': {'@type': 'Country', 'name': 'US'}},
         {'@type': 'WebSite', '@id': f'{BASE}/#website', 'url': f'{BASE}/',
@@ -355,10 +381,10 @@ def write_home(out_dir, manifest=None):
          'inLanguage': 'en-US'},
         {'@type': 'ItemList', 'name': 'Shop', 'itemListElement': item_list(products)['itemListElement']},
     ]}
-    title = 'Habibi Crafts Co — a husband-and-wife craft shop'
+    title = 'Habibi Crafts Co'
     desc = 'A husband-and-wife craft and gift shop in California. Mugs, tees, totes, onesies, prints, stickers, and dad hats, made after you order.'
-    og_desc = 'A husband-and-wife craft and gift shop in California. Made after you order.'
-    og_alt = 'Habibi Crafts Co — mugs, tees, totes, onesies, and prints'
+    og_desc = desc
+    og_alt = SHARE_IMAGE_ALT
     preload = hero_frames[0]['src']
     head = f'''<!doctype html>
 <html lang="en">
@@ -392,12 +418,13 @@ def write_home(out_dir, manifest=None):
 {scripts(True)}
 </head>'''
     gifts = '\n'.join([
-        gift_card('mugs.html', 'mugs', src_for(by_slug['ya-aini']), 'For the kitchen', f'Mugs · {priced["mugs"]}'),
-        gift_card('tees.html', 'tees', src_for(by_slug['khalas-habibi']), 'Wearable', f'Tees · {priced["tees"]}'),
-        gift_card('onesies.html', 'baby', src_for(by_slug['ya-teta']), 'For baby', f'Onesies · {priced["baby"]}'),
-        gift_card('prints.html', 'prints', src_for(by_slug['beit-el-hobb']), 'Art for the wall', f'Prints · {priced["prints"]}'),
-        gift_card('stickers.html', 'stickers', mockup('craft-club-sticker'), 'Small gifts', f'Stickers · {priced["stickers"]}'),
-        gift_card('hats.html', 'hats', mockup('habibi-crafts-hat'), 'Dad hats', f'Unstructured · {priced["hats"]}'),
+        gift_card('mugs.html', 'mugs', src_for(by_slug['baladi']), 'Mugs', TYPE_DESC['mugs']),
+        gift_card('tees.html', 'tees', src_for(by_slug['ya-habayeb']), 'Tees', TYPE_DESC['tees']),
+        gift_card('totes.html', 'totes', src_for(by_slug['halawa']), 'Totes', TYPE_DESC['totes']),
+        gift_card('onesies.html', 'baby', src_for(by_slug['amoura']), 'Onesies', TYPE_DESC['baby']),
+        gift_card('prints.html', 'prints', src_for(by_slug['beit-el-hobb']), 'Prints', TYPE_DESC['prints']),
+        gift_card('stickers.html', 'stickers', mockup('leaf-season-sticker'), 'Stickers', TYPE_DESC['stickers']),
+        gift_card('hats.html', 'hats', mockup('leaf-season-hat'), 'Hats', 'Unstructured dad hat, black, one size'),
     ])
     main = f'''<main id="main">
   <section class="hero">
@@ -405,7 +432,7 @@ def write_home(out_dir, manifest=None):
       <div class="hero-copy">
         <div class="eyebrow">Habibi Crafts Co · California</div>
         <h1>Our small business</h1>
-        <p class="lede">We make all kinds of crafts. Gifts for weddings, bachelor and bachelorette parties, and whoever you’re shopping for.</p>
+        <p class="lede">Crafts and gifts we'd want to give ourselves.</p>
         <div class="actions">
           <a class="button" href="shop.html">Shop all</a>
           <a class="button secondary" href="about.html">About</a>
@@ -421,18 +448,11 @@ def write_home(out_dir, manifest=None):
   <section class="section tight gift-paths" aria-labelledby="gift-heading">
     <div class="shell">
       <div class="section-head">
-        <h2 id="gift-heading">Shop by gift</h2>
+        <h2 id="gift-heading">What we make</h2>
         <a class="text-link" href="shop.html">See everything</a>
       </div>
       <div class="gift-grid">
 {gifts}
-        <a class="gift-card gift-soon reveal" href="shop.html#coming-next">
-          <div class="gift-copy">
-            <div class="soon-kicker">Coming next</div>
-            <h3>More types</h3>
-            <p>Sweatshirts, hoodies, journals, and more. We'll list them when we have a real piece.</p>
-          </div>
-        </a>
       </div>
     </div>
   </section>
@@ -440,22 +460,13 @@ def write_home(out_dir, manifest=None):
 
   <section class="section" id="shop" aria-labelledby="shop-heading">
     <div class="shell">
-      <div class="shop-head">
+      <div class="section-head">
         <h2 id="shop-heading">In the shop</h2>
-        <nav class="filter-bar" aria-label="Shop by type"><a class="filter-button" href="shop.html">All</a><a class="filter-button" href="mugs.html">Mugs</a><a class="filter-button" href="tees.html">Tees</a><a class="filter-button" href="totes.html">Totes</a><a class="filter-button" href="onesies.html">Onesies</a><a class="filter-button" href="prints.html">Prints</a><a class="filter-button" href="stickers.html">Stickers</a><a class="filter-button" href="hats.html">Hats</a></nav>
-        <nav class="filter-bar filter-soon" aria-label="Coming next"><a class="filter-button soon" href="sweatshirts.html">Sweatshirts</a><a class="filter-button soon" href="long-sleeves.html">Long sleeves</a><a class="filter-button soon" href="beanies.html">Beanies</a><a class="filter-button soon" href="hoodies.html">Hoodies</a><a class="filter-button soon" href="youth-tees.html">Youth tees</a><a class="filter-button soon" href="coasters.html">Coasters</a><a class="filter-button soon" href="journals.html">Journals</a><a class="filter-button soon" href="aprons.html">Aprons</a></nav></div>
-      <div class="grid-plain">{grid}</div>
+        <a class="text-link" href="shop.html">See everything</a>
+      </div>
+      <div class="grid-plain">{row}</div>
     </div>
-  </section>
-
-  <section class="section"><div class="shell">
-    <div class="story-panel reveal">
-      <div class="kicker">Why this exists</div>
-      <h2>This is our small business.</h2>
-      <p>We design the pieces. They’re printed after you order.</p>
-      <a class="text-link" href="about.html">About</a>
-    </div>
-  </div></section>'''
+  </section>'''
     html = page_open(head, home=True) + '\n' + page_close(main)
     (out_dir / 'index.html').write_text(html)
     print(f'index.html ({len(products)} products)')
@@ -463,54 +474,42 @@ def write_home(out_dir, manifest=None):
 
 def details_for(p):
     kind = p['category']
+    ship = ('Timing', SHIP_LINE)
     if kind == 'mugs':
         rows = [('Size', '11 oz'), ('Finish', 'White glossy'), ('Material', 'Ceramic'),
-                ('Care', 'Dishwasher and microwave safe'),
-                ('Timing', 'Printed after you order · usually 2–5 days')]
+                ('Care', 'Dishwasher and microwave safe'), ship]
     elif kind == 'tees':
         rows = [('Sizes', 'S, M, L, XL'), ('Fit', 'Unisex'), ('Material', 'Cotton'),
-                ('Print', 'Front'), ('Care', 'Wash cold, inside out · tumble dry low'),
-                ('Timing', 'Printed after you order · usually 3–7 days')]
+                ('Print', 'Front'), ('Care', 'Wash cold, inside out, tumble dry low'), ship]
     elif kind == 'totes':
         rows = [('Size', 'One size'), ('Material', 'Cotton'), ('Print', 'Front'),
-                ('Care', 'Wash cold · tumble dry low'),
-                ('Timing', 'Printed after you order · usually 2–5 days')]
+                ('Care', 'Wash cold, tumble dry low'), ship]
     elif kind == 'baby':
-        rows = [('Sizes', '3–6m, 6–12m, 12–18m'), ('Color', 'White'), ('Material', 'Cotton'),
-                ('Print', 'Front'), ('Care', 'Machine wash cold · tumble dry low'),
-                ('Timing', 'Printed after you order · usually 2–5 days')]
+        rows = [('Sizes', '3-6m, 6-12m, 12-18m'), ('Color', 'White'), ('Material', 'Cotton'),
+                ('Print', 'Front'), ('Care', 'Machine wash cold, tumble dry low'), ship]
     elif kind == 'prints':
-        rows = [('Size', '12 × 16 in'), ('Paper', 'Matte'), ('Frame', 'Not included'),
-                ('Care', 'Keep dry · frame not included'),
-                ('Timing', 'Printed after you order · usually 2–5 days')]
+        rows = [('Size', '12 x 16 in'), ('Paper', 'Matte'), ('Frame', 'Not included'),
+                ('Care', 'Keep dry'), ship]
     elif kind == 'stickers':
         rows = [('Size', 'About 3 in'), ('Material', 'Vinyl'), ('Finish', 'Kiss-cut'),
-                ('Care', 'Spot clean'), ('Timing', 'Printed after you order · usually 3–7 days')]
+                ('Care', 'Spot clean'), ship]
     else:
-        rows = [('Style', 'Dad hat'), ('Fit', 'One size, adjustable'),
-                ('Color', HAT_COLOR[p['slug']]), ('Care', 'Spot clean'),
-                ('Timing', 'Printed after you order · usually 3–7 days')]
+        # Style and fit already appear in the subtitle. Details keeps what they don't.
+        rows = [('Color', HAT_COLOR[p['slug']]), ('Care', 'Spot clean'), ship]
     return ''.join(f'<div><dt>{esc(k)}</dt><dd>{esc(v)}</dd></div>' for k, v in rows)
 
 
 def size_block(p):
+    # Chips only belong next to Add to bag. Details still lists the sizes.
+    if p.get('purchasable') is not True:
+        return ''
     kind = p['category']
     if kind == 'tees':
         sizes = [('S', 'S'), ('M', 'M'), ('L', 'L'), ('XL', 'XL')]
-        note = 'Choosing a size does not start an order.'
     elif kind == 'baby':
-        sizes = [('3-6m', '3–6m'), ('6-12m', '6–12m'), ('12-18m', '12–18m')]
-        note = 'Choosing a size does not start an order. Checkout isn’t open.'
-    elif kind == 'mugs':
-        return '<p class="size-line">11 oz · white glossy</p>'
-    elif kind == 'totes':
-        return '<p class="size-line">Cotton · one size</p>'
-    elif kind == 'prints':
-        return '<p class="size-line">12 × 16 in · matte</p>'
-    elif kind == 'stickers':
-        return '<p class="size-line">About 3 in · vinyl</p>'
+        sizes = [('3-6m', '3-6m'), ('6-12m', '6-12m'), ('12-18m', '12-18m')]
     else:
-        return '<p class="size-line">One size · unstructured</p>'
+        return ''
     buttons = []
     for i, (value, label) in enumerate(sizes):
         pressed = 'true' if i == 0 else 'false'
@@ -522,12 +521,11 @@ def size_block(p):
         <div class="size-options" role="group" aria-labelledby="size-{p['slug']}">
 {chr(10).join(buttons)}
         </div>
-        <p class="size-picker-note">{note}</p>
       </div>'''
 
 
 def viewer_for(p, frames):
-    name = p['name']
+    name = art_alt(p)
     kind = p['category']
     poster = poster_for(p['slug'], frames)
     if not frames and poster:
@@ -575,7 +573,7 @@ def related(catalog, p):
     cards = join_cards(kind, [product_card(item, []) for item in others])
     grid = 'product-grid two' if kind in NL_KINDS else 'product-grid'
     return f'''  <section class="section tight"><div class="shell">
-    <div class="section-head"><h2>More {word}</h2><a class="text-link" href="{filename}">Shop {word}</a></div>
+    <div class="section-head"><h2>More {word}</h2></div>
     <div class="{grid}">{cards}</div>
   </div></section>'''
 
@@ -583,19 +581,28 @@ def related(catalog, p):
 def product_ld(p, desc, filename, label):
     slug = p['slug']
     url = f'{BASE}/product-{slug}.html'
+    product = {
+        '@type': 'Product', '@id': f'{url}#product', 'name': p['name'],
+        'description': desc, 'image': f'{BASE}/assets/mockups/{slug}.png',
+        'brand': {'@type': 'Brand', 'name': 'Habibi Crafts Co'},
+        'offers': {'@type': 'Offer', 'url': url, 'priceCurrency': 'USD',
+                   'price': cents_decimal(p['price']),
+                   'availability': 'https://schema.org/OutOfStock',
+                   'itemCondition': 'https://schema.org/NewCondition'},
+        'url': url, 'sku': slug,
+        'seller': {'@type': 'Organization', '@id': f'{BASE}/#store',
+                   'name': 'Habibi Crafts Co', 'url': f'{BASE}/'},
+    }
+    if p['category'] == 'hats':
+        product['color'] = HAT_COLOR[slug]
+    # TODO(George): meaning
+    meaning = p.get('meaning')
+    if meaning:
+        product['alternateName'] = meaning
     return {
         '@context': 'https://schema.org',
         '@graph': [
-            {'@type': 'Product', '@id': f'{url}#product', 'name': p['name'],
-             'description': desc, 'image': f'{BASE}/assets/mockups/{slug}.png',
-             'brand': {'@type': 'Brand', 'name': 'Habibi Crafts Co'},
-             'offers': {'@type': 'Offer', 'url': url, 'priceCurrency': 'USD',
-                        'price': cents_decimal(p['price']),
-                        'availability': 'https://schema.org/OutOfStock',
-                        'itemCondition': 'https://schema.org/NewCondition'},
-             'url': url, 'sku': slug,
-             'seller': {'@type': 'Organization', '@id': f'{BASE}/#store',
-                        'name': 'Habibi Crafts Co', 'url': f'{BASE}/'}},
+            product,
             {'@type': 'BreadcrumbList', 'itemListElement': [
                 {'@type': 'ListItem', 'position': 1, 'name': 'Home', 'item': f'{BASE}/'},
                 {'@type': 'ListItem', 'position': 2, 'name': 'Shop', 'item': f'{BASE}/shop.html'},
@@ -617,13 +624,21 @@ def write_products(out_dir, manifest=None):
         filename, label = meta[1], meta[3]
         frames = frames_for(p['slug'], manifest)
         gallery = not frames and p['slug'] not in SNAPSHOT['posters']
-        subtitle = p.get('subtitle', '')
-        desc = f"{p['name']} — {subtitle}" if subtitle else p['name']
+        subtitle = TYPE_DESC[kind]
+        desc = f"{p['name']}. {subtitle}."
         url = f"{BASE}/product-{p['slug']}.html"
-        blurb = ('Printed after you order. Tees usually leave in three to seven days, then ship in the US.'
-                 if kind == 'tees' else
-                 'Printed after you order. Most pieces leave in two to five days, then ship in the US.')
-        charge = '' if kind == 'tees' else '\n      <p class="checkout-note">Nothing is charged.</p>'
+        if p.get('purchasable') is True:
+            actions = (
+                f'<div class="actions"><button class="button" type="button" data-add-bag '
+                f'data-product-slug="{p["slug"]}">Add to bag</button></div>'
+            )
+            note = ORDERS_NOTE
+        else:
+            actions = ''
+            note = ORDERS_NOTE_SHORT
+        charge = f'<p class="checkout-note">{note}</p>'
+        buy_parts = [part for part in (size_block(p), actions, charge) if part]
+        buy = '\n      '.join(buy_parts)
         eyebrow = meta[6] if kind != 'hats' else 'Dad hat'
         if kind == 'baby':
             eyebrow = 'Onesie'
@@ -646,12 +661,12 @@ def write_products(out_dir, manifest=None):
 <meta property="og:image:width" content="800">
 <meta property="og:image:height" content="800">
 <meta property="og:locale" content="en_US">
-<meta property="og:image:alt" content="{esc(p['name'])}">
+<meta property="og:image:alt" content="{esc(art_alt(p))}">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="{esc(p['name'])} | Habibi Crafts Co">
 <meta name="twitter:description" content="{esc(desc)}">
 <meta name="twitter:image" content="{BASE}/assets/mockups/{p['slug']}.png">
-<meta name="twitter:image:alt" content="{esc(p['name'])}">
+<meta name="twitter:image:alt" content="{esc(art_alt(p))}">
 {icons()}
 {stylesheet()}
 {json_ld(product_ld(p, desc, filename, label), ensure_ascii=False)}
@@ -667,13 +682,11 @@ def write_products(out_dir, manifest=None):
       <h1>{esc(p['name'])}</h1>
       <p class="product-subtitle">{esc(subtitle)}</p>
       <div class="product-price">{format_cents(p['price'])}</div>
-      {size_block(p)}
-      <div class="actions"><button class="button browse-mode" type="button" disabled data-checkout data-product-slug="{p['slug']}" aria-disabled="true">Browsing only · Checkout opens soon</button></div>{charge}
+      {buy}
       <div class="detail-list">
         <h2>Details</h2>
         <dl>{details_for(p)}</dl>
       </div>
-      <p class="product-blurb">{blurb}</p>
       <p class="product-trust-links"><a href="shipping.html">Shipping &amp; timing</a> · <a href="faq.html">Sizes &amp; care</a></p>
     </div>
   </div>{gap}{related(catalog, p)}'''
@@ -693,14 +706,6 @@ SITEMAP_CORE = [
     ('prints.html', 'weekly', '0.8'),
     ('stickers.html', 'weekly', '0.8'),
     ('hats.html', 'weekly', '0.8'),
-    ('sweatshirts.html', 'weekly', '0.6'),
-    ('long-sleeves.html', 'weekly', '0.6'),
-    ('beanies.html', 'weekly', '0.6'),
-    ('hoodies.html', 'weekly', '0.6'),
-    ('youth-tees.html', 'weekly', '0.6'),
-    ('coasters.html', 'weekly', '0.6'),
-    ('journals.html', 'weekly', '0.6'),
-    ('aprons.html', 'weekly', '0.6'),
     ('about.html', 'monthly', '0.6'),
     ('faq.html', 'monthly', '0.5'),
     ('shipping.html', 'monthly', '0.4'),
@@ -749,7 +754,7 @@ def write_sitemap(out_dir):
     <priority>0.7</priority>
     <image:image>
       <image:loc>{BASE}/assets/mockups/{p['slug']}.png</image:loc>
-      <image:title>{xml_escape(p['name'])} — Habibi Crafts Co</image:title>
+      <image:title>{xml_escape(p['name'])} | Habibi Crafts Co</image:title>
     </image:image>
   </url>''')
     xml = ('<?xml version="1.0" encoding="UTF-8"?>\n'

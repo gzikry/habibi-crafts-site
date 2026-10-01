@@ -174,19 +174,15 @@ function boot() {
   }
 
   function wireAdd() {
-    Array.prototype.forEach.call(document.querySelectorAll('[data-checkout][data-product-slug]'), function (checkout) {
-      var slug = checkout.getAttribute('data-product-slug');
+    Array.prototype.forEach.call(document.querySelectorAll('[data-add-bag][data-product-slug]'), function (button) {
+      if (button.getAttribute('data-wired') === '1') return;
+      button.setAttribute('data-wired', '1');
+      var slug = button.getAttribute('data-product-slug');
       var product = bySlug[slug];
       if (!product || product.purchasable !== true) return;
-      if (checkout.previousElementSibling && checkout.previousElementSibling.hasAttribute('data-add-bag')) return;
-      var button = document.createElement('button');
-      button.type = 'button';
-      button.className = 'button';
-      button.setAttribute('data-add-bag', '');
-      button.textContent = 'Add to bag';
       var addedTimer = 0;
       button.addEventListener('click', function () {
-        if (!add(slug, selectedSize(checkout))) return;
+        if (!add(slug, selectedSize(button))) return;
         button.textContent = 'Added';
         var note = button.parentNode.querySelector('[data-added-note]');
         if (!note) {
@@ -205,7 +201,6 @@ function boot() {
           button.textContent = 'Add to bag';
         }, 2000);
       });
-      checkout.parentNode.insertBefore(button, checkout);
     });
   }
 

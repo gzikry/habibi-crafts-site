@@ -69,42 +69,100 @@ def write_apple_touch(mark: Image.Image, dest: Path) -> None:
     square_on_cream(mark, 180, pad_ratio=0.14).save(dest, "PNG", optimize=True)
 
 
-def write_og_share(logo: Image.Image, mug: Image.Image, dest: Path) -> None:
-    w, h = 1200, 630
-    logo_rgba = logo.convert("RGBA")
-    panel = logo_rgba.getpixel((0, 0))[:3] + (255,)
+def crop_wordmark(logo: Image.Image) -> Image.Image:
+    """Drop the unverified date line under the wordmark."""
+    im = logo.convert("RGBA")
+    _w, h = im.size
+    return im.crop((0, 0, _w, int(h * 270 / 447)))
+
+
+def charcoal_wordmark(white: Image.Image) -> Image.Image:
+    """Nav wordmark is white on transparent. Recolor the ink and keep the alpha."""
+    mark = white.convert("RGBA")
+    pixels = mark.load()
+    width, height = mark.size
+    for y in range(height):
+        for x in range(width):
+            _r, _g, _b, alpha = pixels[x, y]
+            pixels[x, y] = (CHARCOAL[0], CHARCOAL[1], CHARCOAL[2], alpha)
+    bbox = mark.getbbox()
+    return mark.crop(bbox) if bbox else mark
+
+
+def tracked_glyphs(text: str, font, fill, tracking: int) -> Image.Image:
+    """Draw tracked type and crop to the ink, so trailing spacing is not part of the width."""
+    scratch = ImageDraw.Draw(Image.new("RGBA", (1, 1)))
+    widths = []
+    for char in text:
+        box = scratch.textbbox((0, 0), char, font=font)
+        widths.append(box[2] - box[0])
+    line = scratch.textbbox((0, 0), text, font=font)
+    total = sum(widths) + tracking * max(len(text) - 1, 0)
+    image = Image.new("RGBA", (total + 64, (line[3] - line[1]) + 64), (0, 0, 0, 0))
+    draw = ImageDraw.Draw(image)
+    x = 32
+    y = 32 - line[1]
+    for char, char_w in zip(text, widths):
+        draw.text((x, y), char, font=font, fill=fill)
+        x += char_w + tracking
+    bbox = image.getbbox()
+    return image.crop(bbox) if bbox else image
+
+
+def ink_bands(im: Image.Image, threshold: int = 16):
+    """Split a transparent wordmark into its lines and crop each to its glyphs."""
+    alpha = im.getchannel("A")
+    width, height = im.size
+    px = alpha.load()
+    hits = []
+    for y in range(height):
+        hits.append(any(px[x, y] > threshold for x in range(width)))
+    bands = []
+    start = None
+    for y, hit in enumerate(hits + [False]):
+        if hit and start is None:
+            start = y
+        elif not hit and start is not None:
+            band = im.crop((0, start, width, y))
+            bbox = band.getbbox()
+            if bbox:
+                bands.append((band.crop(bbox), start + bbox[1]))
+            start = None
+    return bands
+
+
+def write_og_share(logo: Image.Image, dest: Path) -> None:
+    """Cream card with the wordmark and a small ESTD 2024 line, optically centered.
+
+    The wordmark is drawn on a 2x canvas and downsampled so the edges stay sharp.
+    """
+    del logo  # The opaque plate sits behind logo.png. The nav mark is already transparent.
+    scale = 2
+    w, h = 1200 * scale, 630 * scale
     canvas = Image.new("RGBA", (w, h), CREAM)
-    draw = ImageDraw.Draw(canvas)
-
-    draw.rectangle((0, 0, 640, h), fill=panel)
-    draw.rectangle((0, 0, w, 16), fill=MAROON)
-    draw.rectangle((0, h - 16, w, h), fill=MAROON)
-
-    wordmark = ImageOps.contain(logo_rgba, (520, 360), Image.Resampling.LANCZOS)
-    canvas.alpha_composite(wordmark, (60, 70))
-
-    serif = ImageFont.truetype(SERIF, 28)
-    sans = ImageFont.truetype(SANS, 20)
-    draw.text((80, 430), "A husband-and-wife shop", font=serif, fill=CHARCOAL)
-    draw.text((80, 468), "in California.", font=serif, fill=CHARCOAL)
-    draw.text((80, 520), "Mugs, tees, totes, onesies, and prints.", font=sans, fill=MUTED)
-
-    mug_rgba = mug.convert("RGBA")
-    mug_fit = ImageOps.contain(mug_rgba, (500, 500), Image.Resampling.LANCZOS)
-    canvas.alpha_composite(mug_fit, (w - mug_fit.width - 28, (h - mug_fit.height) // 2))
-
-    canvas.convert("RGB").save(dest, "PNG", optimize=True)
+    mark = charcoal_wordmark(Image.open(ASSETS / "logo-nav-white.png"))
+    fitted = ImageOps.contain(mark, (920 * scale, 300 * scale), Image.Resampling.LANCZOS)
+    date_font = ImageFont.truetype(SANS, 26 * scale)
+    established = tracked_glyphs("ESTD 2024", date_font, MUTED, 8 * scale)
+    # Close the gap the tagline used to occupy, then center the pair.
+    gap = 28 * scale
+    block_h = fitted.height + gap + established.height
+    top = (h - block_h) // 2
+    for band, y0 in ink_bands(fitted):
+        canvas.alpha_composite(band, ((w - band.width) // 2, top + y0))
+    canvas.alpha_composite(established, ((w - established.width) // 2, top + fitted.height + gap))
+    final = canvas.resize((1200, 630), Image.Resampling.LANCZOS)
+    final.convert("RGB").save(dest, "PNG", optimize=True)
 
 
 def main() -> None:
     logo = Image.open(ASSETS / "logo.png")
     mark = trim_logo(logo)
     white = Image.open(ASSETS / "logo-nav-white.png")
-    mug = Image.open(ASSETS / "mockups" / "ya-aini.png")
 
     write_ico(white, SITE / "favicon.ico")
     write_apple_touch(mark, ASSETS / "apple-touch-icon.png")
-    write_og_share(logo, mug, ASSETS / "og-share.png")
+    write_og_share(logo, ASSETS / "og-share.png")
     print("wrote", SITE / "favicon.ico")
     print("wrote", ASSETS / "apple-touch-icon.png")
     print("wrote", ASSETS / "og-share.png")

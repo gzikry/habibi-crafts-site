@@ -213,6 +213,10 @@ def main():
             entry['subtitle'] = sub
         else:
             missing_subtitle.append(slug)
+        # TODO(George): meaning
+        # Empty meaning stays out of the shipped catalog.
+        if kept.get('meaning'):
+            entry['meaning'] = kept['meaning']
         entries.append(entry)
 
         # spec the angle fetcher and builders need, kept separate from the
