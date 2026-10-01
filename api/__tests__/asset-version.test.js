@@ -12,7 +12,7 @@ describe('asset versions', () => {
       cwd: root,
       encoding: 'utf8',
     });
-    assert.match(out, /styles\.css=24/);
+    assert.match(out, /styles\.css=25/);
     assert.match(out, /script and stylesheet versions match, and images are versioned/);
   });
 });
