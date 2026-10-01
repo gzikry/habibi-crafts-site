@@ -43,7 +43,7 @@ for filename in sorted(os.listdir(SITE)):
         for found in re.findall(rf'{re.escape(asset)}\?v=(\d+)', html):
             if found != expected:
                 failures.append(f'{filename}: {asset}?v={found}, expected {expected}')
-    for match in re.finditer(r'(?:src|href)="(assets/(?:mockups|angles)/[^"]+\.png)"', html):
+    for match in re.finditer(r'(?:src|href)="(assets/(?:mockups|angles|on-model)/[^"?]+\.png)"', html):
         failures.append(f'{filename}: unversioned image {match.group(1)}')
 
 if failures:

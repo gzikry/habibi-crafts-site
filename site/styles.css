@@ -381,7 +381,8 @@ button{background:none;border:0;padding:0;font:inherit;color:inherit;cursor:poin
 .coming-copy p{font-size:16px;line-height:1.6;color:var(--muted);margin:0 0 14px}
 .coming-copy .actions{margin-top:8px}
 
-.product-page>.product-gallery{
+.product-page>.product-gallery,
+.product-page>.product-media-col>.product-gallery{
   width:100%;max-width:min(560px,100%);margin-inline:auto;
   background:var(--sand);border-radius:clamp(16px,2.2vw,22px);overflow:hidden;
   aspect-ratio:1;
@@ -402,10 +403,36 @@ button{background:none;border:0;padding:0;font:inherit;color:inherit;cursor:poin
    desktop viewports. width:100% is required — every child of .spin is
    absolutely positioned, so without an explicit width the grid item has no
    intrinsic size and collapses to nothing. */
+.product-media-col{min-width:0;width:100%;max-width:min(560px,100%);margin-inline:auto}
+.product-page>.product-media-col>.spin,
+.product-page>.product-media-col>.product-gallery{max-width:none;width:100%;margin-inline:0}
 .product-page>.spin{
   width:100%;max-width:min(560px,100%);margin-inline:auto;
   border-radius:clamp(16px,2.2vw,22px);
 }
+.shot-photo{
+  display:none;width:100%;height:auto;aspect-ratio:1;object-fit:cover;
+  border-radius:clamp(16px,2.2vw,22px);border:1px solid var(--line);background:#fff;
+}
+.product-media-col:has(.product-gallery) .shot-photo{border:0}
+.shot-switch{display:flex;gap:8px;margin-top:10px}
+.shot-thumb{
+  width:72px;height:72px;flex:none;position:relative;
+  border-radius:12px;border:1px solid var(--line);overflow:hidden;
+  cursor:pointer;background:var(--sand);
+}
+.shot-thumb input{position:absolute;inset:0;margin:0;opacity:0;cursor:pointer}
+.shot-thumb img{width:100%;height:100%;object-fit:contain;display:block}
+.product-media-col:has([data-kind=tees]) .shot-thumb,
+.product-media-col:has([data-kind=baby]) .shot-thumb,
+.product-media-col:has([data-kind=hats]) .shot-thumb{background:var(--sand-warm)}
+.product-media-col:has([data-kind=totes]) .shot-thumb,
+.product-media-col:has([data-kind=prints]) .shot-thumb{background:var(--sand-cool)}
+.shot-thumb:has(input:checked){border-color:var(--maroon)}
+.shot-thumb:has(input:focus-visible){outline:2.5px solid var(--mustard);outline-offset:3px}
+.product-media-col:has(input[data-shot-photo]:checked)>.spin,
+.product-media-col:has(input[data-shot-photo]:checked)>.product-gallery{display:none}
+.product-media-col:has(input[data-shot-photo]:checked)>.shot-photo{display:block}
 .breadcrumbs{font-size:12px;color:var(--muted);margin-bottom:18px}
 .breadcrumbs a:hover{color:var(--charcoal)}
 .product-meta{padding-top:4px;position:sticky;top:78px}
@@ -437,7 +464,8 @@ button{background:none;border:0;padding:0;font:inherit;color:inherit;cursor:poin
 .product-trust-links a:hover{text-decoration:underline;text-underline-offset:3px}
 @media(max-width:900px){
   .product-page{grid-template-columns:1fr;padding-top:14px}
-  .product-page>.spin{max-width:100%}
+  .product-page>.spin,
+  .product-page>.product-media-col{max-width:100%}
   .product-meta{position:static;padding-top:0}
 }
 .actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
