@@ -189,8 +189,11 @@ button{background:none;border:0;padding:0;font:inherit;color:inherit;cursor:poin
   transition:transform .55s cubic-bezier(.2,.7,.2,1);
 }
 .pcard:hover .pcard-media img.mockup{transform:scale(1.035)}
-.pcard:focus-visible{outline:none}
-.pcard:focus-visible .pcard-media{outline:2.5px solid var(--mustard);outline-offset:3px}
+.pcard:focus-visible{outline:none;box-shadow:none}
+.pcard:focus-visible .pcard-media{
+  outline:2px solid var(--maroon);outline-offset:2px;
+  box-shadow:0 0 0 2px var(--mustard);
+}
 /* One listing: type, then name left / price right. Same on shop cards. */
 .pcard-type{
   margin-top:10px;font-size:11px;font-weight:700;letter-spacing:.08em;
@@ -335,8 +338,11 @@ button{background:none;border:0;padding:0;font:inherit;color:inherit;cursor:poin
 .product-row{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
 .product-row h3{font-size:14.5px;letter-spacing:-.005em;line-height:1.3;font-family:var(--sans);font-weight:600}
 .product-card:hover .product-row h3{text-decoration:underline;text-underline-offset:3px}
-.product-card:focus-visible{outline:none}
-.product-card:focus-visible .product-media{outline:2.5px solid var(--mustard);outline-offset:3px}
+.product-card:focus-visible{outline:none;box-shadow:none}
+.product-card:focus-visible .product-media{
+  outline:2px solid var(--maroon);outline-offset:2px;
+  box-shadow:0 0 0 2px var(--mustard);
+}
 .price{font-family:var(--sans);font-size:13.5px;color:var(--muted);font-weight:500;white-space:nowrap}
 
 .gift-paths{padding-top:12px;padding-bottom:8px}
@@ -437,10 +443,10 @@ button{background:none;border:0;padding:0;font:inherit;color:inherit;cursor:poin
   outline:2px solid #fff;outline-offset:0;
 }
 .shot-thumb:has(input:focus-visible){
-  outline:2px solid var(--mustard);outline-offset:2px;
-  box-shadow:0 0 0 2px var(--maroon);
+  outline:2px solid var(--maroon);outline-offset:2px;
+  box-shadow:0 0 0 2px var(--mustard);
 }
-.shot-thumb input:focus-visible{outline:none}
+.shot-thumb input:focus-visible{outline:none;box-shadow:none}
 .product-media-col:has(input[data-shot-photo]:checked)>.spin,
 .product-media-col:has(input[data-shot-photo]:checked)>.product-gallery{display:none}
 .product-media-col:has(input[data-shot-photo]:checked)>.shot-photo{display:block}
@@ -478,15 +484,17 @@ button{background:none;border:0;padding:0;font:inherit;color:inherit;cursor:poin
   .product-page>.spin,
   .product-page>.product-media-col{max-width:100%}
   .product-meta{position:static;padding-top:0}
-  /* Keep Add to bag on the first screen. The thumbs sit on the image box,
-     in the same corner whether or not the angle slider is showing. A
-     side-by-side pair covers the hem, so they stack in the clear left margin. */
+  /* Keep Add to bag on the first screen. The thumbs sit on the image box
+     in the same place whether or not the angle slider is showing. Product
+     art is first, so arrow keys move down the stack. */
   .product-media-col{position:relative}
   .shot-switch{
-    position:absolute;left:4px;bottom:4px;z-index:2;margin:0;gap:4px;
-    flex-direction:column-reverse;
+    position:absolute;left:2px;bottom:4px;z-index:2;margin:0;gap:4px;
+    flex-direction:column;justify-content:flex-end;
   }
   .shot-thumb{width:44px;height:44px;border-radius:10px}
+  /* Slider pages: sit above the bar so the handle and the 360° label stay clear. */
+  .product-media-col:has(.spin-controls) .shot-switch{bottom:calc(56px + 8px)}
 }
 .actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
 .button{
@@ -772,8 +780,10 @@ html.js-reveal .reveal.visible{opacity:1;transform:none}
   background:var(--maroon);border:2.5px solid var(--paper);
   box-shadow:0 1px 5px rgba(64,39,23,.3);
 }
-.spin-slider:focus-visible{outline:none}
-.spin-slider:focus-visible::-webkit-slider-thumb,
+.spin-slider:focus-visible{outline:none;box-shadow:none}
+.spin-slider:focus-visible::-webkit-slider-thumb{
+  box-shadow:0 1px 5px rgba(64,39,23,.3),0 0 0 2px var(--mustard),0 0 0 4px var(--maroon);
+}
 .spin-slider:focus-visible::-moz-range-thumb{
   box-shadow:0 1px 5px rgba(64,39,23,.3),0 0 0 2px var(--mustard),0 0 0 4px var(--maroon);
 }
@@ -788,6 +798,7 @@ html.js-reveal .reveal.visible{opacity:1;transform:none}
 @media(max-width:620px){
   .spin{border-radius:12px}
   .product-media-col:not(:has(.product-gallery)) .shot-photo{border-radius:12px}
+  .product-media-col:has(.spin-controls) .shot-switch{bottom:calc(50px + 8px)}
   .spin-stage{inset:0 0 50px}
   .spin-controls{height:50px;padding:0 13px;gap:9px}
   .spin-end{display:none}
@@ -800,8 +811,9 @@ html.js-reveal .reveal.visible{opacity:1;transform:none}
 }
 
 :focus-visible{
-  outline:2.5px solid var(--mustard);
-  outline-offset:3px;
+  outline:2px solid var(--maroon);
+  outline-offset:2px;
+  box-shadow:0 0 0 2px var(--mustard);
 }
 
 @media(prefers-reduced-motion:reduce){
@@ -827,6 +839,7 @@ html.js-reveal .reveal.visible{opacity:1;transform:none}
   .nav-links>a:hover,.nav-links>a[aria-current=page],
   .nav-shop>summary:hover,.nav-shop[open]>summary,.nav-shop>summary[aria-current=page]{color:var(--charcoal)}
   .nav-shop{width:100%}
+  .nav-shop>summary{text-align:center}
   .nav-shop-menu{
     position:static;left:auto;right:auto;min-width:0;box-shadow:none;border:0;
     padding:4px 12px 10px;background:transparent;transform:none;

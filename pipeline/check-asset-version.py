@@ -35,7 +35,8 @@ print('SCRIPT_V ' + ', '.join(f'{k}={v}' for k, v in SCRIPT_V.items()))
 for filename in sorted(os.listdir(SITE)):
     if not filename.endswith('.html'):
         continue
-    # about.html is byte-locked, so its cache keys stay on the previous publish.
+    # about.html keeps the locked stylesheet key. Only its footer differs
+    # from 22f9dbc, so it is not required to carry the current styles.css key.
     if filename == 'about.html':
         continue
     html = (SITE / filename).read_text()

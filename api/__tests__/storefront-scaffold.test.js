@@ -1,3 +1,4 @@
+import { execFileSync } from 'node:child_process';
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, existsSync } from 'node:fs';
@@ -89,6 +90,18 @@ describe('commerce scaffold stays off and chrome is branded', () => {
 
   it('locks George 2026-09-02 About copy verbatim', () => {
     const about = read('site/about.html');
+    const locked = execFileSync('git', ['show', '22f9dbc:site/about.html'], {
+      cwd: root,
+      encoding: 'utf8',
+    });
+    const aboveFooter = (html) => html.slice(0, html.indexOf('<footer class="site-footer">'));
+    const footerBlock = (html) => {
+      const start = html.indexOf('<footer class="site-footer">');
+      const end = html.indexOf('</footer>', start) + '</footer>'.length;
+      return html.slice(start, end);
+    };
+    assert.equal(aboveFooter(about), aboveFooter(locked));
+    assert.equal(footerBlock(about), footerBlock(read('site/faq.html')));
     assert.match(about, /LOCKED George 2026-09-02/);
     assert.match(about, />Our small business\.</);
     assert.match(about, /We’re a husband and wife\. This is our small business\./);
