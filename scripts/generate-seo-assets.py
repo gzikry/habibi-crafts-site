@@ -102,15 +102,19 @@ def draw_tracked(draw: ImageDraw.ImageDraw, text: str, y: int, font, fill, track
 
 
 def write_og_share(logo: Image.Image, dest: Path) -> None:
-    """Cream card, one large wordmark, one tagline, and a small ESTD 2024 line."""
+    """Cream card, one large wordmark, one tagline, and a small ESTD 2024 line.
+
+    The wordmark is drawn on a 2x canvas and downsampled so the edges stay sharp.
+    """
     del logo  # The opaque plate sits behind logo.png. The nav mark is already transparent.
-    w, h = 1200, 630
+    scale = 2
+    w, h = 1200 * scale, 630 * scale
     canvas = Image.new("RGBA", (w, h), CREAM)
     mark = charcoal_wordmark(Image.open(ASSETS / "logo-nav-white.png"))
-    fitted = ImageOps.contain(mark, (920, 300), Image.Resampling.LANCZOS)
+    fitted = ImageOps.contain(mark, (920 * scale, 300 * scale), Image.Resampling.LANCZOS)
     draw = ImageDraw.Draw(canvas)
-    sans = ImageFont.truetype(SANS, 36)
-    date_font = ImageFont.truetype(SANS, 26)
+    sans = ImageFont.truetype(SANS, 36 * scale)
+    date_font = ImageFont.truetype(SANS, 26 * scale)
     line = "Mugs, tees, totes, and more."
     established = "ESTD 2024"
 
@@ -118,16 +122,17 @@ def write_og_share(logo: Image.Image, dest: Path) -> None:
         box = draw.textbbox((0, 0), text, font=font)
         return box[2] - box[0]
 
-    gap = 36
-    line_h = 48
-    date_h = 36
-    block_h = fitted.height + gap + line_h + 18 + date_h
+    gap = 36 * scale
+    line_h = 48 * scale
+    date_h = 36 * scale
+    block_h = fitted.height + gap + line_h + 18 * scale + date_h
     top = (h - block_h) // 2
     canvas.alpha_composite(fitted, ((w - fitted.width) // 2, top))
     y = top + fitted.height + gap
     draw.text(((w - text_width(line, sans)) // 2, y), line, font=sans, fill=MUTED)
-    draw_tracked(draw, established, y + line_h + 10, date_font, MUTED, 8, w)
-    canvas.convert("RGB").save(dest, "PNG", optimize=True)
+    draw_tracked(draw, established, y + line_h + 10 * scale, date_font, MUTED, 8 * scale, w)
+    final = canvas.resize((1200, 630), Image.Resampling.LANCZOS)
+    final.convert("RGB").save(dest, "PNG", optimize=True)
 
 
 def main() -> None:
