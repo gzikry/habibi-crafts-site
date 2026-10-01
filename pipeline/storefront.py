@@ -135,7 +135,7 @@ def on_model_for(p):
     phrase = ON_MODEL.get(p['category'])
     if not phrase:
         return None
-    rel = f"assets/on-model/{p['slug']}.png"
+    rel = f"assets/on-model/{p['slug']}.jpg"
     if not (SITE / rel).exists():
         return None
     return {'src': f'{rel}?v={ON_MODEL_V}', 'alt': f"{p['name']} {phrase}"}
@@ -158,7 +158,7 @@ def media_with_on_model(p, frames, viewer):
     group = f"shot-{p['slug']}"
     return f'''    <div class="product-media-col">
 {viewer}
-      <img class="shot-photo" src="{esc(photo['src'])}" alt="{esc(photo['alt'])}">
+      <img class="shot-photo" src="{esc(photo['src'])}" alt="{esc(photo['alt'])}" loading="lazy" decoding="async">
       <div class="shot-switch">
         <label class="shot-thumb">
           <input type="radio" name="{esc(group)}" checked aria-label="{esc(alt)}">
@@ -166,7 +166,7 @@ def media_with_on_model(p, frames, viewer):
         </label>
         <label class="shot-thumb">
           <input type="radio" name="{esc(group)}" data-shot-photo aria-label="{esc(photo['alt'])}">
-          <img src="{esc(photo['src'])}" alt="" width="800" height="800">
+          <img src="{esc(photo['src'])}" alt="" width="800" height="800" loading="lazy" decoding="async">
         </label>
       </div>
     </div>'''

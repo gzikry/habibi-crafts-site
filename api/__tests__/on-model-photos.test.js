@@ -53,15 +53,16 @@ describe('apparel PDPs show an on-model photo second', () => {
   for (const product of catalog) {
     if (!APPAREL.has(product.category)) continue;
     it(`${product.slug} has an on-model shot after the product image`, () => {
-      const file = `site/assets/on-model/${product.slug}.png`;
+      const file = `site/assets/on-model/${product.slug}.jpg`;
       assert.equal(existsSync(join(root, file)), true, file);
+      assert.equal(existsSync(join(root, `site/assets/on-model/${product.slug}.png`)), false);
       const html = read(`site/product-${product.slug}.html`);
       const hero = heroSrc(html);
-      const photo = html.match(/<img class="shot-photo" src="([^"]+)" alt="([^"]+)"/);
+      const photo = html.match(/<img class="shot-photo" src="([^"]+)" alt="([^"]+)" loading="lazy" decoding="async">/);
       assert.ok(photo, 'on-model image');
       assert.equal(html.indexOf(hero) < html.indexOf(photo[0]), true);
       assert.doesNotMatch(hero, /on-model/);
-      assert.equal(photo[1], `assets/on-model/${product.slug}.png?v=1`);
+      assert.equal(photo[1], `assets/on-model/${product.slug}.jpg?v=1`);
       assert.equal(photo[2], esc(`${product.name} ${PHRASE[product.category]}`));
       assert.doesNotMatch(photo[2], /Printful/i);
     });
