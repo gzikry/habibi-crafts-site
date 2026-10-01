@@ -132,6 +132,29 @@ describe('storefront copy does not regress the live-site review', () => {
     }
   });
 
+  it('describes the share image as the wordmark on utility pages', () => {
+    const alt = 'Habibi Crafts Co wordmark, established 2024';
+    const named = [
+      'cart.html',
+      'checkout.html',
+      'contact.html',
+      'faq.html',
+      'order-confirmation.html',
+      'privacy.html',
+      'shipping.html',
+      'tracking.html',
+      '404.html',
+    ];
+    for (const name of named) {
+      const html = read(name);
+      assert.equal(html.includes('Mugs, tees, totes, and more.'), false, name);
+      assert.ok(html.includes(`content="${alt}"`), name);
+    }
+    assert.ok(read('about.html').includes('mugs, tees, totes, onesies, and prints'));
+    assert.ok(read('index.html').includes('Mugs, tees, totes, onesies, prints, stickers, and dad hats'));
+    assert.ok(read('shop.html').includes('Mugs, tees, totes, onesies, prints, stickers, and hats.'));
+  });
+
   it('does not repeat a product on the home page', () => {
     const home = visible(read('index.html'));
     const slugs = [...home.matchAll(/<img\b[^>]*src="[^"]*(?:mockups|angles)\/([a-z0-9-]+)/g)].map((match) => match[1]);

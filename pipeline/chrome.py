@@ -15,6 +15,9 @@ SCRIPT_V = {
     'app.js': '12',
 }
 
+# og-share.png is the wordmark and ESTD 2024. Index and shop keep their own alts.
+SHARE_IMAGE_ALT = 'Habibi Crafts Co wordmark, established 2024'
+
 ORDERS_NOTE = "We're not taking orders yet. You can still add things to your bag."
 ORDERS_NOTE_SHORT = "We're not taking orders yet."
 OPENING_SOON = 'Opening soon'

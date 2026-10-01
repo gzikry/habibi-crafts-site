@@ -101,7 +101,7 @@ def page_head(
     extra_meta="",
     extra_ld=None,
     og_image="https://habibicraftsco.com/assets/og-share.png",
-    og_image_alt="Habibi Crafts Co — mugs, tees, totes, onesies, and prints",
+    og_image_alt="Habibi Crafts Co wordmark, established 2024",
     og_w="1200",
     og_h="630",
 ):
@@ -353,6 +353,7 @@ write(
             "Our small business. We make all kinds of crafts. Printed after you order.",
             "https://habibicraftsco.com/",
             extra_ld=[home_ld],
+            og_image_alt="Habibi Crafts Co — mugs, tees, totes, onesies, and prints",
         ),
         "home",
         f"""  <section class="shop-intro">
@@ -401,6 +402,7 @@ write(
             "Mugs, tees, totes, onesies, and prints. We’ll keep adding.",
             "https://habibicraftsco.com/shop.html",
             extra_ld=[item_list_ld("https://habibicraftsco.com/shop.html", "Shop Habibi Crafts Co", PRODUCTS)],
+            og_image_alt="Habibi Crafts Co — mugs, tees, totes, onesies, and prints",
         ),
         "shop",
         f"""  <section class="catalog-head"><div class="shell">
@@ -557,6 +559,7 @@ write(
             "About | Habibi Crafts Co",
             "Our small business. We make all kinds of crafts. Printed after you order.",
             "https://habibicraftsco.com/about.html",
+            og_image_alt="Habibi Crafts Co — mugs, tees, totes, onesies, and prints",
             extra_ld=[
                 {
                     "@context": "https://schema.org",

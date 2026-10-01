@@ -12,9 +12,12 @@ from datetime import date
 from pfangles import order as order_angles
 from root import angles_dir, cents_decimal, format_cents, repo_root, site_dir, without_retired_back
 from chrome import (
-    BASE, ORDERS_NOTE, ORDERS_NOTE_SHORT, SHIP_LINE, SHOP_NEXT, THIN_PAGES,
+    BASE, ORDERS_NOTE, ORDERS_NOTE_SHORT, SHARE_IMAGE_ALT, SHIP_LINE, SHOP_NEXT, THIN_PAGES,
     esc, filter_bars, icons, json_ld, page_close, page_open, scripts, stylesheet,
 )
+
+# Hand-written pages use this for og-share.png. Home and shop keep their own alts.
+share_image_alt = SHARE_IMAGE_ALT
 
 ROOT = repo_root()
 SITE = site_dir()
