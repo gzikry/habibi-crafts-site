@@ -44,6 +44,9 @@ describe('commerce scaffold stays off and chrome is branded', () => {
     assert.match(tee, /data-size-picker/);
     assert.match(tee, /aria-pressed="true"/);
     assert.match(read('site/product-ya-teta.html'), /data-size-picker/);
+    assert.doesNotMatch(read('site/product-garden-gate.html'), /data-size-picker/);
+    assert.doesNotMatch(read('site/product-garden-gate.html'), /data-add-bag/);
+    assert.match(read('site/product-garden-gate.html'), /3-6m, 6-12m, 12-18m/);
     assert.match(read('site/checkout.js'), /Opening soon/);
     assert.match(read('site/cart.html'), /Opening soon/);
   });
@@ -58,6 +61,12 @@ describe('commerce scaffold stays off and chrome is branded', () => {
     assert.match(home, /href="stickers\.html"/);
     assert.match(home, /href="hats\.html"/);
     assert.doesNotMatch(home, /href="sweatshirts\.html"/);
+    assert.doesNotMatch(home, /data-spin-counter/);
+    assert.doesNotMatch(home, /data-spin-hint/);
+    assert.match(home, /data-spin-slider/);
+    assert.match(home, /Turn it around with the slider\./);
+    assert.match(read('site/product-ya-aini.html'), /data-spin-counter/);
+    assert.match(read('site/product-ya-aini.html'), /data-spin-hint/);
   });
 
   it('FAQ does not promise a thank-you card in every box', () => {

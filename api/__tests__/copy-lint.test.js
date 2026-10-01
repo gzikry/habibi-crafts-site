@@ -64,6 +64,7 @@ describe('storefront copy does not regress the live-site review', () => {
           assert.equal(full, 0, name);
           assert.equal(shortOnly, 1, name);
           assert.doesNotMatch(html, /data-add-bag/, name);
+          assert.doesNotMatch(html, /data-size-picker/, name);
         }
       }
       if (NO_NOTE.includes(name)) {

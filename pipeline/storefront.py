@@ -323,11 +323,9 @@ def hero_spin(product, frames):
     first = frames[0]
     name = product['name']
     return f'''        <div class="spin hero-spin" data-spin data-kind="{product['category']}" data-frames="{payload}" data-alt="{esc(name)}">
-          <div class="spin-counter" data-spin-counter>{esc(first['label'])}</div>
           <div class="spin-stage" data-spin-stage>
             <img data-spin-image class="mockup" src="{first['src']}" alt="{esc(name)}" width="1200" height="1200" decoding="async" fetchpriority="high">
           </div>
-          <div class="spin-hint" data-spin-hint>Drag to rotate</div>
           <div class="spin-controls">
           <span class="spin-end" aria-hidden="true">360°</span>
           <input class="spin-slider" type="range" data-spin-slider
@@ -497,6 +495,9 @@ def details_for(p):
 
 
 def size_block(p):
+    # Chips only belong next to Add to bag. Details still lists the sizes.
+    if p.get('purchasable') is not True:
+        return ''
     kind = p['category']
     if kind == 'tees':
         sizes = [('S', 'S'), ('M', 'M'), ('L', 'L'), ('XL', 'XL')]
@@ -630,7 +631,9 @@ def write_products(out_dir, manifest=None):
         else:
             actions = ''
             note = ORDERS_NOTE_SHORT
-        charge = f'\n      <p class="checkout-note">{note}</p>'
+        charge = f'<p class="checkout-note">{note}</p>'
+        buy_parts = [part for part in (size_block(p), actions, charge) if part]
+        buy = '\n      '.join(buy_parts)
         eyebrow = meta[6] if kind != 'hats' else 'Dad hat'
         if kind == 'baby':
             eyebrow = 'Onesie'
@@ -674,8 +677,7 @@ def write_products(out_dir, manifest=None):
       <h1>{esc(p['name'])}</h1>
       <p class="product-subtitle">{esc(subtitle)}</p>
       <div class="product-price">{format_cents(p['price'])}</div>
-      {size_block(p)}
-      {actions}{charge}
+      {buy}
       <div class="detail-list">
         <h2>Details</h2>
         <dl>{details_for(p)}</dl>
