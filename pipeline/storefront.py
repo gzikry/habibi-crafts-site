@@ -64,8 +64,9 @@ NAMED_SLUGS = {
 }
 
 HERO_SLUGS = ['ya-aini', 'khalas-habibi', 'halawa']
-# Hero, gift tiles, and this row use different products. Gather & Grow sits on the row.
-HOME_ROW = ['ya-dunia', 'khalas-habibi', 'gather-grow', 'ya-teta']
+# Hero, gift tiles, and this row use different products. Gather & Grow stays off
+# the row until a blank tote photo exists for a re-mock.
+HOME_ROW = ['ya-dunia', 'khalas-habibi', 'sit-el-kul', 'ya-teta']
 NL_KINDS = {'stickers', 'hats'}
 
 

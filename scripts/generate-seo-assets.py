@@ -89,8 +89,20 @@ def charcoal_wordmark(white: Image.Image) -> Image.Image:
     return mark.crop(bbox) if bbox else mark
 
 
+def draw_tracked(draw: ImageDraw.ImageDraw, text: str, y: int, font, fill, tracking: int, width: int) -> None:
+    widths = []
+    for char in text:
+        box = draw.textbbox((0, 0), char, font=font)
+        widths.append(box[2] - box[0])
+    total = sum(widths) + tracking * (len(text) - 1)
+    x = (width - total) // 2
+    for char, char_w in zip(text, widths):
+        draw.text((x, y), char, font=font, fill=fill)
+        x += char_w + tracking
+
+
 def write_og_share(logo: Image.Image, dest: Path) -> None:
-    """Cream card, one large wordmark, one tagline. No date line and no second name."""
+    """Cream card, one large wordmark, one tagline, and a small ESTD 2024 line."""
     del logo  # The opaque plate sits behind logo.png. The nav mark is already transparent.
     w, h = 1200, 630
     canvas = Image.new("RGBA", (w, h), CREAM)
@@ -98,7 +110,9 @@ def write_og_share(logo: Image.Image, dest: Path) -> None:
     fitted = ImageOps.contain(mark, (920, 300), Image.Resampling.LANCZOS)
     draw = ImageDraw.Draw(canvas)
     sans = ImageFont.truetype(SANS, 36)
+    date_font = ImageFont.truetype(SANS, 26)
     line = "Mugs, tees, totes, and more."
+    established = "ESTD 2024"
 
     def text_width(text, font):
         box = draw.textbbox((0, 0), text, font=font)
@@ -106,11 +120,13 @@ def write_og_share(logo: Image.Image, dest: Path) -> None:
 
     gap = 36
     line_h = 48
-    block_h = fitted.height + gap + line_h
+    date_h = 36
+    block_h = fitted.height + gap + line_h + 18 + date_h
     top = (h - block_h) // 2
     canvas.alpha_composite(fitted, ((w - fitted.width) // 2, top))
     y = top + fitted.height + gap
     draw.text(((w - text_width(line, sans)) // 2, y), line, font=sans, fill=MUTED)
+    draw_tracked(draw, established, y + line_h + 10, date_font, MUTED, 8, w)
     canvas.convert("RGB").save(dest, "PNG", optimize=True)
 
 
