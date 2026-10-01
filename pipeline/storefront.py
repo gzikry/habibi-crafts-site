@@ -59,6 +59,12 @@ HAT_COLOR = {
 
 # Second PDP shot for apparel. Cards and the home grid stay on the mockup.
 ON_MODEL_V = '1'
+# These three files were replaced, so their cache key moves on its own.
+ON_MODEL_V_OVERRIDE = {
+    'habibi-crafts-hat': '2',
+    'leaf-season-hat': '2',
+    'make-something-hat': '2',
+}
 ON_MODEL = {
     'tees': 'tee, worn',
     'hats': 'hat, worn',
@@ -138,7 +144,8 @@ def on_model_for(p):
     rel = f"assets/on-model/{p['slug']}.jpg"
     if not (SITE / rel).exists():
         return None
-    return {'src': f'{rel}?v={ON_MODEL_V}', 'alt': f"{p['name']} {phrase}"}
+    version = ON_MODEL_V_OVERRIDE.get(p['slug'], ON_MODEL_V)
+    return {'src': f'{rel}?v={version}', 'alt': f"{p['name']} {phrase}"}
 
 
 def opening_shot(p, frames):

@@ -62,7 +62,8 @@ describe('apparel PDPs show an on-model photo second', () => {
       assert.ok(photo, 'on-model image');
       assert.equal(html.indexOf(hero) < html.indexOf(photo[0]), true);
       assert.doesNotMatch(hero, /on-model/);
-      assert.equal(photo[1], `assets/on-model/${product.slug}.jpg?v=1`);
+      const version = product.category === 'hats' ? '2' : '1';
+      assert.equal(photo[1], `assets/on-model/${product.slug}.jpg?v=${version}`);
       assert.equal(photo[2], esc(`${product.name} ${PHRASE[product.category]}`));
       assert.doesNotMatch(photo[2], /Printful/i);
     });
