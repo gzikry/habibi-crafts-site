@@ -81,7 +81,7 @@ describe('commerce scaffold stays off and chrome is branded', () => {
     assert.doesNotMatch(about, /labor of love|handcrafted|thrilled/i);
     const home = read('site/index.html');
     assert.match(home, />Our small business</);
-    assert.match(home, /whoever you’re shopping for/);
+    assert.match(home, /Crafts and gifts we'd want to give ourselves\./);
     assert.match(home, /What we make/);
     assert.doesNotMatch(home, /Why this exists/);
     assert.doesNotMatch(home, /This is our small business\./);

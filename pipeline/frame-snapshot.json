@@ -43,19 +43,19 @@
       {
         "file": "garden-gate/front-view.png",
         "label": "front view",
-        "v": "17"
+        "v": "18"
       },
       {
         "file": "garden-gate/back-view.png",
         "label": "back view",
-        "v": "17"
+        "v": "18"
       }
     ],
     "gather-grow": [
       {
         "file": "gather-grow/handle-on-right.png",
         "label": "Handle on Right",
-        "v": "14"
+        "v": "15"
       }
     ],
     "habibi-crafts-hat": [],
@@ -280,8 +280,8 @@
     "craft-club-sticker": "14",
     "dar-el-hawa": "16",
     "early-light": "14",
-    "garden-gate": "17",
-    "gather-grow": "14",
+    "garden-gate": "18",
+    "gather-grow": "15",
     "habibi-crafts-hat": "14",
     "halawa": "14",
     "jiran": "15",

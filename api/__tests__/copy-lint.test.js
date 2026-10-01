@@ -97,13 +97,44 @@ describe('storefront copy does not regress the live-site review', () => {
     assert.equal(shopNotes, 0);
   });
 
-  it('keeps the eight thin pages out of the sitemap and out of the index', () => {
+  it('keeps the eight thin pages out of the sitemap and redirects them', () => {
     const sitemap = readFileSync(join(site, 'sitemap.xml'), 'utf8');
     for (const name of THIN) {
+      const html = read(name);
       assert.doesNotMatch(sitemap, new RegExp(name));
-      assert.match(read(name), /noindex/);
-      assert.match(read(name), /Shop all/);
-      assert.doesNotMatch(read(name), /http-equiv="refresh"/);
+      assert.match(html, /noindex/);
+      assert.match(html, /http-equiv="refresh" content="0; url=\/shop\.html"/);
+      assert.match(html, /rel="canonical" href="https:\/\/habibicraftsco\.com\/shop\.html"/);
+      assert.match(html, />Go to the shop</);
     }
+  });
+
+  it('uses the full orders line only next to Add to bag', () => {
+    for (const name of pages()) {
+      const html = read(name);
+      const full = html.split(NOTE).length - 1;
+      if (html.includes('data-add-bag')) {
+        assert.equal(full, 1, name);
+      } else {
+        assert.equal(full, 0, name);
+      }
+    }
+    const contact = read('contact.html');
+    assert.equal(contact.split(NOTE).length - 1, 0);
+    assert.equal(contact.split(NOTE_SHORT).length - 1, 0);
+  });
+
+  it('ships no empty meaning field', () => {
+    const catalog = JSON.parse(readFileSync(join(site, 'product-catalog.json'), 'utf8'));
+    for (const item of catalog) {
+      assert.equal(Object.hasOwn(item, 'meaning'), false, item.slug);
+    }
+  });
+
+  it('does not repeat a product on the home page', () => {
+    const home = visible(read('index.html'));
+    const slugs = [...home.matchAll(/<img\b[^>]*src="[^"]*(?:mockups|angles)\/([a-z0-9-]+)/g)].map((match) => match[1]);
+    const dupes = slugs.filter((slug, i) => slugs.indexOf(slug) !== i);
+    assert.deepEqual(dupes, []);
   });
 });

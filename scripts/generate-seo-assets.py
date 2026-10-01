@@ -76,15 +76,28 @@ def crop_wordmark(logo: Image.Image) -> Image.Image:
     return im.crop((0, 0, _w, int(h * 270 / 447)))
 
 
+def charcoal_wordmark(white: Image.Image) -> Image.Image:
+    """Nav wordmark is white on transparent. Recolor the ink and keep the alpha."""
+    mark = white.convert("RGBA")
+    pixels = mark.load()
+    width, height = mark.size
+    for y in range(height):
+        for x in range(width):
+            _r, _g, _b, alpha = pixels[x, y]
+            pixels[x, y] = (CHARCOAL[0], CHARCOAL[1], CHARCOAL[2], alpha)
+    bbox = mark.getbbox()
+    return mark.crop(bbox) if bbox else mark
+
+
 def write_og_share(logo: Image.Image, dest: Path) -> None:
+    """Cream card, one large wordmark, one tagline. No date line and no second name."""
+    del logo  # The opaque plate sits behind logo.png. The nav mark is already transparent.
     w, h = 1200, 630
     canvas = Image.new("RGBA", (w, h), CREAM)
-    mark = trim_logo(crop_wordmark(logo))
-    fitted = ImageOps.contain(mark, (780, 250), Image.Resampling.LANCZOS)
+    mark = charcoal_wordmark(Image.open(ASSETS / "logo-nav-white.png"))
+    fitted = ImageOps.contain(mark, (920, 300), Image.Resampling.LANCZOS)
     draw = ImageDraw.Draw(canvas)
-    serif = ImageFont.truetype(SERIF, 64)
     sans = ImageFont.truetype(SANS, 36)
-    title = "Habibi Crafts Co"
     line = "Mugs, tees, totes, and more."
 
     def text_width(text, font):
@@ -92,17 +105,11 @@ def write_og_share(logo: Image.Image, dest: Path) -> None:
         return box[2] - box[0]
 
     gap = 36
-    title_h = 76
     line_h = 48
-    block_h = fitted.height + gap + title_h + 18 + line_h
+    block_h = fitted.height + gap + line_h
     top = (h - block_h) // 2
     canvas.alpha_composite(fitted, ((w - fitted.width) // 2, top))
     y = top + fitted.height + gap
-    draw.text(((w - text_width(title, serif)) // 2, y), title, font=serif, fill=CHARCOAL)
-    y += title_h + 8
-    rule_w = 72
-    draw.rectangle(((w - rule_w) // 2, y, (w + rule_w) // 2, y + 3), fill=MAROON)
-    y += 18
     draw.text(((w - text_width(line, sans)) // 2, y), line, font=sans, fill=MUTED)
     canvas.convert("RGB").save(dest, "PNG", optimize=True)
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Rebuild a few product images from the assets already in git.
+"""Rebuild Garden Gate and Gather & Grow from assets already in git.
 
 Reads the originals at 22f9dbc so a second run does not paint over itself.
 Does not call any external API.
@@ -10,17 +10,22 @@ import io
 import subprocess
 from pathlib import Path
 
-from PIL import Image, ImageDraw, ImageFilter
+import numpy as np
+from PIL import Image, ImageDraw, ImageFont
 
 ROOT = Path(__file__).resolve().parents[1]
 BASE = '22f9dbc'
 MAROON = (125, 46, 33, 255)
-PAPER = (248, 244, 236, 255)
+BEIGE = np.array([237.0, 228.0, 207.0])
+SERIF = '/usr/share/fonts/truetype/noto/NotoSerif-Regular.ttf'
 
 
 def original(rel: str) -> Image.Image:
     data = subprocess.check_output(['git', 'show', f'{BASE}:{rel}'])
-    return Image.open(io.BytesIO(data)).convert('RGBA')
+    im = Image.open(io.BytesIO(data))
+    if im.mode == 'P':
+        im = im.convert('RGBA')
+    return im.convert('RGBA')
 
 
 def save(im: Image.Image, rel: str) -> None:
@@ -30,239 +35,228 @@ def save(im: Image.Image, rel: str) -> None:
     print('wrote', rel, im.size)
 
 
-def knock_beige(im: Image.Image) -> Image.Image:
-    """Key out only the flat beige print box. The garment stays as it was."""
-    from collections import deque
+def _arr(im: Image.Image) -> np.ndarray:
+    return np.asarray(im.convert('RGBA'))
 
-    src = im.convert('RGBA')
-    px = src.load()
-    w, h = src.size
-    samples = []
-    for y in range(h // 3, 2 * h // 3, 2):
-        for x in range(w // 3, 2 * w // 3, 2):
-            r, g, b, a = px[x, y]
-            if a > 220 and (r - b) > 16 and r > 200 and abs(r - g) < 18 and g > b:
-                samples.append((r, g, b))
-    if not samples:
-        raise SystemExit('beige panel not found')
-    buckets = {}
-    for sample in samples:
-        key = tuple(channel // 4 * 4 for channel in sample)
-        buckets[key] = buckets.get(key, 0) + 1
-    ref = max(buckets, key=buckets.get)
-    tolerance = 28
 
-    def near(color):
-        return color[3] > 220 and sum(abs(color[i] - ref[i]) for i in range(3)) <= tolerance
+def _fabric_mask(rgb: np.ndarray) -> np.ndarray:
+    return (rgb.mean(2) > 228) & (np.abs(rgb[:, :, 0] - rgb[:, :, 2]) < 18)
 
-    seen = bytearray(w * h)
-    best_pts = None
-    box = None
-    for y in range(h):
-        for x in range(w):
-            index = y * w + x
-            if seen[index]:
-                continue
-            if not near(px[x, y]):
-                seen[index] = 1
-                continue
-            queue = deque([(x, y)])
-            seen[index] = 1
-            pts = []
-            while queue:
-                cx, cy = queue.popleft()
-                pts.append((cx, cy))
-                for nx, ny in ((cx - 1, cy), (cx + 1, cy), (cx, cy - 1), (cx, cy + 1)):
-                    if nx < 0 or ny < 0 or nx >= w or ny >= h:
-                        continue
-                    nxt = ny * w + nx
-                    if seen[nxt]:
-                        continue
-                    seen[nxt] = 1
-                    if near(px[nx, ny]):
-                        queue.append((nx, ny))
-            if best_pts is None or len(pts) > len(best_pts):
-                best_pts = pts
-                xs = [point[0] for point in pts]
-                ys = [point[1] for point in pts]
-                box = (min(xs), min(ys), max(xs), max(ys))
+
+def _sister_fabric(primary: Image.Image, secondary: Image.Image) -> tuple[np.ndarray, np.ndarray]:
+    a = _arr(primary)[:, :, :3].astype(np.float32)
+    b = _arr(secondary)[:, :, :3].astype(np.float32)
+    src = a.copy()
+    use_b = ~_fabric_mask(a) & _fabric_mask(b)
+    src[use_b] = b[use_b]
+    hole = ~_fabric_mask(a) & ~_fabric_mask(b)
+    return src, hole
+
+
+def _continue_fabric(photo: np.ndarray, sister: np.ndarray | None, hole: np.ndarray | None, box, feather: int):
+    """Fill a print rectangle with the surrounding garment, then the sister photo."""
+    rgb = photo[:, :, :3].astype(np.float32)
+    h, w = rgb.shape[:2]
     x0, y0, x1, y1 = box
-    ring = []
-    for y in range(max(0, y0 - 14), min(h, y1 + 15)):
-        for x in range(max(0, x0 - 14), min(w, x1 + 15)):
-            if x0 <= x <= x1 and y0 <= y <= y1:
-                continue
-            r, g, b, a = px[x, y]
-            if a < 230:
-                continue
-            if abs(r - g) < 10 and abs(g - b) < 10 and r > 220:
-                ring.append((r, g, b))
-    if len(ring) < 20:
-        raise SystemExit('onesie fabric not found')
-    fabric = tuple(sorted(channel[i] for channel in ring)[len(ring) // 2] for i in range(3))
+    mask = np.zeros((h, w), bool)
+    mask[y0:y1 + 1, x0:x1 + 1] = True
+    ys, xs = np.mgrid[0:h, 0:w]
+    dt = (ys - y0).astype(np.float32)
+    db = (y1 - ys).astype(np.float32)
+    dl = (xs - x0).astype(np.float32)
+    dr = (x1 - xs).astype(np.float32)
+    dist = np.minimum(
+        np.minimum(np.maximum(dt, 0), np.maximum(db, 0)),
+        np.minimum(np.maximum(dl, 0), np.maximum(dr, 0)),
+    )
+    ty = np.clip(y0 - 1 - (ys - y0), 0, h - 1)
+    by = np.clip(y1 + 1 + (y1 - ys), 0, h - 1)
+    lx = np.clip(x0 - 1 - (xs - x0), 0, w - 1)
+    rx = np.clip(x1 + 1 + (x1 - xs), 0, w - 1)
+    eps = 0.35
+    wt = np.where(ty < y0, 1 / (np.maximum(dt, 0) + eps) ** 4, 0.0)
+    wb = np.where(by > y1, 1 / (np.maximum(db, 0) + eps) ** 4, 0.0)
+    wl = np.where(lx < x0, 1 / (np.maximum(dl, 0) + eps) ** 4, 0.0)
+    wr = np.where(rx > x1, 1 / (np.maximum(dr, 0) + eps) ** 4, 0.0)
+    wsum = wt + wb + wl + wr
+    mirrored = (
+        rgb[ty, xs] * wt[:, :, None]
+        + rgb[by, xs] * wb[:, :, None]
+        + rgb[ys, lx] * wl[:, :, None]
+        + rgb[ys, rx] * wr[:, :, None]
+    ) / (wsum[:, :, None] + 1e-8)
+    if sister is None:
+        inside = mirrored
+    else:
+        sib = sister.copy()
+        if hole is not None:
+            sib[hole] = mirrored[hole]
+        t = np.clip(dist / float(feather), 0, 1)
+        t = t * t * (3 - 2 * t)
+        inside = mirrored * (1 - t[:, :, None]) + sib * t[:, :, None]
+    out = rgb.copy()
+    out[mask] = inside[mask]
+    return out, mask
 
-    mask = Image.new('L', (w, h), 0)
-    mp = mask.load()
-    for y in range(y0, y1 + 1):
-        for x in range(x0, x1 + 1):
-            if near(px[x, y]):
-                mp[x, y] = 255
-    rim = mask.filter(ImageFilter.MaxFilter(5))
-    rp = rim.load()
-    for y in range(max(0, y0 - 4), min(h, y1 + 5)):
-        for x in range(max(0, x0 - 4), min(w, x1 + 5)):
-            if mp[x, y] or rp[x, y] == 0:
-                continue
-            r, g, b, a = px[x, y]
-            if a < 200:
-                continue
-            dist = sum(abs((r, g, b)[i] - ref[i]) for i in range(3))
-            if dist < 48 and (r - b) > 8:
-                mp[x, y] = 180
-    soft = mask.filter(ImageFilter.GaussianBlur(1.15))
-    sp = soft.load()
-    out = src.copy()
-    op = out.load()
 
-    def ink_amount(color):
-        dist = sum(abs(color[i] - ref[i]) for i in range(3))
-        redder = (color[0] - color[1]) - (ref[0] - ref[1])
-        darker = ref[2] - color[2]
-        if dist < 20 and redder < 10:
-            return 0.0
-        if redder < 12 and darker < 14:
-            return 0.0
-        return max(0.0, min(1.0, max(redder / 70, darker / 90, dist / 160)))
-
-    for y in range(h):
-        for x in range(w):
-            coverage = sp[x, y] / 255
-            if coverage < 0.02:
-                continue
-            r, g, b, a = px[x, y]
-            amount = ink_amount((r, g, b))
-            if amount <= 0:
-                repl = fabric
-            else:
-                ink = _unkey((r, g, b), ref, amount)
-                repl = tuple(int(ink[i] * amount + fabric[i] * (1 - amount)) for i in range(3))
-            mixed = tuple(int(repl[i] * coverage + (r, g, b)[i] * (1 - coverage)) for i in range(3))
-            op[x, y] = mixed + (a,)
-
-    _assert_clean(px, op, w, h, box)
+def _paint_ink(base: np.ndarray, rgb: np.ndarray, mask: np.ndarray) -> np.ndarray:
+    dist = np.abs(rgb - BEIGE).sum(2)
+    redder = (rgb[:, :, 0] - rgb[:, :, 1]) - (BEIGE[0] - BEIGE[1])
+    darker = BEIGE[2] - rgb[:, :, 2]
+    ink = mask & (dist > 26) & ((redder > 12) | (darker > 18))
+    amount = np.where(ink, np.clip((dist - 20) / 75.0, 0, 1), 0.0)
+    safe = np.maximum(amount, 0.18)
+    ink_rgb = np.clip((rgb - (1 - amount)[:, :, None] * BEIGE) / safe[:, :, None], 0, 255)
+    out = np.clip(ink_rgb * amount[:, :, None] + base * (1 - amount[:, :, None]), 0, 255)
+    out[~mask] = rgb[~mask]
     return out
 
 
-def _assert_clean(src, out, w, h, box):
+def _edge_ok(im: np.ndarray, box, name: str) -> None:
     x0, y0, x1, y1 = box
-    for y in range(h):
-        run = 0
-        for x in range(w):
-            if out[x, y][3] != src[x, y][3]:
-                raise SystemExit(f'alpha changed at {x},{y}')
-            outside = not (x0 - 6 <= x <= x1 + 6 and y0 - 6 <= y <= y1 + 6)
-            if outside and out[x, y] != src[x, y]:
-                raise SystemExit(f'garment changed at {x},{y}')
-            if x == 0 or x == w - 1:
-                continue
-            lum = sum(out[x, y][:3]) / 3
-            left = sum(out[x - 1, y][:3]) / 3
-            right = sum(out[x + 1, y][:3]) / 3
-            if lum + 18 < left and lum + 18 < right and lum + 12 < sum(src[x, y][:3]) / 3:
-                run += 1
-            else:
-                if run > 30:
-                    raise SystemExit(f'alpha seam on row {y}')
-                run = 0
+    lum = im.mean(2)
+    gy = np.abs(lum[1:] - lum[:-1])
+    top = gy[y0 - 1, x0:x1]
+    fabric = gy[max(0, y0 - 28):y0 - 6, x0:x1]
+    ratio = float(top.mean() / (fabric.mean() + 1e-6))
+    print(f'  {name} top-edge ratio {ratio:.2f}')
+    if ratio > 1.5:
+        raise SystemExit(f'{name} still has a print-box edge ({ratio:.2f})')
 
 
-def _unkey(color, beige, amount):
-    if amount < 0.08:
-        return color
-    return tuple(max(0, min(255, int((color[i] - (1 - amount) * beige[i]) / amount))) for i in range(3))
+def garden_gate() -> None:
+    mock_box = (257, 130, 538, 451)
+    front_box = (289, 146, 606, 507)
+    back_box = (289, 97, 606, 458)
+
+    photo = original('site/assets/mockups/garden-gate.png')
+    yt = original('site/assets/mockups/ya-teta.png')
+    am = original('site/assets/mockups/amoura.png')
+    sister, hole = _sister_fabric(yt, am)
+    rgb = _arr(photo)[:, :, :3].astype(np.float32)
+    base, mask = _continue_fabric(rgb, sister, hole, mock_box, 36)
+    final = _paint_ink(base, rgb, mask)
+    _edge_ok(final, mock_box, 'mockup')
+    out = _arr(photo).copy()
+    out[:, :, :3] = final.astype(np.uint8)
+    save(Image.fromarray(out), 'site/assets/mockups/garden-gate.png')
+
+    photo = original('site/assets/angles/garden-gate/front-view.png')
+    yt = original('site/assets/angles/ya-teta/front-view.png').resize((900, 900), Image.Resampling.LANCZOS)
+    am = original('site/assets/angles/amoura/front-view.png').resize((900, 900), Image.Resampling.LANCZOS)
+    sister, hole = _sister_fabric(yt, am)
+    rgb = _arr(photo)[:, :, :3].astype(np.float32)
+    base, mask = _continue_fabric(rgb, sister, hole, front_box, 36)
+    final = _paint_ink(base, rgb, mask)
+    _edge_ok(final, front_box, 'front')
+    out = _arr(photo).copy()
+    out[:, :, :3] = final.astype(np.uint8)
+    save(Image.fromarray(out), 'site/assets/angles/garden-gate/front-view.png')
+
+    # The sister back views are the same flat panel, so the back continues
+    # this photo's own fabric instead of borrowing another print.
+    photo = original('site/assets/angles/garden-gate/back-view.png')
+    rgb = _arr(photo)[:, :, :3].astype(np.float32)
+    base, mask = _continue_fabric(rgb, None, None, back_box, 1)
+    final = _paint_ink(base, rgb, mask)
+    _edge_ok(final, back_box, 'back')
+    out = _arr(photo).copy()
+    out[:, :, :3] = final.astype(np.uint8)
+    save(Image.fromarray(out), 'site/assets/angles/garden-gate/back-view.png')
 
 
-def portrait_print(im: Image.Image, size: int) -> Image.Image:
-    src = im.convert('RGBA')
-    px = src.load()
-    w, h = src.size
-    opaque = []
-    for y in range(0, h, 2):
-        for x in range(0, w, 2):
-            if px[x, y][3] > 200:
-                opaque.append((x, y))
-    if not opaque:
-        raise SystemExit('print has no paper')
-    xs = [p[0] for p in opaque]
-    ys = [p[1] for p in opaque]
-    x0, x1 = min(xs), max(xs)
-    y0, y1 = min(ys), max(ys)
-    paper_samples = []
-    for y in range(y0, y1, 4):
-        for x in range(x0, x1, 4):
-            r, g, b, a = px[x, y]
-            if a > 220 and r > 210 and g > 200 and b > 180 and abs(r - g) < 20:
-                paper_samples.append((r, g, b))
-    paper = tuple(sorted(c[i] for c in paper_samples)[len(paper_samples) // 2] for i in range(3))
-    ink = Image.new('RGBA', (x1 - x0 + 1, y1 - y0 + 1), (0, 0, 0, 0))
-    ip = ink.load()
-    minx, miny, maxx, maxy = ink.size[0], ink.size[1], 0, 0
-    found = False
-    for y in range(y0, y1 + 1):
-        for x in range(x0, x1 + 1):
-            r, g, b, a = px[x, y]
-            if a < 200:
-                continue
-            dist = sum(abs((r, g, b)[i] - paper[i]) for i in range(3))
-            if dist < 26:
-                continue
-            if r > 180 and g > 160 and b > 140:
-                continue
-            amount = min(1.0, dist / 90)
-            color = _unkey((r, g, b), paper, max(amount, 0.15))
-            ip[x - x0, y - y0] = color + (int(255 * amount),)
-            found = True
-            minx = min(minx, x - x0)
-            miny = min(miny, y - y0)
-            maxx = max(maxx, x - x0)
-            maxy = max(maxy, y - y0)
-    if not found:
-        raise SystemExit('print ink not found')
-    sprite = ink.crop((minx, miny, maxx + 1, maxy + 1))
-    canvas = Image.new('RGBA', (size, size), (0, 0, 0, 0))
-    card_h = int(size * 0.72)
-    card_w = int(card_h * 12 / 16)
-    left = (size - card_w) // 2
-    top = (size - card_h) // 2
-    shadow = Image.new('RGBA', (card_w + 28, card_h + 28), (0, 0, 0, 0))
-    ImageDraw.Draw(shadow).rounded_rectangle((10, 14, card_w + 10, card_h + 14), radius=8, fill=(40, 32, 24, 70))
-    shadow = shadow.filter(ImageFilter.GaussianBlur(10))
-    canvas.alpha_composite(shadow, (left - 10, top - 6))
-    card = Image.new('RGBA', (card_w, card_h), PAPER)
-    ImageDraw.Draw(card).rounded_rectangle((0, 0, card_w - 1, card_h - 1), radius=2, outline=(230, 222, 208, 255))
-    pad = int(card_w * 0.12)
-    fitted = sprite.copy()
-    fitted.thumbnail((card_w - pad * 2, card_h - pad * 2), Image.Resampling.LANCZOS)
-    card.alpha_composite(fitted, ((card_w - fitted.width) // 2, (card_h - fitted.height) // 2))
-    canvas.alpha_composite(card, (left, top))
-    return canvas
+def _tote_blank() -> np.ndarray:
+    slugs = ('halawa', 'sit-el-kul', 'early-light')
+    arrs = [_arr(original(f'site/assets/mockups/{slug}.png')).astype(np.float32) for slug in slugs]
+    a, b, c = arrs
+    ab = np.abs(a[:, :, :3] - b[:, :, :3]).sum(2) < 12
+    ac = np.abs(a[:, :, :3] - c[:, :, :3]).sum(2) < 12
+    bc = np.abs(b[:, :, :3] - c[:, :, :3]).sum(2) < 12
+    out = a.copy()
+    out[bc & ~ab] = b[bc & ~ab]
+    out[ac & ~ab & ~bc] = c[ac & ~ab & ~bc]
+    leftover = ~(ab | ac | bc)
+    print('  tote pixels with no agreed blank', int(leftover.sum()))
+    if leftover.any():
+        ys, xs = np.where(leftover)
+        box = (int(xs.min()), int(ys.min()), int(xs.max()), int(ys.max()))
+        filled, _mask = _continue_fabric(out[:, :, :3], None, None, box, 1)
+        rgb = a[:, :, :3].copy()
+        rgb[leftover] = filled[leftover]
+        out = np.dstack([rgb, a[:, :, 3]])
+    return out
 
 
-def main():
+def _sprig() -> Image.Image:
+    art = _arr(original('site/assets/mockups/gather-grow.png')).astype(np.float32)
+    blank = _arr(original('site/assets/mockups/halawa.png')).astype(np.float32)
+    delta = np.abs(art[:, :, :3] - blank[:, :, :3]).sum(2)
+    zone = np.zeros(delta.shape, bool)
+    zone[520:670, 240:560] = True
+    ink = zone & (delta > 25)
+    if ink.sum() < 400:
+        raise SystemExit('sprig did not separate from the tote')
+    ys, xs = np.where(ink)
+    amount = np.clip(delta / 80.0, 0, 1)
+    amount = np.where(ink, amount, 0)
+    sprite = np.zeros_like(art, dtype=np.uint8)
+    sprite[:, :, 0] = MAROON[0]
+    sprite[:, :, 1] = MAROON[1]
+    sprite[:, :, 2] = MAROON[2]
+    sprite[:, :, 3] = (amount * 255).astype(np.uint8)
+    pad = 2
+    crop = sprite[ys.min() - pad:ys.max() + pad + 1, xs.min() - pad:xs.max() + pad + 1]
+    return Image.fromarray(crop)
+
+
+def _gather_art(sprig: Image.Image) -> Image.Image:
+    """Two centered lines, one size, sprig centered underneath. Transparent."""
+    canvas = Image.new('RGBA', (640, 520), (0, 0, 0, 0))
+    draw = ImageDraw.Draw(canvas)
+    size = 86
+    font = ImageFont.truetype(SERIF, size)
+    lines = ('GATHER &', 'GROW')
+    gap = 8
+    boxes = [draw.textbbox((0, 0), line, font=font) for line in lines]
+    widths = [box[2] - box[0] for box in boxes]
+    heights = [box[3] - box[1] for box in boxes]
+    block_w = max(widths)
+    y = 10
+    for line, box, width, height in zip(lines, boxes, widths, heights):
+        x = (canvas.width - width) // 2 - box[0]
+        draw.text((x, y - box[1]), line, font=font, fill=MAROON)
+        y += height + gap
+    mark = sprig.copy()
+    mark.thumbnail((int(block_w * 0.46), 180), Image.Resampling.LANCZOS)
+    canvas.alpha_composite(mark, ((canvas.width - mark.width) // 2, y + 6))
+    bbox = canvas.getbbox()
+    return canvas.crop(bbox)
+
+
+def gather_grow() -> None:
+    blank = _tote_blank()
+    art = _gather_art(_sprig())
+    # The old print sits in this window on both the mockup and the matching angle.
+    x0, y0, x1, y1 = 257, 367, 544, 654
+    fitted = art.copy()
+    fitted.thumbnail((x1 - x0 - 8, y1 - y0 - 8), Image.Resampling.LANCZOS)
+    layer = Image.fromarray(np.clip(blank, 0, 255).astype(np.uint8), 'RGBA')
+    layer.alpha_composite(
+        fitted,
+        (x0 + (x1 - x0 - fitted.width) // 2, y0 + (y1 - y0 - fitted.height) // 2),
+    )
+    # Mockup and handle-on-right are the same photograph at 22f9dbc.
     for rel in (
-        'site/assets/angles/garden-gate/front-view.png',
-        'site/assets/angles/garden-gate/back-view.png',
-        'site/assets/mockups/garden-gate.png',
+        'site/assets/mockups/gather-grow.png',
+        'site/assets/angles/gather-grow/handle-on-right.png',
     ):
-        save(knock_beige(original(rel)), rel)
+        save(layer, rel)
 
-    prints = ('starlight', 'beit-el-hobb', 'dar-el-hawa')
-    for slug in prints:
-        angle = f'site/assets/angles/{slug}/handle-on-right.png'
-        mock = f'site/assets/mockups/{slug}.png'
-        src = original(angle)
-        save(portrait_print(src, 900), angle)
-        save(portrait_print(src, 800), mock)
+
+def main() -> None:
+    garden_gate()
+    gather_grow()
+
 
 if __name__ == '__main__':
     main()

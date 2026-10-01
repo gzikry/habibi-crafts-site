@@ -64,7 +64,8 @@ NAMED_SLUGS = {
 }
 
 HERO_SLUGS = ['ya-aini', 'khalas-habibi', 'halawa']
-HOME_ROW = ['ya-aini', 'khalas-habibi', 'halawa', 'ya-teta']
+# Hero, gift tiles, and this row use different products. Gather & Grow sits on the row.
+HOME_ROW = ['ya-dunia', 'khalas-habibi', 'gather-grow', 'ya-teta']
 NL_KINDS = {'stickers', 'hats'}
 
 
@@ -202,29 +203,23 @@ def shop_next_line():
 
 
 def write_thin_pages(out_dir):
+    """Static-host redirect. These files stay out of the sitemap."""
     for filename, label in THIN_PAGES:
-        desc = f'{label} are not in the shop yet.'
-        url = f'{BASE}/{filename}'
-        ld = {
-            '@context': 'https://schema.org', '@type': 'WebPage',
-            'name': f'{label} | Habibi Crafts Co', 'url': url,
-            'description': desc,
-        }
-        head = collection_head(
-            f'{label} | Habibi Crafts Co', desc, url, ld,
-            f'{BASE}/assets/og-share.png', '1200', '630',
-            'Habibi Crafts Co', include_spin=False,
-        ).replace(
-            'index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1',
-            'noindex,follow',
-        )
-        main = f'''<main id="main">
-  <section class="catalog-head"><div class="shell">
-    <h1>{label}</h1>
-    <p class="lede">{desc}</p>
-    <div class="actions"><a class="button" href="shop.html">Shop all</a></div>
-  </div></section>'''
-        html = page_open(head, shop=True) + '\n' + page_close(main)
+        html = f'''<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{esc(label)} | Habibi Crafts Co</title>
+<meta name="robots" content="noindex,follow">
+<meta http-equiv="refresh" content="0; url=/shop.html">
+<link rel="canonical" href="{BASE}/shop.html">
+</head>
+<body>
+<p><a href="/shop.html">Go to the shop</a></p>
+</body>
+</html>
+'''
         (out_dir / filename).write_text(html)
     print(f'{len(THIN_PAGES)} thin pages')
 
@@ -420,13 +415,13 @@ def write_home(out_dir, manifest=None):
 {scripts(True)}
 </head>'''
     gifts = '\n'.join([
-        gift_card('mugs.html', 'mugs', src_for(by_slug['ya-aini']), 'Mugs', TYPE_DESC['mugs']),
-        gift_card('tees.html', 'tees', src_for(by_slug['khalas-habibi']), 'Tees', TYPE_DESC['tees']),
+        gift_card('mugs.html', 'mugs', src_for(by_slug['baladi']), 'Mugs', TYPE_DESC['mugs']),
+        gift_card('tees.html', 'tees', src_for(by_slug['ya-habayeb']), 'Tees', TYPE_DESC['tees']),
         gift_card('totes.html', 'totes', src_for(by_slug['halawa']), 'Totes', TYPE_DESC['totes']),
-        gift_card('onesies.html', 'baby', src_for(by_slug['ya-teta']), 'Onesies', TYPE_DESC['baby']),
-        gift_card('prints.html', 'prints', src_for(by_slug['starlight']), 'Prints', TYPE_DESC['prints']),
-        gift_card('stickers.html', 'stickers', mockup('craft-club-sticker'), 'Stickers', TYPE_DESC['stickers']),
-        gift_card('hats.html', 'hats', mockup('habibi-crafts-hat'), 'Hats', 'Black. ' + TYPE_DESC['hats']),
+        gift_card('onesies.html', 'baby', src_for(by_slug['amoura']), 'Onesies', TYPE_DESC['baby']),
+        gift_card('prints.html', 'prints', src_for(by_slug['beit-el-hobb']), 'Prints', TYPE_DESC['prints']),
+        gift_card('stickers.html', 'stickers', mockup('leaf-season-sticker'), 'Stickers', TYPE_DESC['stickers']),
+        gift_card('hats.html', 'hats', mockup('leaf-season-hat'), 'Hats', 'Unstructured dad hat, black, one size'),
     ])
     main = f'''<main id="main">
   <section class="hero">
@@ -434,7 +429,7 @@ def write_home(out_dir, manifest=None):
       <div class="hero-copy">
         <div class="eyebrow">Habibi Crafts Co · California</div>
         <h1>Our small business</h1>
-        <p class="lede">We make all kinds of crafts. Gifts for weddings, bachelor and bachelorette parties, and whoever you’re shopping for.</p>
+        <p class="lede">Crafts and gifts we'd want to give ourselves.</p>
         <div class="actions">
           <a class="button" href="shop.html">Shop all</a>
           <a class="button secondary" href="about.html">About</a>
