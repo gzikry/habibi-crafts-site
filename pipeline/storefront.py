@@ -494,8 +494,8 @@ def details_for(p):
         rows = [('Size', 'About 3 in'), ('Material', 'Vinyl'), ('Finish', 'Kiss-cut'),
                 ('Care', 'Spot clean'), ship]
     else:
-        rows = [('Style', 'Dad hat'), ('Fit', 'One size, adjustable'),
-                ('Color', HAT_COLOR[p['slug']]), ('Care', 'Spot clean'), ship]
+        # Style and fit already appear in the subtitle. Details keeps what they don't.
+        rows = [('Color', HAT_COLOR[p['slug']]), ('Care', 'Spot clean'), ship]
     return ''.join(f'<div><dt>{esc(k)}</dt><dd>{esc(v)}</dd></div>' for k, v in rows)
 
 

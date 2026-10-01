@@ -155,6 +155,16 @@ describe('storefront copy does not regress the live-site review', () => {
     assert.ok(read('shop.html').includes('Mugs, tees, totes, onesies, prints, stickers, and hats.'));
   });
 
+  it('does not repeat the hat subtitle in the details rows', () => {
+    for (const name of ['product-habibi-crafts-hat.html', 'product-make-something-hat.html', 'product-leaf-season-hat.html']) {
+      const html = read(name);
+      assert.match(html, /<p class="product-subtitle">Unstructured dad hat, one size adjustable<\/p>/);
+      assert.doesNotMatch(html, /<dt>Style<\/dt>/);
+      assert.doesNotMatch(html, /<dt>Fit<\/dt>/);
+      assert.match(html, /<dt>Color<\/dt><dd>Black<\/dd>/);
+    }
+  });
+
   it('keeps the hat fit line on the hats intro only', () => {
     const line = 'Black. Unstructured dad hat, one size adjustable.';
     const hats = read('hats.html');
