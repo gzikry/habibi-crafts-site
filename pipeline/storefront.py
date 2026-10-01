@@ -166,7 +166,8 @@ def media_with_on_model(p, frames, viewer):
     return f'''    <div class="product-media-col">
 {viewer}
       <img class="shot-photo" src="{esc(photo['src'])}" alt="{esc(photo['alt'])}" loading="lazy" decoding="async">
-      <div class="shot-switch">
+      <fieldset class="shot-switch">
+        <legend class="sr-only">Product photos</legend>
         <label class="shot-thumb">
           <input type="radio" name="{esc(group)}" checked aria-label="{esc(alt)}">
           <img src="{esc(src)}" alt="" width="800" height="800">
@@ -175,7 +176,7 @@ def media_with_on_model(p, frames, viewer):
           <input type="radio" name="{esc(group)}" data-shot-photo aria-label="{esc(photo['alt'])}">
           <img src="{esc(photo['src'])}" alt="" width="800" height="800" loading="lazy" decoding="async">
         </label>
-      </div>
+      </fieldset>
     </div>'''
 
 

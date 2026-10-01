@@ -66,6 +66,7 @@ describe('apparel PDPs show an on-model photo second', () => {
       assert.equal(photo[1], `assets/on-model/${product.slug}.jpg?v=${version}`);
       assert.equal(photo[2], esc(`${product.name} ${PHRASE[product.category]}`));
       assert.doesNotMatch(photo[2], /Printful/i);
+      assert.match(html, /<fieldset class="shot-switch">\s*<legend class="sr-only">Product photos<\/legend>/);
     });
 
     it(`${product.slug} cards keep the transparent product shot`, () => {
