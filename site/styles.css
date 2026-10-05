@@ -615,8 +615,9 @@ button{background:none;border:0;padding:0;font:inherit;color:inherit;cursor:poin
 .footer-brand{display:inline-block;line-height:0}
 .footer-brand img{width:132px;height:auto}
 .footer-copy{margin-top:10px;max-width:280px;color:rgba(250,246,239,.88);font-size:13.5px;line-height:1.55}
-.footer-about,.footer-note{margin:10px 0 0;max-width:42ch;color:rgba(250,246,239,.74);font-size:13px;line-height:1.55}
+.footer-about,.footer-note{margin:10px 0 0;max-width:42ch;color:rgba(250,246,239,.74);font-size:13px;line-height:1.55;text-wrap:pretty}
 .footer-note{margin-top:8px}
+.page-contact .footer-note{display:none}
 .footer-title{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:rgba(250,246,239,.55);margin-bottom:12px;font-weight:600}
 .footer-links{display:grid;gap:7px}
 .footer-links a{color:rgba(250,246,239,.9);font-size:13.5px}
@@ -658,7 +659,7 @@ html.js-reveal .reveal.visible{opacity:1;transform:none}
   margin:34px 0 10px;color:var(--charcoal);
 }
 .policy h2:first-child{margin-top:0}
-.policy p{font-size:15.5px;line-height:1.72;color:var(--muted);margin-bottom:14px}
+.policy p{font-size:15.5px;line-height:1.72;color:var(--muted);margin-bottom:14px;text-wrap:pretty}
 .policy a{color:var(--maroon);text-decoration:underline;text-underline-offset:3px}
 .policy a:hover{color:var(--maroon)}
 
