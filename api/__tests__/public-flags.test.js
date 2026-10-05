@@ -80,6 +80,7 @@ describe('public flags stay off and invent no secrets', () => {
     assert.match(page, /"@id":"https:\/\/habibicraftsco\.com\/#store"/);
     assert.match(page, /"slogan":"All kinds of crafts\."/);
     assert.match(page, /"disambiguatingDescription":/);
+    assert.match(page, /"email":"habibicraftsco@gmail\.com"/);
     assert.doesNotMatch(page, /"sameAs"|"foundingDate"|"founder"|"legalName"|"contactPoint"/);
   });
 });

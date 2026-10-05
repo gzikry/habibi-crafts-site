@@ -166,6 +166,7 @@ def footer(prefix=''):
         <a href="{prefix}shipping.html">Shipping</a>
         <a href="{prefix}privacy.html">Privacy</a>
         <a href="{prefix}contact.html">Contact</a>
+        <a href="mailto:habibicraftsco@gmail.com">Email</a>
       </div>
     </div>
   </div>

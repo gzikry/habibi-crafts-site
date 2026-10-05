@@ -453,6 +453,7 @@ def write_home(out_dir, manifest=None):
     ld = {'@context': 'https://schema.org', '@graph': [
         {'@type': ['OnlineStore', 'Organization'], '@id': f'{BASE}/#store',
          'name': 'Habibi Crafts Co', 'url': f'{BASE}/',
+         'email': 'habibicraftsco@gmail.com',
          'logo': {'@type': 'ImageObject', 'url': f'{BASE}/assets/logo.png', 'width': 447, 'height': 447},
          'image': f'{BASE}/assets/og-share.png',
          'slogan': 'All kinds of crafts.',

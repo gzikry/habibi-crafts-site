@@ -20,7 +20,8 @@ describe('commerce scaffold stays off and chrome is branded', () => {
       assert.match(html, /site-header/);
       assert.match(html, /Habibi Crafts Co/);
       assert.doesNotMatch(html, /Printful/i);
-      assert.doesNotMatch(html, /mailto:/i);
+      assert.equal(html.split('mailto:habibicraftsco@gmail.com').length - 1, 1);
+      assert.doesNotMatch(html.replaceAll('mailto:habibicraftsco@gmail.com', ''), /mailto:/i);
       assert.doesNotMatch(html, /data-checkout-enabled="true"/);
     }
     assert.match(read('site/order-confirmation.html'), /noindex/);
@@ -94,16 +95,22 @@ describe('commerce scaffold stays off and chrome is branded', () => {
       cwd: root,
       encoding: 'utf8',
     });
-    const aboveFooter = (html) => html.slice(0, html.indexOf('<footer class="site-footer">'));
-    assert.equal(aboveFooter(about), aboveFooter(locked));
-    const aboutOnMain = execFileSync('git', ['show', '3d60057:site/about.html'], {
-      cwd: root,
-      encoding: 'utf8',
-    });
-    assert.equal(about, aboutOnMain);
-    assert.match(read('site/faq.html'), /class="footer-about"/);
-    assert.match(read('site/faq.html'), /class="footer-note"/);
-    assert.doesNotMatch(about, /footer-about/);
+    const mainBlock = (html) => {
+      const start = html.indexOf('<main id="main">');
+      const end = html.indexOf('</main>', start) + '</main>'.length;
+      return html.slice(start, end);
+    };
+    const footerBlock = (html) => {
+      const start = html.indexOf('<footer class="site-footer">');
+      const end = html.indexOf('</footer>', start) + '</footer>'.length;
+      return html.slice(start, end);
+    };
+    assert.equal(mainBlock(about), mainBlock(locked));
+    const faq = read('site/faq.html');
+    assert.equal(footerBlock(about), footerBlock(faq));
+    const styleKey = faq.match(/styles\.css\?v=\d+/)[0];
+    assert.match(about, new RegExp(styleKey.replace('?', '\\?')));
+    assert.match(about, /"mainEntity":\{"@id":"https:\/\/habibicraftsco\.com\/#store"\}/);
     assert.match(about, /LOCKED George 2026-09-02/);
     assert.match(about, />Our small business\.</);
     assert.match(about, /We’re a husband and wife\. This is our small business\./);
@@ -127,18 +134,20 @@ describe('commerce scaffold stays off and chrome is branded', () => {
     assert.match(read('scripts/build-storefront.py'), /LOCKED George 2026-09-02/);
   });
 
-  it('contact does not invent an email address', () => {
+  it('contact publishes the shop email', () => {
     const contact = read('site/contact.html');
-    assert.match(contact, /haven.t posted a public email yet/i);
+    assert.doesNotMatch(contact, /haven.t posted a public email yet/i);
     assert.match(contact, /only website is habibicraftsco\.com/);
     const main = contact.slice(contact.indexOf('<main'), contact.indexOf('</main>'));
     assert.equal(main.split('only website is habibicraftsco.com').length - 1, 1);
+    assert.match(main, /How to reach us[\s\S]*Email us at <a href="mailto:habibicraftsco@gmail\.com">habibicraftsco@gmail\.com<\/a>\./);
     assert.match(main, /How to reach us[\s\S]*only website is habibicraftsco\.com/);
+    assert.equal(main.split('mailto:habibicraftsco@gmail.com').length - 1, 1);
     assert.doesNotMatch(main.slice(main.indexOf('Where we are')), /only website is habibicraftsco/);
     assert.match(contact, /not affiliated with other businesses that have similar names/);
     assert.match(contact, /"mainEntity":\{"@id":"https:\/\/habibicraftsco\.com\/#store"\}/);
-    assert.doesNotMatch(contact, /mailto:/);
-    assert.doesNotMatch(contact, /@[a-z0-9.-]+\.[a-z]{2,}/i);
+    assert.match(contact, /"email":"habibicraftsco@gmail\.com"/);
+    assert.doesNotMatch(contact.replaceAll('habibicraftsco@gmail.com', ''), /@[a-z0-9.-]+\.[a-z]{2,}/i);
     assert.match(contact, /faq\.html/);
     assert.match(contact, /shipping\.html/);
   });
