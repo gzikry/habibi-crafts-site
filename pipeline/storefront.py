@@ -137,6 +137,30 @@ def mockup(slug):
     return f"assets/mockups/{slug}.png?v={SNAPSHOT['mockups'][slug]}"
 
 
+def checkout_enabled():
+    text = (SITE / 'public-config.js').read_text()
+    config = re.search(r'CHECKOUT_ENABLED:\s*(true|false)', text)
+    window_flag = re.search(r'HABIBI_CHECKOUT_ENABLED\s*=\s*(true|false)', text)
+    return bool(
+        config and config.group(1) == 'true'
+        and window_flag and window_flag.group(1) == 'true'
+    )
+
+
+def offer_availability(p):
+    in_stock = checkout_enabled() and p.get('purchasable') is True
+    state = 'InStock' if in_stock else 'OutOfStock'
+    return f'https://schema.org/{state}'
+
+
+def ld_images(slug, frames):
+    images = [f'{BASE}/assets/mockups/{slug}.png']
+    for frame in frames:
+        src = frame['src'].split('?', 1)[0].lstrip('/')
+        images.append(f'{BASE}/{src}')
+    return images
+
+
 def on_model_for(p):
     phrase = ON_MODEL.get(p['category'])
     if not phrase:
@@ -427,11 +451,13 @@ def write_home(out_dir, manifest=None):
 
     row = ''.join(pcard(by_slug[slug], src_for(by_slug[slug])) for slug in HOME_ROW)
     ld = {'@context': 'https://schema.org', '@graph': [
-        {'@type': ['Store', 'Organization'], '@id': f'{BASE}/#store',
+        {'@type': ['OnlineStore', 'Organization'], '@id': f'{BASE}/#store',
          'name': 'Habibi Crafts Co', 'url': f'{BASE}/',
-         'logo': f'{BASE}/assets/logo.png',
+         'logo': {'@type': 'ImageObject', 'url': f'{BASE}/assets/logo.png', 'width': 447, 'height': 447},
          'image': f'{BASE}/assets/og-share.png',
+         'slogan': 'All kinds of crafts.',
          'description': 'A husband-and-wife craft and gift shop in California. Mugs, tees, totes, onesies, prints, stickers, and dad hats, made after you order.',
+         'disambiguatingDescription': 'Habibi Crafts Co is the online craft and gift shop at habibicraftsco.com, run by a husband and wife in California. It is not affiliated with similarly named craft companies or shops.',
          'address': {'@type': 'PostalAddress', 'addressRegion': 'CA', 'addressCountry': 'US'},
          'areaServed': {'@type': 'Country', 'name': 'US'}},
         {'@type': 'WebSite', '@id': f'{BASE}/#website', 'url': f'{BASE}/',
@@ -636,20 +662,22 @@ def related(catalog, p):
   </div></section>'''
 
 
-def product_ld(p, desc, filename, label):
+def product_ld(p, desc, filename, label, frames):
     slug = p['slug']
     url = f'{BASE}/product-{slug}.html'
+    seller = {'@id': f'{BASE}/#store', 'name': 'Habibi Crafts Co'}
     product = {
         '@type': 'Product', '@id': f'{url}#product', 'name': p['name'],
-        'description': desc, 'image': f'{BASE}/assets/mockups/{slug}.png',
+        'description': desc, 'category': label,
+        'image': ld_images(slug, frames),
         'brand': {'@type': 'Brand', 'name': 'Habibi Crafts Co'},
         'offers': {'@type': 'Offer', 'url': url, 'priceCurrency': 'USD',
                    'price': cents_decimal(p['price']),
-                   'availability': 'https://schema.org/OutOfStock',
-                   'itemCondition': 'https://schema.org/NewCondition'},
+                   'availability': offer_availability(p),
+                   'itemCondition': 'https://schema.org/NewCondition',
+                   'seller': seller},
         'url': url, 'sku': slug,
-        'seller': {'@type': 'Organization', '@id': f'{BASE}/#store',
-                   'name': 'Habibi Crafts Co', 'url': f'{BASE}/'},
+        'seller': {'@type': 'Organization', **seller, 'url': f'{BASE}/'},
     }
     if p['category'] == 'hats':
         product['color'] = HAT_COLOR[slug]
@@ -683,7 +711,7 @@ def write_products(out_dir, manifest=None):
         frames = frames_for(p['slug'], manifest)
         gallery = not frames and p['slug'] not in SNAPSHOT['posters']
         subtitle = TYPE_DESC[kind]
-        desc = f"{p['name']}. {subtitle}."
+        desc = p.get('description') or f"{p['name']}. {subtitle}."
         url = f"{BASE}/product-{p['slug']}.html"
         if p.get('purchasable') is True:
             actions = (
@@ -727,7 +755,7 @@ def write_products(out_dir, manifest=None):
 <meta name="twitter:image:alt" content="{esc(art_alt(p))}">
 {icons()}
 {stylesheet()}
-{json_ld(product_ld(p, desc, filename, label), ensure_ascii=False)}
+{json_ld(product_ld(p, desc, filename, label, frames), ensure_ascii=False)}
 {scripts(include_spin=not gallery)}
 </head>'''
         gap = '\n' if gallery else '\n\n'

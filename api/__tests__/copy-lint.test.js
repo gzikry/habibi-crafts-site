@@ -130,6 +130,10 @@ describe('storefront copy does not regress the live-site review', () => {
     for (const item of catalog) {
       assert.equal(Object.hasOwn(item, 'meaning'), false, item.slug);
     }
+    const amoura = catalog.find((item) => item.slug === 'amoura');
+    assert.equal(Object.hasOwn(amoura, 'description'), false);
+    assert.match(read('product-amoura.html'), /Amoura\. Baby onesie\./);
+    assert.doesNotMatch(read('product-amoura.html'), /cutie/i);
   });
 
   it('describes the share image as the wordmark on utility pages', () => {
