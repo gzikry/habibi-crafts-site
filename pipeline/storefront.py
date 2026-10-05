@@ -724,7 +724,13 @@ def write_products(out_dir, manifest=None):
             actions = ''
             note = ORDERS_NOTE_SHORT
         charge = f'<p class="checkout-note">{note}</p>'
-        buy_parts = [part for part in (size_block(p), actions, charge) if part]
+        personalize = ''
+        if kind == 'mugs':
+            personalize = (
+                '<p class="checkout-note">Want a name on it? '
+                '<a href="mailto:habibicraftsco@gmail.com">Email us</a>.</p>'
+            )
+        buy_parts = [part for part in (size_block(p), actions, charge, personalize) if part]
         buy = '\n      '.join(buy_parts)
         eyebrow = meta[6] if kind != 'hats' else 'Dad hat'
         if kind == 'baby':

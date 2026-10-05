@@ -135,6 +135,33 @@ describe('commerce scaffold stays off and chrome is branded', () => {
     assert.match(read('scripts/build-storefront.py'), /LOCKED George 2026-09-02/);
   });
 
+  it('offers a name on mug pages only', () => {
+    const line = '<p class="checkout-note">Want a name on it? <a href="mailto:habibicraftsco@gmail.com">Email us</a>.</p>';
+    const mugs = [
+      'product-ya-aini.html',
+      'product-baladi.html',
+      'product-ya-dunia.html',
+      'product-jiran.html',
+      'product-maamoul.html',
+      'product-knafeh-club.html',
+      'product-morning-ritual.html',
+    ];
+    for (const name of mugs) {
+      const html = read(`site/${name}`);
+      const metaStart = html.indexOf('<div class="product-meta">');
+      const details = html.indexOf('<div class="detail-list">', metaStart);
+      const meta = html.slice(metaStart, details);
+      assert.equal(meta.split(line).length - 1, 1, name);
+      const noteAt = meta.indexOf('class="checkout-note"');
+      const inviteAt = meta.indexOf(line);
+      assert.ok(noteAt >= 0 && inviteAt > noteAt, name);
+    }
+    for (const name of ['product-khalas-habibi.html', 'product-halawa.html', 'product-starlight.html', 'product-garden-gate.html', 'about.html', 'mugs.html']) {
+      assert.doesNotMatch(read(`site/${name}`), /Want a name on it/);
+    }
+    assert.match(read('site/styles.css'), /\.checkout-note a\{text-decoration:underline;text-underline-offset:3px\}/);
+  });
+
   it('contact publishes the shop email', () => {
     const contact = read('site/contact.html');
     assert.doesNotMatch(contact, /haven.t posted a public email yet/i);
