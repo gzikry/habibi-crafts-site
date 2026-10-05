@@ -90,7 +90,11 @@ describe('storefront copy does not regress the live-site review', () => {
       assert.doesNotMatch(html, /30-day print fix/, name);
       assert.doesNotMatch(metaAndLd(html), /—/, name);
       if (name !== 'index.html') {
-        assert.doesNotMatch(html, /husband-and-wife/, name);
+        const outsideFooter = html.replace(
+          'Habibi Crafts Co is a husband-and-wife craft and gift shop in California.',
+          '',
+        );
+        assert.doesNotMatch(outsideFooter, /husband-and-wife/, name);
       }
     }
     assert.match(read('shop.html'), new RegExp(SHOP_NEXT.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));

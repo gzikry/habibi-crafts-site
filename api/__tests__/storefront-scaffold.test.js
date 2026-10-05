@@ -130,7 +130,11 @@ describe('commerce scaffold stays off and chrome is branded', () => {
   it('contact does not invent an email address', () => {
     const contact = read('site/contact.html');
     assert.match(contact, /haven.t posted a public email yet/i);
-    assert.match(contact, /habibicraftsco\.com is our only website/);
+    assert.match(contact, /only website is habibicraftsco\.com/);
+    const main = contact.slice(contact.indexOf('<main'), contact.indexOf('</main>'));
+    assert.equal(main.split('only website is habibicraftsco.com').length - 1, 1);
+    assert.match(main, /How to reach us[\s\S]*only website is habibicraftsco\.com/);
+    assert.doesNotMatch(main.slice(main.indexOf('Where we are')), /only website is habibicraftsco/);
     assert.match(contact, /not affiliated with other businesses that have similar names/);
     assert.match(contact, /"mainEntity":\{"@id":"https:\/\/habibicraftsco\.com\/#store"\}/);
     assert.doesNotMatch(contact, /mailto:/);

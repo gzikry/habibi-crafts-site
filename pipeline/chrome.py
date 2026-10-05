@@ -6,7 +6,7 @@ BASE = 'https://habibicraftsco.com'
 # Per-file cache keys on the live pages. bag.js is an ES module, so the tag
 # is type=module. A deferred classic script cannot load it.
 SCRIPT_V = {
-    'styles.css': '27',
+    'styles.css': '28',
     'public-config.js': '11',
     'analytics.js': '10',
     'bag.js': '16',
@@ -142,8 +142,8 @@ def footer(prefix=''):
     <div>
       <a class="footer-brand" href="{prefix}index.html"><img src="{prefix}assets/logo-nav-white.png" alt="Habibi Crafts Co" width="213" height="93"></a>
       <p class="footer-copy">All kinds of crafts.</p>
-      <p class="footer-about">Habibi Crafts Co is a small craft and gift shop run by a husband and wife in California. We design mugs, tees, totes, baby onesies, prints, stickers and hats, and each piece is printed after you order and ships within the US. Our shop\'s home is <a href="https://habibicraftsco.com/">habibicraftsco.com</a>.</p>
-      <p class="footer-note">We\'re not affiliated with other businesses that have similar names.</p>
+      <p class="footer-about">Habibi Crafts Co is a husband-and-wife craft and gift shop in California. Each piece is printed after you order and ships within the US.</p>
+      <p class="footer-note">Our only website is habibicraftsco.com. We\'re not affiliated with other businesses that have similar names.</p>
     </div>
     <div>
       <div class="footer-title">Shop</div>
