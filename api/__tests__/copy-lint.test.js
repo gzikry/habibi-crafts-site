@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { readFileSync, readdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import namedEntities from './named-entities.json' with { type: 'json' };
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const site = join(root, 'site');
@@ -197,15 +198,12 @@ describe('storefront copy does not regress the live-site review', () => {
 
 function plain(value) {
   return value
-    .replace(/<[^>]+>/g, '')
+    .replace(/<[^>]+>/g, ' ')
     .replace(/&#(\d+);/g, (_, code) => String.fromCodePoint(Number(code)))
     .replace(/&#x([0-9a-f]+);/gi, (_, code) => String.fromCodePoint(parseInt(code, 16)))
-    .replace(/&quot;/g, '"')
-    .replace(/&#39;|&apos;/g, "'")
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>')
-    .replace(/&nbsp;/g, ' ')
-    .replace(/&amp;/g, '&')
+    .replace(/&([A-Za-z][A-Za-z0-9]+);/g, (entity, name) => (
+      Object.hasOwn(namedEntities, name) ? namedEntities[name] : entity
+    ))
     .replace(/\s+/g, ' ')
     .trim();
 }
