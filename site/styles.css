@@ -674,9 +674,14 @@ html.js-reveal .reveal.visible{opacity:1;transform:none}
 }
 .story-copy p:last-child{margin-bottom:0}
 .story-copy em{font-style:italic;color:var(--maroon);font-weight:500}
+.story-media{
+  display:grid;place-items:center;
+  background:var(--cream);
+  border:1px solid var(--line);border-radius:14px;
+  padding:clamp(32px,7vw,56px);
+}
 .story-media img{
-  width:100%;height:auto;border-radius:14px;border:1px solid var(--line);
-  background:var(--sand);
+  width:min(100%,300px);height:auto;object-fit:contain;
 }
 .steps{
   display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));

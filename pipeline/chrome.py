@@ -6,7 +6,7 @@ BASE = 'https://habibicraftsco.com'
 # Per-file cache keys on the live pages. bag.js is an ES module, so the tag
 # is type=module. A deferred classic script cannot load it.
 SCRIPT_V = {
-    'styles.css': '30',
+    'styles.css': '31',
     'public-config.js': '11',
     'analytics.js': '10',
     'bag.js': '16',

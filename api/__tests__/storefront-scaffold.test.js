@@ -135,6 +135,15 @@ describe('commerce scaffold stays off and chrome is branded', () => {
     assert.match(read('scripts/build-storefront.py'), /LOCKED George 2026-09-02/);
   });
 
+  it('shows the company logo on the About story panel', () => {
+    const about = read('site/about.html');
+    assert.match(about, /<div class="story-media">\s*<img src="assets\/logo\.png" alt="Habibi Crafts Co" width="447" height="447"/);
+    assert.doesNotMatch(about, /halawa|Halawa tote/i);
+    const css = read('site/styles.css');
+    assert.match(css, /\.story-media\{[^}]*background:var\(--cream\)/);
+    assert.match(css, /\.story-media img\{[^}]*object-fit:contain/);
+  });
+
   it('offers a name on mug pages only', () => {
     const line = '<p class="checkout-note">Want a name on it? <a href="mailto:habibicraftsco@gmail.com">Email us</a>.</p>';
     const mugs = [
