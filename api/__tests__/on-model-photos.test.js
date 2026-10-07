@@ -8,7 +8,7 @@ const root = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const APPAREL = new Set(['tees', 'hats', 'baby']);
 const ON_MODEL_V = '2';
 const ON_MODEL_V_OVERRIDE = {
-  'habibi-crafts-hat': '4',
+  'habibi-crafts-hat': '5',
   'leaf-season-hat': '3',
   'make-something-hat': '3',
 };

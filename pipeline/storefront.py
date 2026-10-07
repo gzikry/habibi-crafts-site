@@ -61,9 +61,9 @@ HAT_COLOR = {
 # Totes stay off this map. The only worn photo crops the head, so those pages keep the product shot.
 ON_MODEL_V = '2'
 # Hats were already at 2 when this refresh landed, so they moved to 3.
-# habibi-crafts-hat moved to 4 after that first file hid the eyes.
+# habibi-crafts-hat moved again after the first two files were rejected.
 ON_MODEL_V_OVERRIDE = {
-    'habibi-crafts-hat': '4',
+    'habibi-crafts-hat': '5',
     'leaf-season-hat': '3',
     'make-something-hat': '3',
 }
