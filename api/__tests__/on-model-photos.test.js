@@ -11,6 +11,12 @@ const ON_MODEL_V_OVERRIDE = {
   'habibi-crafts-hat': '5',
   'leaf-season-hat': '3',
   'make-something-hat': '3',
+  'khalas-habibi': '3',
+  'ya-habayeb': '3',
+  'warm-embrace': '3',
+  'garden-gate': '3',
+  'amoura': '3',
+  'ya-teta': '3',
 };
 const PHRASE = {
   tees: 'tee, worn',

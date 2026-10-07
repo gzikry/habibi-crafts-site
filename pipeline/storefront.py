@@ -62,10 +62,17 @@ HAT_COLOR = {
 ON_MODEL_V = '2'
 # Hats were already at 2 when this refresh landed, so they moved to 3.
 # habibi-crafts-hat moved again after the first two files were rejected.
+# These six files were replaced again, so their cache key moves off the default.
 ON_MODEL_V_OVERRIDE = {
     'habibi-crafts-hat': '5',
     'leaf-season-hat': '3',
     'make-something-hat': '3',
+    'khalas-habibi': '3',
+    'ya-habayeb': '3',
+    'warm-embrace': '3',
+    'garden-gate': '3',
+    'amoura': '3',
+    'ya-teta': '3',
 }
 ON_MODEL = {
     'tees': 'tee, worn',
