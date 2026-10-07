@@ -232,7 +232,7 @@
     "price": 2999,
     "subtitle": "Unstructured dad hat.",
     "description": "Our name on a hat. Habibi means \"my dear,\" and that's how we think about everyone who shops with us. A charcoal unstructured dad hat, one size, adjustable, printed after you order.",
-    "purchasable": false
+    "purchasable": true
   },
   {
     "slug": "make-something-hat",
@@ -241,7 +241,7 @@
     "price": 2999,
     "subtitle": "Unstructured dad hat.",
     "description": "Make Something dad hat: charcoal, unstructured, one size adjustable, printed after you order.",
-    "purchasable": false
+    "purchasable": true
   },
   {
     "slug": "leaf-season-hat",
@@ -250,6 +250,6 @@
     "price": 2999,
     "subtitle": "Unstructured dad hat.",
     "description": "Leaf Season dad hat: charcoal, unstructured, one size adjustable, printed after you order.",
-    "purchasable": false
+    "purchasable": true
   }
 ]

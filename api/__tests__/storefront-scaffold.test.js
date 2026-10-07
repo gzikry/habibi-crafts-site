@@ -52,6 +52,20 @@ describe('commerce scaffold stays off and chrome is branded', () => {
     assert.match(read('site/cart.html'), /Opening soon/);
   });
 
+  it('hat PDPs render Add to bag like other one-size products', () => {
+    const catalog = JSON.parse(read('site/product-catalog.json'));
+    const hats = catalog.filter((product) => product.category === 'hats');
+    assert.equal(hats.length, 3);
+    for (const product of hats) {
+      const html = read(`site/product-${product.slug}.html`);
+      assert.match(html, new RegExp(`data-add-bag[^>]*data-product-slug="${product.slug}"`), product.slug);
+      assert.match(html, /We're not taking orders yet\. You can still add things to your bag\./, product.slug);
+      assert.doesNotMatch(html, /data-size-picker/, product.slug);
+      assert.match(html, /schema\.org\/OutOfStock/, product.slug);
+      assert.doesNotMatch(html, /schema\.org\/InStock/, product.slug);
+    }
+  });
+
   it('anchors the shop menu to the right edge of Shop', () => {
     const css = read('site/styles.css');
     const desktop = css.match(/\.nav-shop-menu\{[^}]+\}/);

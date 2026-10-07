@@ -48,7 +48,7 @@ describe('launch prices', () => {
     assert.equal(bySlug['craft-club-sticker'].price, 599);
     assert.equal(bySlug['habibi-crafts-hat'].price, 2999);
     assert.equal(bySlug['craft-club-sticker'].purchasable, false);
-    assert.equal(bySlug['habibi-crafts-hat'].purchasable, false);
+    assert.equal(bySlug['habibi-crafts-hat'].purchasable, true);
   });
 
   it('drops retired tote ids and whole-dollar prices from the customer files', () => {
