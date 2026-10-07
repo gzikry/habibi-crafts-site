@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Refresh shared chrome on hand-written pages from pipeline/chrome.py.
 
-about.html is locked and is not touched. Generated pages get chrome from
-the storefront builders instead.
+about.html keeps its story copy and receives the same header, trust strip,
+and footer as the other hand pages. Generated pages get chrome from the
+storefront builders instead.
 """
 import sys
 from pathlib import Path
@@ -14,6 +15,7 @@ from storefront import share_image_alt
 from root import site_dir
 
 HAND = (
+    'about.html',
     'faq.html',
     'shipping.html',
     'contact.html',

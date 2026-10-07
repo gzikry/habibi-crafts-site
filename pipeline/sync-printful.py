@@ -213,6 +213,8 @@ def main():
             entry['subtitle'] = sub
         else:
             missing_subtitle.append(slug)
+        if kept.get('description'):
+            entry['description'] = kept['description']
         # TODO(George): meaning
         # Empty meaning stays out of the shipped catalog.
         if kept.get('meaning'):

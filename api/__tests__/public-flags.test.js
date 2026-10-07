@@ -1,6 +1,6 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import { readFileSync, readdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -64,8 +64,23 @@ describe('public flags stay off and invent no secrets', () => {
   });
 
   it('product structured data stays OutOfStock while checkout is off', () => {
-    const page = read('site/product-ya-aini.html');
-    assert.match(page, /schema\.org\/OutOfStock/);
-    assert.doesNotMatch(page, /schema\.org\/InStock/);
+    const htmlFiles = readdirSync(join(root, 'site')).filter((name) => name.endsWith('.html'));
+    for (const name of htmlFiles) {
+      const page = read(`site/${name}`);
+      assert.doesNotMatch(page, /schema\.org\/InStock/, name);
+      if (name.startsWith('product-')) {
+        assert.match(page, /schema\.org\/OutOfStock/, name);
+      }
+    }
+  });
+
+  it('homepage JSON-LD names this shop', () => {
+    const page = read('site/index.html');
+    assert.match(page, /"@type":\["OnlineStore","Organization"\]/);
+    assert.match(page, /"@id":"https:\/\/habibicraftsco\.com\/#store"/);
+    assert.match(page, /"slogan":"All kinds of crafts\."/);
+    assert.match(page, /"disambiguatingDescription":/);
+    assert.match(page, /"email":"habibicraftsco@gmail\.com"/);
+    assert.doesNotMatch(page, /"sameAs"|"foundingDate"|"founder"|"legalName"|"contactPoint"/);
   });
 });

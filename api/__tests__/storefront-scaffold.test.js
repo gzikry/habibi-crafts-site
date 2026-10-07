@@ -1,4 +1,3 @@
-import { execFileSync } from 'node:child_process';
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, existsSync } from 'node:fs';
@@ -20,7 +19,8 @@ describe('commerce scaffold stays off and chrome is branded', () => {
       assert.match(html, /site-header/);
       assert.match(html, /Habibi Crafts Co/);
       assert.doesNotMatch(html, /Printful/i);
-      assert.doesNotMatch(html, /mailto:/i);
+      assert.equal(html.split('mailto:habibicraftsco@gmail.com').length - 1, 1);
+      assert.doesNotMatch(html.replaceAll('mailto:habibicraftsco@gmail.com', ''), /mailto:/i);
       assert.doesNotMatch(html, /data-checkout-enabled="true"/);
     }
     assert.match(read('site/order-confirmation.html'), /noindex/);
@@ -88,29 +88,39 @@ describe('commerce scaffold stays off and chrome is branded', () => {
     assert.doesNotMatch(faq, /Printful/i);
   });
 
-  it('locks George 2026-09-02 About copy verbatim', () => {
+  it('locks George 2026-10-05 About copy verbatim', () => {
     const about = read('site/about.html');
-    const locked = execFileSync('git', ['show', '22f9dbc:site/about.html'], {
-      cwd: root,
-      encoding: 'utf8',
-    });
-    const aboveFooter = (html) => html.slice(0, html.indexOf('<footer class="site-footer">'));
+    const mainBlock = (html) => {
+      const start = html.indexOf('<main id="main">');
+      const end = html.indexOf('</main>', start) + '</main>'.length;
+      return html.slice(start, end);
+    };
     const footerBlock = (html) => {
       const start = html.indexOf('<footer class="site-footer">');
       const end = html.indexOf('</footer>', start) + '</footer>'.length;
       return html.slice(start, end);
     };
-    assert.equal(aboveFooter(about), aboveFooter(locked));
-    assert.equal(footerBlock(about), footerBlock(read('site/faq.html')));
-    assert.match(about, /LOCKED George 2026-09-02/);
-    assert.match(about, />Our small business\.</);
-    assert.match(about, /We’re a husband and wife\. This is our small business\./);
-    assert.match(about, /We make all kinds of crafts — gifts for weddings, bachelor and bachelorette parties, and everyday\./);
-    assert.match(about, /What’s in the shop now is just the start\. More as we add it\./);
-    assert.match(about, /We design the pieces\. They’re printed after you order\./);
-    assert.match(about, /Thanks for supporting our small business\./);
-    assert.doesNotMatch(about, /Thanks for stopping by/);
-    assert.doesNotMatch(about, /labor of love|handcrafted|thrilled/i);
+    const lock = read('LOCKED-STOREFRONT-COPY.md');
+    const fenced = lock.match(/```text\n([\s\S]*?)\n```/);
+    assert.ok(fenced, 'About lock file has a text block');
+    const paragraphs = fenced[1].split('\n\n').map((part) => part.trim()).filter(Boolean);
+    const main = mainBlock(about);
+    let cursor = 0;
+    for (const paragraph of paragraphs) {
+      const at = main.indexOf(paragraph, cursor);
+      assert.ok(at > cursor, paragraph.slice(0, 40));
+      cursor = at + paragraph.length;
+    }
+    assert.match(main, /Welcome to Habibi Crafts Co!/);
+    assert.doesNotMatch(main, /Habibi Crafts Co !/);
+    assert.doesNotMatch(main, />Our small business\.</);
+    assert.doesNotMatch(main, /We’re a husband and wife\. This is our small business\./);
+    const faq = read('site/faq.html');
+    assert.equal(footerBlock(about), footerBlock(faq));
+    const styleKey = faq.match(/styles\.css\?v=\d+/)[0];
+    assert.match(about, new RegExp(styleKey.replace('?', '\\?')));
+    assert.match(about, /"mainEntity":\{"@id":"https:\/\/habibicraftsco\.com\/#store"\}/);
+    assert.match(about, /A husband-and-wife craft shop\. Personalized mugs and other pieces for weddings, parties, and celebrations\./);
     const home = read('site/index.html');
     assert.match(home, />Our small business</);
     assert.match(home, /Crafts and gifts we'd want to give ourselves\./);
@@ -125,11 +135,60 @@ describe('commerce scaffold stays off and chrome is branded', () => {
     assert.match(read('scripts/build-storefront.py'), /LOCKED George 2026-09-02/);
   });
 
-  it('contact does not invent an email address', () => {
+  it('shows the company logo on the About story panel', () => {
+    const about = read('site/about.html');
+    assert.match(about, /<div class="story-media">\s*<img src="assets\/logo\.png" alt="Habibi Crafts Co" width="447" height="447"/);
+    assert.doesNotMatch(about, /halawa|Halawa tote/i);
+    const css = read('site/styles.css');
+    assert.match(css, /\.story-media\{[^}]*background:var\(--cream\)/);
+    assert.match(css, /\.story-media img\{[^}]*object-fit:contain/);
+  });
+
+  it('offers a name on mug pages only', () => {
+    const line = '<p class="checkout-note">Want a name on it? <a href="mailto:habibicraftsco@gmail.com">Email us</a>.</p>';
+    const mugs = [
+      'product-ya-aini.html',
+      'product-baladi.html',
+      'product-ya-dunia.html',
+      'product-jiran.html',
+      'product-maamoul.html',
+      'product-knafeh-club.html',
+      'product-morning-ritual.html',
+    ];
+    for (const name of mugs) {
+      const html = read(`site/${name}`);
+      const metaStart = html.indexOf('<div class="product-meta">');
+      const details = html.indexOf('<div class="detail-list">', metaStart);
+      const meta = html.slice(metaStart, details);
+      assert.equal(meta.split(line).length - 1, 1, name);
+      const noteAt = meta.indexOf('class="checkout-note"');
+      const inviteAt = meta.indexOf(line);
+      assert.ok(noteAt >= 0 && inviteAt > noteAt, name);
+    }
+    for (const name of ['product-khalas-habibi.html', 'product-halawa.html', 'product-starlight.html', 'product-garden-gate.html', 'about.html', 'mugs.html']) {
+      assert.doesNotMatch(read(`site/${name}`), /Want a name on it/);
+    }
+    assert.match(read('site/styles.css'), /\.checkout-note a\{text-decoration:underline;text-underline-offset:3px\}/);
+  });
+
+  it('contact publishes the shop email', () => {
     const contact = read('site/contact.html');
-    assert.match(contact, /haven.t posted a public email yet/i);
-    assert.doesNotMatch(contact, /mailto:/);
-    assert.doesNotMatch(contact, /@[a-z0-9.-]+\.[a-z]{2,}/i);
+    assert.doesNotMatch(contact, /haven.t posted a public email yet/i);
+    assert.match(contact, /only website is habibicraftsco\.com/);
+    const main = contact.slice(contact.indexOf('<main'), contact.indexOf('</main>'));
+    assert.equal(main.split('only website is habibicraftsco.com').length - 1, 1);
+    assert.match(main, /How to reach us[\s\S]*Email us at <a href="mailto:habibicraftsco@gmail\.com">habibicraftsco@gmail\.com<\/a>\./);
+    assert.match(main, /How to reach us[\s\S]*only website is habibicraftsco\.com/);
+    assert.equal(main.split('mailto:habibicraftsco@gmail.com').length - 1, 1);
+    assert.doesNotMatch(main.slice(main.indexOf('Where we are')), /only website is habibicraftsco/);
+    assert.match(contact, /not affiliated with other businesses that have similar names/);
+    assert.match(contact, /"mainEntity":\{"@id":"https:\/\/habibicraftsco\.com\/#store"\}/);
+    assert.match(contact, /<body class="page-contact">/);
+    assert.match(read('site/styles.css'), /\.page-contact \.footer-note\{display:none\}/);
+    assert.match(read('site/styles.css'), /\.footer-about,\.footer-note\{[^}]*text-wrap:pretty/);
+    assert.match(read('site/styles.css'), /\.policy p\{[^}]*text-wrap:pretty/);
+    assert.match(contact, /"email":"habibicraftsco@gmail\.com"/);
+    assert.doesNotMatch(contact.replaceAll('habibicraftsco@gmail.com', ''), /@[a-z0-9.-]+\.[a-z]{2,}/i);
     assert.match(contact, /faq\.html/);
     assert.match(contact, /shipping\.html/);
   });
