@@ -13,7 +13,7 @@ const ON_MODEL_V_OVERRIDE = {
   'make-something-hat': '3',
   'khalas-habibi': '3',
   'ya-habayeb': '3',
-  'warm-embrace': '3',
+  'warm-embrace': '4',
   'garden-gate': '3',
   'amoura': '3',
   'ya-teta': '3',
@@ -69,7 +69,7 @@ describe('apparel PDPs show an on-model photo second', () => {
       assert.equal(existsSync(join(root, `site/assets/on-model/${product.slug}.png`)), false);
       const html = read(`site/product-${product.slug}.html`);
       const hero = heroSrc(html);
-      const photo = html.match(/<img class="shot-photo" src="([^"]+)" alt="([^"]+)" loading="lazy" decoding="async">/);
+      const photo = html.match(/<img class="shot-photo" src="([^"]+)" alt="([^"]+)" width="800" height="800" loading="lazy" decoding="async">/);
       assert.ok(photo, 'on-model image');
       assert.equal(html.indexOf(hero) < html.indexOf(photo[0]), true);
       assert.doesNotMatch(hero, /on-model/);

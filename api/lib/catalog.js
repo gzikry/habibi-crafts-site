@@ -22,7 +22,10 @@ export const LIVE_SLUGS = [
   'ya-teta',
   'amoura',
   'beit-el-hobb',
-  'dar-el-hawa'
+  'dar-el-hawa',
+  'habibi-crafts-hat',
+  'make-something-hat',
+  'leaf-season-hat'
 ];
 
 export function resolveVariant(product, size) {

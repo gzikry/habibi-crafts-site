@@ -386,6 +386,75 @@
           "sync_variant_id": null
         }
       }
+    },
+    "habibi-crafts-hat": {
+      "external_id": "habibi-hat-habibi-crafts",
+      "sync_product_id": 473281911,
+      "printful_product_id": 473281911,
+      "catalog_product_id": 206,
+      "type": "hat",
+      "name": "Habibi Crafts",
+      "price": 2999,
+      "default_variant": "default",
+      "attributes": {
+        "style": "unstructured dad hat",
+        "color": "Black",
+        "size": "one size, adjustable",
+        "decoration": "embroidery"
+      },
+      "variants": {
+        "default": {
+          "external_variant_id": "habibi-hat-habibi-crafts-black",
+          "catalog_variant_id": 7854,
+          "sync_variant_id": 5506375453
+        }
+      }
+    },
+    "make-something-hat": {
+      "external_id": "habibi-hat-make-something",
+      "sync_product_id": 473281912,
+      "printful_product_id": 473281912,
+      "catalog_product_id": 206,
+      "type": "hat",
+      "name": "Make Something",
+      "price": 2999,
+      "default_variant": "default",
+      "attributes": {
+        "style": "unstructured dad hat",
+        "color": "Black",
+        "size": "one size, adjustable",
+        "decoration": "embroidery"
+      },
+      "variants": {
+        "default": {
+          "external_variant_id": "habibi-hat-make-something-black",
+          "catalog_variant_id": 7854,
+          "sync_variant_id": 5506375454
+        }
+      }
+    },
+    "leaf-season-hat": {
+      "external_id": "habibi-hat-leaf-season",
+      "sync_product_id": 473281913,
+      "printful_product_id": 473281913,
+      "catalog_product_id": 206,
+      "type": "hat",
+      "name": "Leaf Season",
+      "price": 2999,
+      "default_variant": "default",
+      "attributes": {
+        "style": "unstructured dad hat",
+        "color": "Black",
+        "size": "one size, adjustable",
+        "decoration": "embroidery"
+      },
+      "variants": {
+        "default": {
+          "external_variant_id": "habibi-hat-leaf-season-black",
+          "catalog_variant_id": 7854,
+          "sync_variant_id": 5506375455
+        }
+      }
     }
   }
 }

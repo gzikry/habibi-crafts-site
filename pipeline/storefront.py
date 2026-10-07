@@ -69,7 +69,7 @@ ON_MODEL_V_OVERRIDE = {
     'make-something-hat': '3',
     'khalas-habibi': '3',
     'ya-habayeb': '3',
-    'warm-embrace': '3',
+    'warm-embrace': '4',
     'garden-gate': '3',
     'amoura': '3',
     'ya-teta': '3',
@@ -197,7 +197,7 @@ def media_with_on_model(p, frames, viewer):
     group = f"shot-{p['slug']}"
     return f'''    <div class="product-media-col">
 {viewer}
-      <img class="shot-photo" src="{esc(photo['src'])}" alt="{esc(photo['alt'])}" loading="lazy" decoding="async">
+      <img class="shot-photo" src="{esc(photo['src'])}" alt="{esc(photo['alt'])}" width="800" height="800" loading="lazy" decoding="async">
       <fieldset class="shot-switch">
         <legend class="sr-only">Product photos</legend>
         <label class="shot-thumb">
@@ -588,7 +588,8 @@ def details_for(p):
                 ('Care', 'Spot clean'), ship]
     else:
         # Style and fit already appear in the subtitle. Details keeps what they don't.
-        rows = [('Color', HAT_COLOR[p['slug']]), ('Care', 'Spot clean'), ship]
+        rows = [('Color', HAT_COLOR[p['slug']]), ('Decoration', 'Embroidery'), ('Care', 'Spot clean'),
+                ('Timing', 'We embroider it after you order. It usually ships in 2 to 5 days.')]
     return ''.join(f'<div><dt>{esc(k)}</dt><dd>{esc(v)}</dd></div>' for k, v in rows)
 
 

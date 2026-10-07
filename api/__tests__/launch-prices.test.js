@@ -49,6 +49,16 @@ describe('launch prices', () => {
     assert.equal(bySlug['habibi-crafts-hat'].price, 2999);
     assert.equal(bySlug['craft-club-sticker'].purchasable, false);
     assert.equal(bySlug['habibi-crafts-hat'].purchasable, true);
+    for (const product of site) {
+      if (product.purchasable !== true) continue;
+      const entry = api.products[product.slug];
+      assert.ok(entry, product.slug);
+      const variants = Object.values(entry.variants);
+      assert.ok(
+        variants.some((variant) => Object.hasOwn(variant, 'sync_variant_id')),
+        product.slug,
+      );
+    }
   });
 
   it('drops retired tote ids and whole-dollar prices from the customer files', () => {
