@@ -57,19 +57,19 @@ HAT_COLOR = {
     'make-something-hat': 'Black',
 }
 
-# Second PDP shot for apparel. Cards and the home grid stay on the mockup.
-ON_MODEL_V = '1'
-# These three files were replaced, so their cache key moves on its own.
+# Second PDP shot for tees, onesies, and hats. Cards and the home grid stay on the mockup.
+# Totes stay off this map. The only worn photo crops the head, so those pages keep the product shot.
+ON_MODEL_V = '2'
+# Hats were already at 2, so this refresh moves their cache key again.
 ON_MODEL_V_OVERRIDE = {
-    'habibi-crafts-hat': '2',
-    'leaf-season-hat': '2',
-    'make-something-hat': '2',
+    'habibi-crafts-hat': '3',
+    'leaf-season-hat': '3',
+    'make-something-hat': '3',
 }
 ON_MODEL = {
     'tees': 'tee, worn',
     'hats': 'hat, worn',
     'baby': 'onesie, worn',
-    'totes': 'tote, carried',
 }
 
 # TODO(George): meaning
