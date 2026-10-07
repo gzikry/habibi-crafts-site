@@ -142,7 +142,7 @@ def footer(prefix=''):
     <div>
       <a class="footer-brand" href="{prefix}index.html"><img src="{prefix}assets/logo-nav-white.png" alt="Habibi Crafts Co" width="213" height="93"></a>
       <p class="footer-copy">All kinds of crafts.</p>
-      <p class="footer-about">Habibi Crafts Co is a husband-and-wife craft and gift shop in California. Each piece is printed after you order and ships within the US.</p>
+      <p class="footer-about">Habibi Crafts Co is a husband-and-wife craft and gift shop in California. Each piece is made after you order and ships within the US.</p>
       <p class="footer-note">Our only website is habibicraftsco.com. We\'re not affiliated with other businesses that have similar names.</p>
     </div>
     <div>
