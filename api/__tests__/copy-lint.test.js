@@ -194,3 +194,64 @@ describe('storefront copy does not regress the live-site review', () => {
     assert.deepEqual(dupes, []);
   });
 });
+
+function plain(value) {
+  return value
+    .replace(/<[^>]+>/g, '')
+    .replace(/&#(\d+);/g, (_, code) => String.fromCodePoint(Number(code)))
+    .replace(/&#x([0-9a-f]+);/gi, (_, code) => String.fromCodePoint(parseInt(code, 16)))
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;|&apos;/g, "'")
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function faqPages(html) {
+  const pages = [];
+  for (const match of html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)) {
+    const data = JSON.parse(match[1]);
+    const nodes = data['@graph'] || [data];
+    for (const node of nodes) {
+      const type = node['@type'];
+      const types = Array.isArray(type) ? type : [type];
+      if (types.includes('FAQPage')) pages.push(node);
+    }
+  }
+  return pages;
+}
+
+function visibleFaq(html) {
+  const pairs = new Map();
+  const pattern = /<details class="faq-item"[^>]*>\s*<summary>([\s\S]*?)<\/summary>([\s\S]*?)<\/details>/g;
+  for (const match of html.matchAll(pattern)) {
+    pairs.set(plain(match[1]), plain(match[2]));
+  }
+  return pairs;
+}
+
+describe('FAQ structured data matches the visible answers', () => {
+  it('copies each FAQPage question and answer from the page', () => {
+    const names = readdirSync(site).filter((name) => name.endsWith('.html'));
+    let seen = 0;
+    for (const name of names) {
+      const html = read(name);
+      const pages = faqPages(html);
+      if (pages.length === 0) continue;
+      seen += pages.length;
+      const shown = visibleFaq(html);
+      assert.ok(shown.size > 0, name);
+      for (const page of pages) {
+        for (const question of page.mainEntity) {
+          const nameText = plain(question.name);
+          assert.equal(shown.has(nameText), true, `${name}: ${nameText}`);
+          assert.equal(plain(question.acceptedAnswer.text), shown.get(nameText), `${name}: ${nameText}`);
+        }
+      }
+    }
+    assert.ok(seen > 0, 'expected at least one FAQPage');
+  });
+});
