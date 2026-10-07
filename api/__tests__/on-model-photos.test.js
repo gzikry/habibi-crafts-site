@@ -6,6 +6,12 @@ import { fileURLToPath } from 'node:url';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const APPAREL = new Set(['tees', 'hats', 'baby']);
+const ON_MODEL_V = '2';
+const ON_MODEL_V_OVERRIDE = {
+  'habibi-crafts-hat': '4',
+  'leaf-season-hat': '3',
+  'make-something-hat': '3',
+};
 const PHRASE = {
   tees: 'tee, worn',
   hats: 'hat, worn',
@@ -61,7 +67,7 @@ describe('apparel PDPs show an on-model photo second', () => {
       assert.ok(photo, 'on-model image');
       assert.equal(html.indexOf(hero) < html.indexOf(photo[0]), true);
       assert.doesNotMatch(hero, /on-model/);
-      const version = product.category === 'hats' ? '3' : '2';
+      const version = ON_MODEL_V_OVERRIDE[product.slug] ?? ON_MODEL_V;
       assert.equal(photo[1], `assets/on-model/${product.slug}.jpg?v=${version}`);
       assert.equal(photo[2], esc(`${product.name} ${PHRASE[product.category]}`));
       assert.doesNotMatch(photo[2], /Printful/i);
