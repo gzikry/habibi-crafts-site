@@ -23,7 +23,10 @@ const LIVE_SYNC_IDS = {
   'ya-teta': 462532461,
   amoura: 462540363,
   'beit-el-hobb': 462532462,
-  'dar-el-hawa': 462540368
+  'dar-el-hawa': 462540368,
+  'habibi-crafts-hat': 473281911,
+  'make-something-hat': 473281912,
+  'leaf-season-hat': 473281913
 };
 
 describe('catalog contract', () => {
@@ -34,7 +37,7 @@ describe('catalog contract', () => {
       const product = products[slug];
       assert.equal(product.sync_product_id, LIVE_SYNC_IDS[slug]);
       assert.equal(product.printful_product_id, LIVE_SYNC_IDS[slug]);
-      assert.match(product.external_id, /^habibi-(mug|tee|tote|onesie|print)-/);
+      assert.match(product.external_id, /^habibi-(mug|tee|tote|onesie|print|hat)-/);
       assert.ok(product.price > 0);
       assert.ok(product.variants);
       const variant = product.variants[product.default_variant];

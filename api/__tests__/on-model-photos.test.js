@@ -1,16 +1,27 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
-const APPAREL = new Set(['tees', 'hats', 'baby', 'totes']);
+const APPAREL = new Set(['tees', 'hats', 'baby']);
+const ON_MODEL_V = '2';
+const ON_MODEL_V_OVERRIDE = {
+  'habibi-crafts-hat': '5',
+  'leaf-season-hat': '3',
+  'make-something-hat': '3',
+  'khalas-habibi': '3',
+  'ya-habayeb': '3',
+  'warm-embrace': '4',
+  'garden-gate': '3',
+  'amoura': '3',
+  'ya-teta': '3',
+};
 const PHRASE = {
   tees: 'tee, worn',
   hats: 'hat, worn',
   baby: 'onesie, worn',
-  totes: 'tote, carried',
 };
 const CARD_PAGE = {
   tees: 'tees.html',
@@ -58,11 +69,11 @@ describe('apparel PDPs show an on-model photo second', () => {
       assert.equal(existsSync(join(root, `site/assets/on-model/${product.slug}.png`)), false);
       const html = read(`site/product-${product.slug}.html`);
       const hero = heroSrc(html);
-      const photo = html.match(/<img class="shot-photo" src="([^"]+)" alt="([^"]+)" loading="lazy" decoding="async">/);
+      const photo = html.match(/<img class="shot-photo" src="([^"]+)" alt="([^"]+)" width="800" height="800" loading="lazy" decoding="async">/);
       assert.ok(photo, 'on-model image');
       assert.equal(html.indexOf(hero) < html.indexOf(photo[0]), true);
       assert.doesNotMatch(hero, /on-model/);
-      const version = product.category === 'hats' ? '2' : '1';
+      const version = ON_MODEL_V_OVERRIDE[product.slug] ?? ON_MODEL_V;
       assert.equal(photo[1], `assets/on-model/${product.slug}.jpg?v=${version}`);
       assert.equal(photo[2], esc(`${product.name} ${PHRASE[product.category]}`));
       assert.doesNotMatch(photo[2], /Printful/i);
@@ -84,8 +95,39 @@ describe('apparel PDPs show an on-model photo second', () => {
 
   it('mugs, prints, and stickers have no on-model shot', () => {
     for (const product of catalog) {
-      if (APPAREL.has(product.category)) continue;
+      if (APPAREL.has(product.category) || product.category === 'totes') continue;
       assert.doesNotMatch(read(`site/product-${product.slug}.html`), /assets\/on-model\//);
+    }
+  });
+});
+
+describe('tote PDPs show only the product shot', () => {
+  const toteSlugs = catalog.filter((product) => product.category === 'totes').map((product) => product.slug);
+
+  for (const product of catalog) {
+    if (product.category !== 'totes') continue;
+
+    it(`${product.slug} has no on-model photo`, () => {
+      const html = read(`site/product-${product.slug}.html`);
+      assert.equal(html.includes('assets/on-model/'), false);
+      assert.equal(html.includes('shot-switch'), false);
+      assert.equal(html.includes('shot-photo'), false);
+      assert.equal(existsSync(join(root, `site/assets/on-model/${product.slug}.jpg`)), false);
+    });
+
+    it(`${product.slug} cards keep the transparent product shot`, () => {
+      for (const page of ['site/shop.html', `site/${CARD_PAGE[product.category]}`]) {
+        const src = cardSrc(page === 'site/shop.html' ? shop : read(page), product.slug);
+        assert.match(src, new RegExp(`assets/mockups/${product.slug}\\.png`));
+        assert.doesNotMatch(src, /on-model/);
+      }
+    });
+  }
+
+  it('on-model directory has no tote files', () => {
+    const names = readdirSync(join(root, 'site/assets/on-model'));
+    for (const slug of toteSlugs) {
+      assert.equal(names.includes(`${slug}.jpg`), false, slug);
     }
   });
 });

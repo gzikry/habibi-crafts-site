@@ -57,19 +57,27 @@ HAT_COLOR = {
     'make-something-hat': 'Black',
 }
 
-# Second PDP shot for apparel. Cards and the home grid stay on the mockup.
-ON_MODEL_V = '1'
-# These three files were replaced, so their cache key moves on its own.
+# Second PDP shot for tees, onesies, and hats. Cards and the home grid stay on the mockup.
+# Totes stay off this map. The only worn photo crops the head, so those pages keep the product shot.
+ON_MODEL_V = '2'
+# Hats were already at 2 when this refresh landed, so they moved to 3.
+# habibi-crafts-hat moved again after the first two files were rejected.
+# These six files were replaced again, so their cache key moves off the default.
 ON_MODEL_V_OVERRIDE = {
-    'habibi-crafts-hat': '2',
-    'leaf-season-hat': '2',
-    'make-something-hat': '2',
+    'habibi-crafts-hat': '5',
+    'leaf-season-hat': '3',
+    'make-something-hat': '3',
+    'khalas-habibi': '3',
+    'ya-habayeb': '3',
+    'warm-embrace': '4',
+    'garden-gate': '3',
+    'amoura': '3',
+    'ya-teta': '3',
 }
 ON_MODEL = {
     'tees': 'tee, worn',
     'hats': 'hat, worn',
     'baby': 'onesie, worn',
-    'totes': 'tote, carried',
 }
 
 # TODO(George): meaning
@@ -189,7 +197,7 @@ def media_with_on_model(p, frames, viewer):
     group = f"shot-{p['slug']}"
     return f'''    <div class="product-media-col">
 {viewer}
-      <img class="shot-photo" src="{esc(photo['src'])}" alt="{esc(photo['alt'])}" loading="lazy" decoding="async">
+      <img class="shot-photo" src="{esc(photo['src'])}" alt="{esc(photo['alt'])}" width="800" height="800" loading="lazy" decoding="async">
       <fieldset class="shot-switch">
         <legend class="sr-only">Product photos</legend>
         <label class="shot-thumb">
@@ -580,7 +588,8 @@ def details_for(p):
                 ('Care', 'Spot clean'), ship]
     else:
         # Style and fit already appear in the subtitle. Details keeps what they don't.
-        rows = [('Color', HAT_COLOR[p['slug']]), ('Care', 'Spot clean'), ship]
+        rows = [('Color', HAT_COLOR[p['slug']]), ('Decoration', 'Embroidery'), ('Care', 'Spot clean'),
+                ('Timing', 'We embroider it after you order. It usually ships in 2 to 5 days.')]
     return ''.join(f'<div><dt>{esc(k)}</dt><dd>{esc(v)}</dd></div>' for k, v in rows)
 
 
