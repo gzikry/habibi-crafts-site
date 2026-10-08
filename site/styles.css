@@ -606,7 +606,7 @@ button{background:none;border:0;padding:0;font:inherit;color:inherit;cursor:poin
 .faq-item summary::-webkit-details-marker{display:none}
 .faq-item summary::after{content:"+";float:right;color:var(--maroon);font-weight:500;font-family:var(--sans)}
 .faq-item[open] summary::after{content:"–"}
-.faq-item p{padding:0 0 16px;max-width:58ch}
+.faq-item p{padding:0 0 16px;max-width:58ch;text-wrap:pretty}
 
 .site-footer{background:var(--charcoal);color:var(--cream);margin-top:40px}
 .footer-grid{
@@ -661,8 +661,8 @@ html.js-reveal .reveal.visible{opacity:1;transform:none}
 }
 .policy h2:first-child{margin-top:0}
 .policy p{font-size:15.5px;line-height:1.72;color:var(--muted);margin-bottom:14px;text-wrap:pretty}
-.policy a{color:var(--maroon);text-decoration:underline;text-underline-offset:3px}
-.policy a:hover{color:var(--maroon)}
+.policy a,.faq-item a{color:var(--maroon);text-decoration:underline;text-underline-offset:3px}
+.policy a:hover,.faq-item a:hover{color:var(--maroon)}
 
 /* ---------- about / story ---------- */
 .story-grid{
