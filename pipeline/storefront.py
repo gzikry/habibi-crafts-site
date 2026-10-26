@@ -976,7 +976,7 @@ def curated_card(p):
     kind = p['category']
     type_name = next(row[6] for row in CATS if row[0] == kind)
     return f'''<a class="product-card" href="/product-{p['slug']}.html" data-category="{kind}">
-  <div class="product-media"><img class="mockup" src="/{mockup(p['slug'])}" alt="{esc(art_alt(p))}" width="800" height="800" loading="lazy" decoding="async"></div>
+  <div class="product-media"><img class="mockup" src="/{mockup(p['slug'])}" alt="{esc(art_alt(p))}" width="800" height="800" loading="eager" decoding="async"></div>
   <div class="product-copy">
     <div class="product-type">{type_name}</div>
     <div class="product-row"><h3>{esc(p['name'])}</h3><span class="price">{format_cents(p['price'])}</span></div>
@@ -1112,7 +1112,7 @@ def write_collections(out_dir, manifest=None):
         products = [by_slug[slug] for slug in spec['products']]
         cover = products[0]
         tiles.append(f'''<a class="collection-card" href="/collections/{spec['slug']}/" data-kind="{cover['category']}">
-  <div class="collection-media"><img class="mockup" src="/{mockup(cover['slug'])}" alt="" width="800" height="800" loading="lazy" decoding="async"></div>
+  <div class="collection-media"><img class="mockup" src="/{mockup(cover['slug'])}" alt="" width="800" height="800" loading="eager" decoding="async"></div>
   <div class="collection-copy">
     <h3>{esc(spec['title'])}</h3>
     <p>{esc(spec['lede'])}</p>

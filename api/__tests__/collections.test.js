@@ -1,6 +1,6 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -81,6 +81,26 @@ describe('curated collections', () => {
     }
     for (const name of ['hoodies.html', 'sweatshirts.html', 'beanies.html', 'coasters.html', 'journals.html', 'aprons.html']) {
       assert.equal(sitemap.includes(name), false, name);
+    }
+  });
+
+  it('loads a real mockup on every collection card', () => {
+    const pages = [
+      'site/collections/index.html',
+      ...CURATED.map(([slug]) => `site/collections/${slug}/index.html`),
+    ];
+    for (const rel of pages) {
+      const html = read(rel);
+      const imgs = [...html.matchAll(/<(?:a class="product-card"|a class="collection-card")[\s\S]*?<img class="mockup" src="([^"]+)"[^>]*>/g)];
+      assert.ok(imgs.length > 0, rel);
+      for (const match of imgs) {
+        const src = match[1];
+        assert.match(src, /^\/assets\/mockups\/[a-z0-9-]+\.png\?v=\d+$/, `${rel} ${src}`);
+        assert.equal(match[0].includes('loading="lazy"'), false, `${rel} ${src}`);
+        assert.match(match[0], /loading="eager"/);
+        const file = src.slice(1).split('?')[0];
+        assert.equal(existsSync(join(root, 'site', file)), true, file);
+      }
     }
   });
 
