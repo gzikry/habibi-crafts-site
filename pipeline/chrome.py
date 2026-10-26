@@ -6,13 +6,13 @@ BASE = 'https://habibicraftsco.com'
 # Per-file cache keys on the live pages. bag.js is an ES module, so the tag
 # is type=module. A deferred classic script cannot load it.
 SCRIPT_V = {
-    'styles.css': '32',
+    'styles.css': '34',
     'public-config.js': '11',
     'analytics.js': '10',
-    'bag.js': '16',
+    'bag.js': '17',
     'checkout.js': '13',
     'spin.js': '11',
-    'app.js': '12',
+    'app.js': '13',
 }
 
 # og-share.png is the wordmark and ESTD 2024. Home and shop use this alt too.
@@ -23,17 +23,6 @@ ORDERS_NOTE_SHORT = "We're not taking orders yet."
 OPENING_SOON = 'Opening soon'
 SHIP_LINE = 'We print it after you order. It usually ships in 2 to 5 days.'
 SHOP_NEXT = "We're working on sweatshirts and a few other things. They'll show up here when they're ready."
-
-SHOP_LINKS = (
-    ('shop.html', 'All'),
-    ('mugs.html', 'Mugs'),
-    ('tees.html', 'Tees'),
-    ('totes.html', 'Totes'),
-    ('onesies.html', 'Onesies'),
-    ('prints.html', 'Prints'),
-    ('stickers.html', 'Stickers'),
-    ('hats.html', 'Hats'),
-)
 
 THIN_PAGES = (
     ('sweatshirts.html', 'Sweatshirts'),
@@ -59,17 +48,17 @@ def output_dir(default):
     return default
 
 
-def scripts(include_spin=True):
+def scripts(include_spin=True, prefix=''):
     v = SCRIPT_V
     lines = [
-        f'<script src="public-config.js?v={v["public-config.js"]}"></script>',
-        f'<script defer src="analytics.js?v={v["analytics.js"]}"></script>',
-        f'<script type="module" src="bag.js?v={v["bag.js"]}"></script>',
-        f'<script defer src="checkout.js?v={v["checkout.js"]}"></script>',
+        f'<script src="{prefix}public-config.js?v={v["public-config.js"]}"></script>',
+        f'<script defer src="{prefix}analytics.js?v={v["analytics.js"]}"></script>',
+        f'<script type="module" src="{prefix}bag.js?v={v["bag.js"]}"></script>',
+        f'<script defer src="{prefix}checkout.js?v={v["checkout.js"]}"></script>',
     ]
     if include_spin:
-        lines.append(f'<script defer src="spin.js?v={v["spin.js"]}"></script>')
-    lines.append(f'<script defer src="app.js?v={v["app.js"]}"></script>')
+        lines.append(f'<script defer src="{prefix}spin.js?v={v["spin.js"]}"></script>')
+    lines.append(f'<script defer src="{prefix}app.js?v={v["app.js"]}"></script>')
     return '\n'.join(lines)
 
 
@@ -80,8 +69,8 @@ def icons():
 <meta name="referrer" content="strict-origin-when-cross-origin">'''
 
 
-def stylesheet():
-    return f'<link rel="stylesheet" href="styles.css?v={SCRIPT_V["styles.css"]}">'
+def stylesheet(prefix=''):
+    return f'<link rel="stylesheet" href="{prefix}styles.css?v={SCRIPT_V["styles.css"]}">'
 
 
 def json_ld(data, ensure_ascii=True):
@@ -90,9 +79,10 @@ def json_ld(data, ensure_ascii=True):
             + '</script>')
 
 
-def nav(home=False, shop=False, prefix=''):
+def nav(home=False, shop=False, collections=False, prefix=''):
     brand = ' aria-current="page"' if home else ''
     summary = ' aria-current="page"' if shop else ''
+    collections_current = ' aria-current="page"' if collections else ''
     return f'''<header class="site-header">
   <nav class="nav" aria-label="Primary navigation">
     <a class="brand" href="{prefix}index.html"{brand}><img src="{prefix}assets/logo-nav-white.png" alt="Habibi Crafts Co" width="213" height="93"></a>
@@ -114,8 +104,15 @@ def nav(home=False, shop=False, prefix=''):
         <a href="{prefix}prints.html">Prints</a>
         <a href="{prefix}stickers.html">Stickers</a>
         <a href="{prefix}hats.html">Hats</a>
+        <span class="nav-shop-label">Collections</span>
+        <a href="{prefix}collections/">All collections</a>
+        <a href="{prefix}collections/cozy-warm-minimalism/">Warm minimalism</a>
+        <a href="{prefix}collections/literary-and-desk/">Reading nook</a>
+        <a href="{prefix}collections/kitchen-and-hosting/">Kitchen and hosting</a>
+        <a href="{prefix}collections/stickers-and-caps/">Stickers and hats</a>
         </div>
       </details>
+      <a href="{prefix}collections/"{collections_current}>Collections</a>
       <a href="{prefix}about.html">About</a>
       <a href="{prefix}faq.html">FAQ</a>
       <a class="nav-mobile-only" href="{prefix}shipping.html">Shipping</a>
@@ -156,6 +153,7 @@ def footer(prefix=''):
         <a href="{prefix}prints.html">Prints</a>
         <a href="{prefix}stickers.html">Stickers</a>
         <a href="{prefix}hats.html">Hats</a>
+        <a href="{prefix}collections/">Collections</a>
       </div>
     </div>
     <div>
@@ -174,27 +172,61 @@ def footer(prefix=''):
 </footer>'''
 
 
-def filter_bars(current):
-    def buttons(links, soon=False):
-        bits = []
-        for href, label in links:
-            cur = ' aria-current="page"' if href == current else ''
-            cls = 'filter-button soon' if soon else 'filter-button'
-            bits.append(f'<a class="{cls}" href="{href}"{cur}>{label}</a>')
-        return ''.join(bits)
-    return f'<nav class="filter-bar" aria-label="Shop by collection">{buttons(SHOP_LINKS)}</nav>'
+# key, visible label, category-page href, count key, shop-page hash
+FILTER_PILLS = (
+    ('all', 'All', 'shop.html', 'all', '#main'),
+    ('mugs', 'Mugs', 'mugs.html', 'mugs', '#mugs'),
+    ('tees', 'Tees', 'tees.html', 'tees', '#tees'),
+    ('totes', 'Tote Bags', 'totes.html', 'totes', '#totes'),
+    ('baby', 'Onesies', 'onesies.html', 'baby', '#baby'),
+    ('prints', 'Prints', 'prints.html', 'prints', '#prints'),
+    ('stickers', 'Stickers', 'stickers.html', 'stickers', '#stickers'),
+    ('hats', 'Embroidered Hats', 'hats.html', 'hats', '#hats'),
+    ('hoodies', 'Hoodies', 'shop.html#hoodies', 'hoodies', '#hoodies'),
+)
 
 
-def page_open(head_html, home=False, shop=False):
+def filter_bars(current, counts, on_shop=False):
+    bits = []
+    for key, label, href, count_key, shop_href in FILTER_PILLS:
+        count = counts[count_key]
+        link = shop_href if on_shop else href
+        cur = ''
+        pressed = ''
+        if on_shop and key == 'all':
+            cur = ' aria-current="page"'
+            pressed = ' aria-pressed="true"'
+        elif on_shop:
+            pressed = ' aria-pressed="false"'
+        elif href == current:
+            cur = ' aria-current="page"'
+        if key == 'hoodies':
+            described = f'{label}, {count} in the collection, next on the workbench'
+        elif key == 'all':
+            described = f'{label}, {count} in the collection'
+        else:
+            described = f'{label}, {count} in the collection'
+        bits.append(
+            f'<a class="filter-button" href="{link}" data-filter="{key}" '
+            f'aria-label="{esc(described)}"{cur}{pressed}>'
+            f'{esc(label)} <span class="filter-count">{count}</span></a>'
+        )
+    return (
+        '<nav class="filter-bar" aria-label="Shop by collection" data-catalog-filters>'
+        + ''.join(bits) + '</nav>'
+    )
+
+
+def page_open(head_html, home=False, shop=False, collections=False, prefix=''):
     return '\n'.join([
         head_html,
         '<body>',
         '<a class="skip-link" href="#main">Skip to content</a>',
-        nav(home=home, shop=shop),
-        trust(),
+        nav(home=home, shop=shop, collections=collections, prefix=prefix),
+        trust(prefix),
     ])
 
 
-def page_close(main_html, blank_before_footer=False):
+def page_close(main_html, blank_before_footer=False, prefix=''):
     gap = '\n\n' if blank_before_footer else '\n'
-    return main_html + '\n</main>' + gap + footer() + '\n</body>\n</html>\n'
+    return main_html + '\n</main>' + gap + footer(prefix) + '\n</body>\n</html>\n'

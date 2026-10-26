@@ -36,12 +36,13 @@ def main():
         out = Path(tmp)
         for name in BUILDERS:
             subprocess.check_call([sys.executable, str(ROOT / 'pipeline' / name), '--out', str(out)])
-        generated = sorted(p for p in out.iterdir() if p.is_file())
+        generated = sorted(p for p in out.rglob('*') if p.is_file())
         for built in generated:
-            live = SITE / built.name
+            rel = built.relative_to(out)
+            live = SITE / rel
             if not live.exists() or built.read_bytes() != live.read_bytes():
                 failed = True
-                print(f'differs: {built.name}')
+                print(f'differs: {rel}')
         print(f'{len(generated)} generated files' + ('' if not failed else ', with diffs'))
     if failed:
         sys.exit(1)

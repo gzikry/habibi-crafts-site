@@ -256,7 +256,12 @@ def join_cards(kind, cards):
     return ('\n' if kind in NL_KINDS else '').join(cards)
 
 
-def collection_head(title, desc, canonical, ld, og_image, og_w, og_h, og_alt, include_spin=True, ensure_ascii=True):
+def ld_tags(ld, ensure_ascii=True):
+    items = ld if isinstance(ld, list) else [ld]
+    return '\n'.join(json_ld(item, ensure_ascii) for item in items)
+
+
+def collection_head(title, desc, canonical, ld, og_image, og_w, og_h, og_alt, include_spin=True, ensure_ascii=True, prefix=''):
     return f'''<!doctype html>
 <html lang="en">
 <head>
@@ -283,16 +288,43 @@ def collection_head(title, desc, canonical, ld, og_image, og_w, og_h, og_alt, in
 <meta name="twitter:image" content="{og_image}">
 <meta name="twitter:image:alt" content="{esc(og_alt)}">
 {icons()}
-{stylesheet()}
-{json_ld(ld, ensure_ascii)}
-{scripts(include_spin)}
+{stylesheet(prefix)}
+{ld_tags(ld, ensure_ascii)}
+{scripts(include_spin, prefix)}
 </head>'''
 
 
 def shop_next_line():
-    return f'''<section class="section tight"><div class="shell">
+    return f'''<section class="section tight" data-shop-next><div class="shell">
     <p class="lede">{SHOP_NEXT}</p>
   </div></section>'''
+
+
+def catalog_counts(catalog):
+    counts = {kind: 0 for kind, *_rest in CATS}
+    counts['hoodies'] = 0
+    for product in catalog:
+        if product['category'] in counts:
+            counts[product['category']] += 1
+    counts['all'] = sum(counts[kind] for kind, *_rest in CATS)
+    return counts
+
+
+def hoodies_panel():
+    return '''<section class="section tight shop-section workbench-panel is-parked" id="hoodies" data-shop-kind="hoodies" aria-labelledby="hoodies-heading">
+  <div class="shell">
+    <div class="section-head">
+      <div>
+        <h2 id="hoodies-heading">Hoodies</h2>
+        <p>Next on the workbench.</p>
+      </div>
+    </div>
+    <div class="workbench-empty">
+      <p>No hoodies are in the collection. Crewneck sweatshirts are the fleece we are making first, planned around $44–$48, and a hoodie waits until that blank is real.</p>
+      <p><a href="mailto:habibicraftsco@gmail.com?subject=Hoodies%20on%20the%20workbench">Email us for a note when a hoodie is ready</a></p>
+    </div>
+  </div>
+</section>'''
 
 
 def write_thin_pages(out_dir):
@@ -337,13 +369,14 @@ def write_shop(out_dir, manifest=None):
         f'{BASE}/assets/og-share.png', '1200', '630',
         SHARE_IMAGE_ALT,
     )
+    counts = catalog_counts(catalog)
     sections = []
     for kind, filename, section_id, label, blurb, _lede, _type_name, word in CATS:
         items = [p for p in catalog if p['category'] == kind]
         text = blurb.format(price=priced[kind])
         cards = join_cards(kind, [product_card(p, frames_for(p['slug'], manifest)) for p in items])
         grid = 'product-grid' if len(items) > 2 else 'product-grid two'
-        block = f'''<section class="section tight shop-section" id="{section_id}" aria-labelledby="{section_id}-heading">
+        block = f'''<section class="section tight shop-section" id="{section_id}" data-shop-kind="{kind}" aria-labelledby="{section_id}-heading">
   <div class="shell">
     <div class="section-head">
       <div><h2 id="{section_id}-heading">{label}</h2><p>{esc(text)}</p></div>
@@ -358,12 +391,15 @@ def write_shop(out_dir, manifest=None):
         if 'id="stickers"' in block and body:
             body.append('')
         body.append(block)
+    body.append(hoodies_panel())
     body.append(shop_next_line())
     main = f'''<main id="main">
   <section class="catalog-head"><div class="shell">
     <h1>The shop</h1>
     <p class="lede">Everything in the shop. Free US shipping on orders $39 and up. $6.99 flat below that.</p>
-    {filter_bars('shop.html')}
+    <p class="catalog-note"><a href="collections/">Collections</a> group the same pieces for a table, a desk, or a gift.</p>
+    {filter_bars('shop.html', counts, on_shop=True)}
+    <p class="filter-status" data-filter-status aria-live="polite"></p>
   </div></section>
 ''' + '\n'.join(body)
     html = page_open(head, shop=True) + '\n' + page_close(main)
@@ -392,7 +428,7 @@ def write_shop(out_dir, manifest=None):
   <section class="catalog-head"><div class="shell">
     <h1>{label}</h1>
     <p class="lede">{esc(visible)}</p>
-    {filter_bars(filename)}
+    {filter_bars(filename, counts)}
   </div></section>
   <section class="section tight"><div class="shell">
     <div class="{grid}">{cards}</div>
@@ -400,6 +436,7 @@ def write_shop(out_dir, manifest=None):
         html = page_open(head, shop=True) + '\n' + page_close(main)
         (out_dir / filename).write_text(html)
     write_thin_pages(out_dir)
+    write_collections(out_dir, manifest)
     print(f'shop.html + {len(CATS)} category pages')
 
 
@@ -434,6 +471,13 @@ def gift_card(href, kind, src, title, line):
     return f'''        <a class="gift-card reveal" href="{href}" data-kind="{kind}">
           <div class="gift-media"><img class="mockup" src="{src}" alt="" width="800" height="800" loading="lazy" decoding="async"></div>
           <div class="gift-copy"><h3>{title}</h3><p>{line}</p></div>
+        </a>'''
+
+
+def collection_tile(href, kind, src, title, line):
+    return f'''        <a class="collection-card reveal" href="{href}" data-kind="{kind}">
+          <div class="collection-media"><img class="mockup" src="{src}" alt="" width="800" height="800" loading="lazy" decoding="async"></div>
+          <div class="collection-copy"><h3>{title}</h3><p>{line}</p></div>
         </a>'''
 
 
@@ -519,6 +563,32 @@ def write_home(out_dir, manifest=None):
         gift_card('stickers.html', 'stickers', mockup('leaf-season-sticker'), 'Stickers', TYPE_DESC['stickers']),
         gift_card('hats.html', 'hats', mockup('leaf-season-hat'), 'Hats', 'Unstructured dad hat, black, one size'),
     ])
+    curated = '\n'.join([
+        collection_tile(
+            'collections/cozy-warm-minimalism/', 'mugs',
+            src_for(by_slug['morning-ritual']),
+            'Warm minimalism',
+            'Mugs, totes, and kiss-cut stickers for a quiet table.',
+        ),
+        collection_tile(
+            'collections/literary-and-desk/', 'totes',
+            src_for(by_slug['sit-el-kul']),
+            'Reading nook',
+            'Totes, mugs, and stickers for a desk or a chair.',
+        ),
+        collection_tile(
+            'collections/kitchen-and-hosting/', 'mugs',
+            src_for(by_slug['maamoul']),
+            'Kitchen and hosting',
+            'Ceramic mugs and cotton totes for tea and a full table.',
+        ),
+        collection_tile(
+            'collections/stickers-and-caps/', 'stickers',
+            mockup('craft-club-sticker'),
+            'Stickers and hats',
+            'Kiss-cut stickers and embroidered dad hats.',
+        ),
+    ])
     main = f'''<main id="main">
   <section class="hero">
     <div class="shell hero-grid">
@@ -550,6 +620,18 @@ def write_home(out_dir, manifest=None):
     </div>
   </section>
 
+  <section class="section tight collection-paths" aria-labelledby="collections-heading">
+    <div class="shell">
+      <div class="section-head">
+        <h2 id="collections-heading">Collections</h2>
+        <a class="text-link" href="collections/">See the groups</a>
+      </div>
+      <p class="lede collection-intro">Grouped the way we would set a table, a desk, or a gift.</p>
+      <div class="collection-grid">
+{curated}
+      </div>
+    </div>
+  </section>
 
   <section class="section" id="shop" aria-labelledby="shop-heading">
     <div class="shell">
@@ -799,6 +881,282 @@ def write_products(out_dir, manifest=None):
     print(f'Built {built} product pages')
 
 
+# Curated groups. Product slugs are real catalog items. Workbench rows are
+# blanks we have not made, so they never get a price, a product URL, or an
+# add-to-bag control. Crewneck range is the planned retail, not a live SKU.
+CURATED = (
+    {
+        'slug': 'cozy-warm-minimalism',
+        'title': 'Warm Minimalism & Coffee Table Goods',
+        'nav': 'Warm minimalism',
+        'description': 'Mugs, cotton totes, and kiss-cut stickers for a quiet table. Crewneck sweatshirts and coasters are next on the workbench.',
+        'lede': 'Mugs, cotton totes, and kiss-cut stickers for a quiet table. Crewnecks and coasters are next on the workbench.',
+        'products': (
+            'morning-ritual', 'ya-aini', 'baladi',
+            'gather-grow', 'early-light',
+            'leaf-season-sticker', 'make-something-sticker', 'craft-club-sticker',
+        ),
+        'workbench': (
+            (
+                'Crewneck sweatshirts',
+                'A fleece for the same table. Planned around $44–$48 once the blank is ready. Not for sale yet.',
+                'Crewneck sweatshirts',
+            ),
+            (
+                'Coasters',
+                'A square to sit under the mug. Next on the workbench, not a piece you can order.',
+                'Coasters',
+            ),
+        ),
+    },
+    {
+        'slug': 'literary-and-desk',
+        'title': 'Reading Nook & Desk Companions',
+        'nav': 'Reading nook',
+        'description': 'Totes, mugs, and kiss-cut stickers for a reading chair or a desk. Hardcover journals are next on the workbench.',
+        'lede': 'Totes, mugs, and kiss-cut stickers for a reading chair or a desk. Hardcover journals are next on the workbench.',
+        'products': (
+            'sit-el-kul', 'halawa', 'early-light',
+            'morning-ritual', 'ya-dunia',
+            'make-something-sticker', 'craft-club-sticker',
+        ),
+        'workbench': (
+            (
+                'Hardcover journals',
+                'A matte journal for the desk, with room for a short wordmark on the cover. Next on the workbench.',
+                'Hardcover journals',
+            ),
+        ),
+    },
+    {
+        'slug': 'kitchen-and-hosting',
+        'title': 'Kitchen, Tea & Hosting Table',
+        'nav': 'Kitchen and hosting',
+        'description': 'Ceramic mugs and cotton totes for tea and a full table. Aprons and coasters are next on the workbench.',
+        'lede': 'Ceramic mugs and cotton totes for tea and a full table. Aprons and coasters are next on the workbench.',
+        'products': (
+            'knafeh-club', 'maamoul', 'jiran', 'morning-ritual',
+            'gather-grow', 'halawa',
+        ),
+        'workbench': (
+            (
+                'Aprons',
+                'An apron for cooking and making, with a small mark on the chest. Next on the workbench.',
+                'Aprons',
+            ),
+            (
+                'Coasters',
+                'Coasters for the mug that is already on the table. Not in the shop yet.',
+                'Coasters',
+            ),
+        ),
+    },
+    {
+        'slug': 'stickers-and-caps',
+        'title': 'Stickers & Embroidered Dad Hats',
+        'nav': 'Stickers and hats',
+        'description': 'Kiss-cut vinyl stickers at $5.99 and unstructured dad hats at $29.99. Beanies are next on the workbench.',
+        'lede': 'Kiss-cut vinyl stickers at $5.99 and unstructured dad hats at $29.99. Beanies are next on the workbench.',
+        'products': (
+            'craft-club-sticker', 'make-something-sticker', 'leaf-season-sticker',
+            'habibi-crafts-hat', 'make-something-hat', 'leaf-season-hat',
+        ),
+        'workbench': (
+            (
+                'Beanies',
+                'A cuffed beanie to sit with the dad hats. Next on the workbench, not in the collection.',
+                'Beanies',
+            ),
+        ),
+    },
+)
+
+
+def curated_card(p):
+    kind = p['category']
+    type_name = next(row[6] for row in CATS if row[0] == kind)
+    return f'''<a class="product-card" href="/product-{p['slug']}.html" data-category="{kind}">
+  <div class="product-media"><img class="mockup" src="/{mockup(p['slug'])}" alt="{esc(art_alt(p))}" width="800" height="800" loading="eager" decoding="async"></div>
+  <div class="product-copy">
+    <div class="product-type">{type_name}</div>
+    <div class="product-row"><h3>{esc(p['name'])}</h3><span class="price">{format_cents(p['price'])}</span></div>
+    <p class="status-line">In the collection</p>
+  </div>
+</a>'''
+
+
+def workbench_card(title, copy, subject):
+    mailto = 'mailto:habibicraftsco@gmail.com?subject=' + subject.replace(' ', '%20')
+    return f'''<article class="workbench-card">
+  <h3>{esc(title)}</h3>
+  <p class="status-line">Next on the workbench</p>
+  <p>{esc(copy)}</p>
+  <p><a href="{mailto}">Email us for a note when this is ready</a></p>
+</article>'''
+
+
+def collection_page_ld(spec, products, url):
+    crumbs = [
+        {'@type': 'ListItem', 'position': 1, 'name': 'Home', 'item': f'{BASE}/'},
+        {'@type': 'ListItem', 'position': 2, 'name': 'Collections', 'item': f'{BASE}/collections/'},
+        {'@type': 'ListItem', 'position': 3, 'name': spec['title'], 'item': url},
+    ]
+    page = {
+        '@context': 'https://schema.org',
+        '@type': 'CollectionPage',
+        'name': spec['title'],
+        'description': spec['description'],
+        'url': url,
+        'isPartOf': {'@type': 'WebSite', 'name': 'Habibi Crafts Co', 'url': f'{BASE}/'},
+        'mainEntity': item_list(products),
+    }
+    crumbs_ld = {
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        'itemListElement': crumbs,
+    }
+    return page, crumbs_ld
+
+
+def write_collections(out_dir, manifest=None):
+    del manifest  # Curated pages use catalog mockups, not angle frames.
+    catalog = json.load(open(SITE / 'product-catalog.json'))
+    by_slug = {p['slug']: p for p in catalog}
+    prefix = '/'
+    root = out_dir / 'collections'
+    root.mkdir(parents=True, exist_ok=True)
+
+    for spec in CURATED:
+        products = [by_slug[slug] for slug in spec['products']]
+        url = f"{BASE}/collections/{spec['slug']}/"
+        page_ld, crumb_ld = collection_page_ld(spec, products, url)
+        head = collection_head(
+            f"{spec['title']} | Habibi Crafts Co",
+            spec['description'],
+            url,
+            [page_ld, crumb_ld],
+            f'{BASE}/assets/og-share.png',
+            '1200', '630',
+            SHARE_IMAGE_ALT,
+            include_spin=False,
+            prefix=prefix,
+        )
+        cards = '\n'.join(curated_card(p) for p in products)
+        bench = '\n'.join(workbench_card(*row) for row in spec['workbench'])
+        grid = 'product-grid' if len(products) > 2 else 'product-grid two'
+        main = f'''<main id="main">
+  <section class="catalog-head"><div class="shell">
+    <nav class="crumbs" aria-label="Breadcrumb">
+      <a href="/">Home</a>
+      <span aria-hidden="true">/</span>
+      <a href="/collections/">Collections</a>
+      <span aria-hidden="true">/</span>
+      <span aria-current="page">{esc(spec['title'])}</span>
+    </nav>
+    <h1>{esc(spec['title'])}</h1>
+    <p class="lede">{esc(spec['lede'])}</p>
+  </div></section>
+  <section class="section tight" aria-labelledby="in-collection-heading">
+    <div class="shell">
+      <div class="section-head">
+        <h2 id="in-collection-heading">In the collection</h2>
+      </div>
+      <div class="{grid}">{cards}</div>
+    </div>
+  </section>
+  <section class="section tight" aria-labelledby="workbench-heading">
+    <div class="shell">
+      <div class="section-head">
+        <h2 id="workbench-heading">Next on the workbench</h2>
+      </div>
+      <div class="workbench-grid">{bench}</div>
+    </div>
+  </section>'''
+        html = page_open(head, collections=True, prefix=prefix) + '\n' + page_close(main, prefix=prefix)
+        folder = root / spec['slug']
+        folder.mkdir(parents=True, exist_ok=True)
+        (folder / 'index.html').write_text(html)
+
+    index_url = f'{BASE}/collections/'
+    index_desc = (
+        'Four groups from the shop: a quiet table, a reading desk, a hosting table, '
+        'and stickers with embroidered dad hats. Blanks still on the workbench stay marked that way.'
+    )
+    index_items = [
+        {'slug': spec['slug'], 'name': spec['title']}
+        for spec in CURATED
+    ]
+    index_ld = {
+        '@context': 'https://schema.org',
+        '@type': 'CollectionPage',
+        'name': 'Collections',
+        'description': index_desc,
+        'url': index_url,
+        'isPartOf': {'@type': 'WebSite', 'name': 'Habibi Crafts Co', 'url': f'{BASE}/'},
+        'mainEntity': {'@type': 'ItemList', 'itemListElement': [
+            {'@type': 'ListItem', 'position': i + 1,
+             'url': f"{BASE}/collections/{item['slug']}/", 'name': item['name']}
+            for i, item in enumerate(index_items)
+        ]},
+    }
+    index_crumbs = {
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        'itemListElement': [
+            {'@type': 'ListItem', 'position': 1, 'name': 'Home', 'item': f'{BASE}/'},
+            {'@type': 'ListItem', 'position': 2, 'name': 'Collections', 'item': index_url},
+        ],
+    }
+    tiles = []
+    for spec in CURATED:
+        products = [by_slug[slug] for slug in spec['products']]
+        cover = products[0]
+        tiles.append(f'''<a class="collection-card" href="/collections/{spec['slug']}/" data-kind="{cover['category']}">
+  <div class="collection-media"><img class="mockup" src="/{mockup(cover['slug'])}" alt="" width="800" height="800" loading="eager" decoding="async"></div>
+  <div class="collection-copy">
+    <h3>{esc(spec['title'])}</h3>
+    <p>{esc(spec['lede'])}</p>
+    <p class="status-line">{len(products)} in the collection · {len(spec['workbench'])} next on the workbench</p>
+  </div>
+</a>''')
+    head = collection_head(
+        'Collections | Habibi Crafts Co',
+        index_desc,
+        index_url,
+        [index_ld, index_crumbs],
+        f'{BASE}/assets/og-share.png',
+        '1200', '630',
+        SHARE_IMAGE_ALT,
+        include_spin=False,
+        prefix=prefix,
+    )
+    main = f'''<main id="main">
+  <section class="catalog-head"><div class="shell">
+    <nav class="crumbs" aria-label="Breadcrumb">
+      <a href="/">Home</a>
+      <span aria-hidden="true">/</span>
+      <span aria-current="page">Collections</span>
+    </nav>
+    <h1>Collections</h1>
+    <p class="lede">Four ways through the shop. Pieces you can open are in the collection. The rest are next on the workbench, and they are not for sale yet.</p>
+  </div></section>
+  <section class="section tight"><div class="shell">
+    <div class="collection-hub">
+{chr(10).join(tiles)}
+    </div>
+  </div></section>
+  <section class="section tight"><div class="shell">
+    <div class="workbench-empty">
+      <h2>Still on the bench</h2>
+      <p>Crewneck sweatshirts, planned around $44–$48, plus beanies, coasters, hardcover journals, and aprons. Hoodies are not in the collection. They wait until a crewneck is actually in the shop.</p>
+      <p><a href="mailto:habibicraftsco@gmail.com?subject=Workbench%20note">Email us for a note when a blank is ready</a></p>
+    </div>
+  </div></section>'''
+    html = page_open(head, collections=True, prefix=prefix) + '\n' + page_close(main, prefix=prefix)
+    (root / 'index.html').write_text(html)
+    print(f'collections: {len(CURATED)} curated pages')
+
+
 SITEMAP_CORE = [
     ('index.html', 'weekly', '1.0'),
     ('shop.html', 'weekly', '0.9'),
@@ -816,6 +1174,15 @@ SITEMAP_CORE = [
     ('contact.html', 'yearly', '0.3'),
 ]
 
+# Directory indexes. Listed only when the page exists, and never as index.html.
+SITEMAP_COLLECTIONS = (
+    ('collections/', 'weekly', '0.8'),
+    ('collections/cozy-warm-minimalism/', 'weekly', '0.7'),
+    ('collections/literary-and-desk/', 'weekly', '0.7'),
+    ('collections/kitchen-and-hosting/', 'weekly', '0.7'),
+    ('collections/stickers-and-caps/', 'weekly', '0.7'),
+)
+
 
 def xml_escape(s):
     return s.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
@@ -828,6 +1195,15 @@ def existing_lastmod():
     return dict(re.findall(r'<loc>([^<]+)</loc>\s*<lastmod>([^<]+)</lastmod>', path.read_text()))
 
 
+def sitemap_entry(loc, last, freq, prio):
+    return f'''  <url>
+    <loc>{loc}</loc>
+    <lastmod>{last}</lastmod>
+    <changefreq>{freq}</changefreq>
+    <priority>{prio}</priority>
+  </url>'''
+
+
 def write_sitemap(out_dir):
     catalog = json.load(open(SITE / 'product-catalog.json'))
     known = existing_lastmod()
@@ -837,13 +1213,12 @@ def write_sitemap(out_dir):
         if not (SITE / name).exists():
             continue
         loc = BASE + '/' if name == 'index.html' else f'{BASE}/{name}'
-        last = known.get(loc, today)
-        urls.append(f'''  <url>
-    <loc>{loc}</loc>
-    <lastmod>{last}</lastmod>
-    <changefreq>{freq}</changefreq>
-    <priority>{prio}</priority>
-  </url>''')
+        urls.append(sitemap_entry(loc, known.get(loc, today), freq, prio))
+    for route, freq, prio in SITEMAP_COLLECTIONS:
+        if not (SITE / route / 'index.html').exists():
+            continue
+        loc = f'{BASE}/{route}'
+        urls.append(sitemap_entry(loc, known.get(loc, today), freq, prio))
     for p in catalog:
         name = f"product-{p['slug']}.html"
         if not (SITE / name).exists():

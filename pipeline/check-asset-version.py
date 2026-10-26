@@ -32,9 +32,8 @@ for name in BUILDERS:
 
 print('SCRIPT_V ' + ', '.join(f'{k}={v}' for k, v in SCRIPT_V.items()))
 
-for filename in sorted(os.listdir(SITE)):
-    if not filename.endswith('.html'):
-        continue
+html_files = sorted(path.relative_to(SITE).as_posix() for path in SITE.rglob('*.html'))
+for filename in html_files:
     html = (SITE / filename).read_text()
     style_hits = re.findall(r'styles\.css\?v=(\d+)', html)
     expected_style = SCRIPT_V['styles.css']
@@ -51,7 +50,8 @@ for filename in sorted(os.listdir(SITE)):
             if found != expected:
                 failures.append(f'{filename}: {asset}?v={found}, expected {expected}')
     for match in re.finditer(
-        r'(?:src|href)="(assets/(?:mockups|angles|on-model)/[^"?]+\.png|assets/on-model/[^"?]+\.jpg)"',
+        r'(?:src|href)="(?:\.\./|/)?'
+        r'(assets/(?:mockups|angles|on-model)/[^"?]+\.png|assets/on-model/[^"?]+\.jpg)"',
         html,
     ):
         failures.append(f'{filename}: unversioned image {match.group(1)}')

@@ -27,14 +27,14 @@
 <link rel="icon" type="image/png" href="/assets/logo.png">
 <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
 <meta name="referrer" content="strict-origin-when-cross-origin">
-<link rel="stylesheet" href="styles.css?v=32">
+<link rel="stylesheet" href="styles.css?v=34">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"CollectionPage","name":"Shop Habibi Crafts Co","url":"https://habibicraftsco.com/shop.html","mainEntity":{"@type":"ItemList","itemListElement":[{"@type":"ListItem","position":1,"url":"https://habibicraftsco.com/product-ya-aini.html","name":"Ya Aini"},{"@type":"ListItem","position":2,"url":"https://habibicraftsco.com/product-baladi.html","name":"Baladi"},{"@type":"ListItem","position":3,"url":"https://habibicraftsco.com/product-ya-dunia.html","name":"Ya Dunia"},{"@type":"ListItem","position":4,"url":"https://habibicraftsco.com/product-jiran.html","name":"Jiran"},{"@type":"ListItem","position":5,"url":"https://habibicraftsco.com/product-maamoul.html","name":"Maamoul"},{"@type":"ListItem","position":6,"url":"https://habibicraftsco.com/product-knafeh-club.html","name":"Knafeh Club"},{"@type":"ListItem","position":7,"url":"https://habibicraftsco.com/product-morning-ritual.html","name":"Morning Ritual"},{"@type":"ListItem","position":8,"url":"https://habibicraftsco.com/product-khalas-habibi.html","name":"Khalas Habibi"},{"@type":"ListItem","position":9,"url":"https://habibicraftsco.com/product-ya-habayeb.html","name":"Ya Habayeb"},{"@type":"ListItem","position":10,"url":"https://habibicraftsco.com/product-warm-embrace.html","name":"Warm Embrace"},{"@type":"ListItem","position":11,"url":"https://habibicraftsco.com/product-halawa.html","name":"Halawa"},{"@type":"ListItem","position":12,"url":"https://habibicraftsco.com/product-sit-el-kul.html","name":"Sit El Kul"},{"@type":"ListItem","position":13,"url":"https://habibicraftsco.com/product-early-light.html","name":"Early Light"},{"@type":"ListItem","position":14,"url":"https://habibicraftsco.com/product-gather-grow.html","name":"Gather & Grow"},{"@type":"ListItem","position":15,"url":"https://habibicraftsco.com/product-ya-teta.html","name":"Ya Teta"},{"@type":"ListItem","position":16,"url":"https://habibicraftsco.com/product-amoura.html","name":"Amoura"},{"@type":"ListItem","position":17,"url":"https://habibicraftsco.com/product-garden-gate.html","name":"Garden Gate"},{"@type":"ListItem","position":18,"url":"https://habibicraftsco.com/product-beit-el-hobb.html","name":"Beit El Hobb"},{"@type":"ListItem","position":19,"url":"https://habibicraftsco.com/product-dar-el-hawa.html","name":"Dar El Hawa"},{"@type":"ListItem","position":20,"url":"https://habibicraftsco.com/product-starlight.html","name":"Starlight"},{"@type":"ListItem","position":21,"url":"https://habibicraftsco.com/product-craft-club-sticker.html","name":"Craft Club"},{"@type":"ListItem","position":22,"url":"https://habibicraftsco.com/product-make-something-sticker.html","name":"Make Something"},{"@type":"ListItem","position":23,"url":"https://habibicraftsco.com/product-leaf-season-sticker.html","name":"Leaf Season"},{"@type":"ListItem","position":24,"url":"https://habibicraftsco.com/product-habibi-crafts-hat.html","name":"Habibi Crafts"},{"@type":"ListItem","position":25,"url":"https://habibicraftsco.com/product-make-something-hat.html","name":"Make Something"},{"@type":"ListItem","position":26,"url":"https://habibicraftsco.com/product-leaf-season-hat.html","name":"Leaf Season"}]}}</script>
 <script src="public-config.js?v=11"></script>
 <script defer src="analytics.js?v=10"></script>
-<script type="module" src="bag.js?v=16"></script>
+<script type="module" src="bag.js?v=17"></script>
 <script defer src="checkout.js?v=13"></script>
 <script defer src="spin.js?v=11"></script>
-<script defer src="app.js?v=12"></script>
+<script defer src="app.js?v=13"></script>
 </head>
 <body>
 <a class="skip-link" href="#main">Skip to content</a>
@@ -59,8 +59,15 @@
         <a href="prints.html">Prints</a>
         <a href="stickers.html">Stickers</a>
         <a href="hats.html">Hats</a>
+        <span class="nav-shop-label">Collections</span>
+        <a href="collections/">All collections</a>
+        <a href="collections/cozy-warm-minimalism/">Warm minimalism</a>
+        <a href="collections/literary-and-desk/">Reading nook</a>
+        <a href="collections/kitchen-and-hosting/">Kitchen and hosting</a>
+        <a href="collections/stickers-and-caps/">Stickers and hats</a>
         </div>
       </details>
+      <a href="collections/">Collections</a>
       <a href="about.html">About</a>
       <a href="faq.html">FAQ</a>
       <a class="nav-mobile-only" href="shipping.html">Shipping</a>
@@ -80,9 +87,11 @@
   <section class="catalog-head"><div class="shell">
     <h1>The shop</h1>
     <p class="lede">Everything in the shop. Free US shipping on orders $39 and up. $6.99 flat below that.</p>
-    <nav class="filter-bar" aria-label="Shop by collection"><a class="filter-button" href="shop.html" aria-current="page">All</a><a class="filter-button" href="mugs.html">Mugs</a><a class="filter-button" href="tees.html">Tees</a><a class="filter-button" href="totes.html">Totes</a><a class="filter-button" href="onesies.html">Onesies</a><a class="filter-button" href="prints.html">Prints</a><a class="filter-button" href="stickers.html">Stickers</a><a class="filter-button" href="hats.html">Hats</a></nav>
+    <p class="catalog-note"><a href="collections/">Collections</a> group the same pieces for a table, a desk, or a gift.</p>
+    <nav class="filter-bar" aria-label="Shop by collection" data-catalog-filters><a class="filter-button" href="#main" data-filter="all" aria-label="All, 26 in the collection" aria-current="page" aria-pressed="true">All <span class="filter-count">26</span></a><a class="filter-button" href="#mugs" data-filter="mugs" aria-label="Mugs, 7 in the collection" aria-pressed="false">Mugs <span class="filter-count">7</span></a><a class="filter-button" href="#tees" data-filter="tees" aria-label="Tees, 3 in the collection" aria-pressed="false">Tees <span class="filter-count">3</span></a><a class="filter-button" href="#totes" data-filter="totes" aria-label="Tote Bags, 4 in the collection" aria-pressed="false">Tote Bags <span class="filter-count">4</span></a><a class="filter-button" href="#baby" data-filter="baby" aria-label="Onesies, 3 in the collection" aria-pressed="false">Onesies <span class="filter-count">3</span></a><a class="filter-button" href="#prints" data-filter="prints" aria-label="Prints, 3 in the collection" aria-pressed="false">Prints <span class="filter-count">3</span></a><a class="filter-button" href="#stickers" data-filter="stickers" aria-label="Stickers, 3 in the collection" aria-pressed="false">Stickers <span class="filter-count">3</span></a><a class="filter-button" href="#hats" data-filter="hats" aria-label="Embroidered Hats, 3 in the collection" aria-pressed="false">Embroidered Hats <span class="filter-count">3</span></a><a class="filter-button" href="#hoodies" data-filter="hoodies" aria-label="Hoodies, 0 in the collection, next on the workbench" aria-pressed="false">Hoodies <span class="filter-count">0</span></a></nav>
+    <p class="filter-status" data-filter-status aria-live="polite"></p>
   </div></section>
-<section class="section tight shop-section" id="mugs" aria-labelledby="mugs-heading">
+<section class="section tight shop-section" id="mugs" data-shop-kind="mugs" aria-labelledby="mugs-heading">
   <div class="shell">
     <div class="section-head">
       <div><h2 id="mugs-heading">Mugs</h2><p>11 oz ceramic mug.</p></div>
@@ -133,7 +142,7 @@
 </a></div>
   </div>
 </section>
-<section class="section tight shop-section" id="tees" aria-labelledby="tees-heading">
+<section class="section tight shop-section" id="tees" data-shop-kind="tees" aria-labelledby="tees-heading">
   <div class="shell">
     <div class="section-head">
       <div><h2 id="tees-heading">Tees</h2><p>Unisex cotton tee.</p></div>
@@ -160,7 +169,7 @@
 </a></div>
   </div>
 </section>
-<section class="section tight shop-section" id="totes" aria-labelledby="totes-heading">
+<section class="section tight shop-section" id="totes" data-shop-kind="totes" aria-labelledby="totes-heading">
   <div class="shell">
     <div class="section-head">
       <div><h2 id="totes-heading">Totes</h2><p>Cotton tote.</p></div>
@@ -193,7 +202,7 @@
 </a></div>
   </div>
 </section>
-<section class="section tight shop-section" id="baby" aria-labelledby="baby-heading">
+<section class="section tight shop-section" id="baby" data-shop-kind="baby" aria-labelledby="baby-heading">
   <div class="shell">
     <div class="section-head">
       <div><h2 id="baby-heading">Onesies</h2><p>Baby onesie.</p></div>
@@ -220,7 +229,7 @@
 </a></div>
   </div>
 </section>
-<section class="section tight shop-section" id="prints" aria-labelledby="prints-heading">
+<section class="section tight shop-section" id="prints" data-shop-kind="prints" aria-labelledby="prints-heading">
   <div class="shell">
     <div class="section-head">
       <div><h2 id="prints-heading">Prints</h2><p>12 x 16 matte print, frame not included.</p></div>
@@ -248,7 +257,7 @@
   </div>
 </section>
 
-<section class="section tight shop-section" id="stickers" aria-labelledby="stickers-heading">
+<section class="section tight shop-section" id="stickers" data-shop-kind="stickers" aria-labelledby="stickers-heading">
   <div class="shell">
     <div class="section-head">
       <div><h2 id="stickers-heading">Stickers</h2><p>Vinyl sticker.</p></div>
@@ -277,7 +286,7 @@
 </a></div>
   </div>
 </section>
-<section class="section tight shop-section" id="hats" aria-labelledby="hats-heading">
+<section class="section tight shop-section" id="hats" data-shop-kind="hats" aria-labelledby="hats-heading">
   <div class="shell">
     <div class="section-head">
       <div><h2 id="hats-heading">Hats</h2><p>Black dad hats.</p></div>
@@ -306,7 +315,21 @@
 </a></div>
   </div>
 </section>
-<section class="section tight"><div class="shell">
+<section class="section tight shop-section workbench-panel is-parked" id="hoodies" data-shop-kind="hoodies" aria-labelledby="hoodies-heading">
+  <div class="shell">
+    <div class="section-head">
+      <div>
+        <h2 id="hoodies-heading">Hoodies</h2>
+        <p>Next on the workbench.</p>
+      </div>
+    </div>
+    <div class="workbench-empty">
+      <p>No hoodies are in the collection. Crewneck sweatshirts are the fleece we are making first, planned around $44–$48, and a hoodie waits until that blank is real.</p>
+      <p><a href="mailto:habibicraftsco@gmail.com?subject=Hoodies%20on%20the%20workbench">Email us for a note when a hoodie is ready</a></p>
+    </div>
+  </div>
+</section>
+<section class="section tight" data-shop-next><div class="shell">
     <p class="lede">We're working on sweatshirts and a few other things. They'll show up here when they're ready.</p>
   </div></section>
 </main>
@@ -329,6 +352,7 @@
         <a href="prints.html">Prints</a>
         <a href="stickers.html">Stickers</a>
         <a href="hats.html">Hats</a>
+        <a href="collections/">Collections</a>
       </div>
     </div>
     <div>

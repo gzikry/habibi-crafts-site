@@ -69,7 +69,9 @@ def refresh(path, prefix=''):
         html = html.replace(f'styles.css?v={old}', f'styles.css?v={style_v}')
     html = html.replace('Habibi Crafts Co. Mugs, tees, totes, and more.', share_image_alt)
     html = html.replace('checkout.js?v=12', 'checkout.js?v=13')
-    html = html.replace('bag.js?v=15', 'bag.js?v=16')
+    bag_v = SCRIPT_V['bag.js']
+    for old in range(1, int(bag_v)):
+        html = html.replace(f'bag.js?v={old}', f'bag.js?v={bag_v}')
     path.write_text(html)
     print('chrome', path.name)
 

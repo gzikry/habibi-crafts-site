@@ -211,7 +211,7 @@ function boot() {
     subtotal: subtotal
   };
 
-  fetch('product-catalog.json')
+  fetch('/product-catalog.json')
     .then(function (response) { return response.json(); })
     .then(function (catalog) {
       catalog.forEach(function (product) { bySlug[product.slug] = product; });
