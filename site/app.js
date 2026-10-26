@@ -123,6 +123,70 @@
     });
   }
 
+  var catalogBar=document.querySelector('[data-catalog-filters]');
+  var catalogSections=document.querySelectorAll('[data-shop-kind]');
+  if(catalogBar&&catalogSections.length){
+    var filterStatus=document.querySelector('[data-filter-status]');
+
+    var filterName=function(button){
+      var node=button.firstChild;
+      if(!node) return 'Pieces';
+      return String(node.nodeValue||'').replace(/\s+$/, '') || 'Pieces';
+    };
+
+    var applyCatalogFilter=function(kind){
+      Array.prototype.forEach.call(catalogSections,function(section){
+        var sectionKind=section.getAttribute('data-shop-kind');
+        var show=kind==='all'?sectionKind!=='hoodies':sectionKind===kind;
+        section.hidden=!show;
+        if(sectionKind==='hoodies') section.classList.toggle('is-parked',!show);
+        if(show){
+          Array.prototype.forEach.call(section.querySelectorAll('.reveal'),function(el){
+            el.classList.add('visible');
+          });
+        }
+      });
+      var next=document.querySelector('[data-shop-next]');
+      if(next) next.hidden=kind!=='all';
+      Array.prototype.forEach.call(catalogBar.querySelectorAll('[data-filter]'),function(button){
+        var pressed=button.getAttribute('data-filter')===kind;
+        button.setAttribute('aria-pressed',pressed?'true':'false');
+        if(pressed) button.setAttribute('aria-current','page');
+        else button.removeAttribute('aria-current');
+      });
+      if(filterStatus){
+        if(kind==='hoodies'){
+          filterStatus.textContent='Hoodies: nothing in the collection yet.';
+        }else if(kind==='all'){
+          filterStatus.textContent='';
+        }else{
+          var shown=document.querySelector('[data-shop-kind="'+kind+'"]');
+          var count=shown?shown.querySelectorAll('.product-card').length:0;
+          var button=catalogBar.querySelector('[data-filter="'+kind+'"]');
+          var name=button?filterName(button):'Pieces';
+          filterStatus.textContent=count===0
+            ? name+': nothing in the collection yet.'
+            : 'Showing '+count+' '+name+'.';
+        }
+      }
+    };
+
+    catalogBar.addEventListener('click',function(e){
+      var button=e.target.closest('[data-filter]');
+      if(!button||!catalogBar.contains(button)) return;
+      e.preventDefault();
+      var kind=button.getAttribute('data-filter');
+      applyCatalogFilter(kind);
+      var nextUrl=kind==='all'?'shop.html':'#'+kind;
+      if(window.history&&history.replaceState) history.replaceState(null,'',nextUrl);
+    });
+
+    var initial=(window.location.hash||'').replace('#','');
+    if(initial&&catalogBar.querySelector('[data-filter="'+initial+'"]')){
+      applyCatalogFilter(initial);
+    }
+  }
+
   Array.prototype.forEach.call(document.querySelectorAll('[data-size-picker]'),function(picker){
     picker.addEventListener('click',function(e){
       var btn=e.target.closest('[data-size]');

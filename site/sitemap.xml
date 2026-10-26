@@ -86,6 +86,36 @@
     <priority>0.3</priority>
   </url>
   <url>
+    <loc>https://habibicraftsco.com/collections/</loc>
+    <lastmod>2026-10-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://habibicraftsco.com/collections/cozy-warm-minimalism/</loc>
+    <lastmod>2026-10-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://habibicraftsco.com/collections/literary-and-desk/</loc>
+    <lastmod>2026-10-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://habibicraftsco.com/collections/kitchen-and-hosting/</loc>
+    <lastmod>2026-10-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://habibicraftsco.com/collections/stickers-and-caps/</loc>
+    <lastmod>2026-10-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://habibicraftsco.com/product-ya-aini.html</loc>
     <lastmod>2026-09-18</lastmod>
     <changefreq>monthly</changefreq>
