@@ -137,17 +137,14 @@
     var applyCatalogFilter=function(kind){
       Array.prototype.forEach.call(catalogSections,function(section){
         var sectionKind=section.getAttribute('data-shop-kind');
-        var show=kind==='all'?sectionKind!=='hoodies':sectionKind===kind;
+        var show=kind==='all'||sectionKind===kind;
         section.hidden=!show;
-        if(sectionKind==='hoodies') section.classList.toggle('is-parked',!show);
         if(show){
           Array.prototype.forEach.call(section.querySelectorAll('.reveal'),function(el){
             el.classList.add('visible');
           });
         }
       });
-      var next=document.querySelector('[data-shop-next]');
-      if(next) next.hidden=kind!=='all';
       Array.prototype.forEach.call(catalogBar.querySelectorAll('[data-filter]'),function(button){
         var pressed=button.getAttribute('data-filter')===kind;
         button.setAttribute('aria-pressed',pressed?'true':'false');
@@ -155,9 +152,7 @@
         else button.removeAttribute('aria-current');
       });
       if(filterStatus){
-        if(kind==='hoodies'){
-          filterStatus.textContent='Hoodies: nothing in the collection yet.';
-        }else if(kind==='all'){
+        if(kind==='all'){
           filterStatus.textContent='';
         }else{
           var shown=document.querySelector('[data-shop-kind="'+kind+'"]');

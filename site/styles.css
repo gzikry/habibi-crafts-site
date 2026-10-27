@@ -306,18 +306,6 @@ button{background:none;border:0;padding:0;font:inherit;color:inherit;cursor:poin
 .catalog-note{margin:8px 0 0;font-size:14.5px;color:var(--muted)}
 .catalog-note a{color:var(--maroon);text-decoration:underline;text-underline-offset:3px}
 .filter-status{margin:10px 0 0;min-height:1.15em;font-size:13px;color:var(--muted)}
-.workbench-panel.is-parked{display:none}
-/* Hash fallback for shop.html#hoodies without JS. replaceState does not clear :target, so this must not beat the hidden state JS sets when another filter is chosen. */
-#hoodies:target:not([hidden]){display:block}
-#hoodies.is-parked[hidden]{display:none}
-.workbench-empty,.workbench-card{
-  background:var(--paper);border:1px dashed var(--line);border-radius:14px;padding:18px 16px;
-}
-.workbench-empty h2{font-size:clamp(20px,2.2vw,26px);letter-spacing:-.02em}
-.workbench-card h3{font-family:var(--serif);font-size:22px;letter-spacing:-.02em}
-.workbench-empty p,.workbench-card p{margin-top:8px;font-size:14.5px;line-height:1.5;color:var(--muted)}
-.workbench-empty a,.workbench-card a{color:var(--maroon);text-decoration:underline;text-underline-offset:3px}
-.workbench-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
 .status-line{margin-top:4px;font-size:13px;color:var(--muted)}
 .crumbs{
   display:flex;flex-wrap:wrap;gap:6px;align-items:center;
@@ -946,7 +934,7 @@ html.js-reveal .reveal.visible{opacity:1;transform:none}
   .product-grid,.product-grid.two,.product-grid.featured,.kind-grid,.gift-grid,.soon-grid,.collection-grid{
     grid-template-columns:repeat(2,minmax(0,1fr));--grid-gap:8px;gap:var(--grid-gap);
   }
-  .collection-hub,.workbench-grid{grid-template-columns:1fr}
+  .collection-hub{grid-template-columns:1fr}
   .kind-grid > :last-child:nth-child(odd){
     grid-column:1 / -1;
     justify-self:center;

@@ -12,7 +12,7 @@ from datetime import date
 from pfangles import order as order_angles
 from root import angles_dir, cents_decimal, format_cents, repo_root, site_dir, without_retired_back
 from chrome import (
-    BASE, ORDERS_NOTE, ORDERS_NOTE_SHORT, SHARE_IMAGE_ALT, SHIP_LINE, SHOP_NEXT, THIN_PAGES,
+    BASE, ORDERS_NOTE, ORDERS_NOTE_SHORT, SHARE_IMAGE_ALT, SHIP_LINE, THIN_PAGES,
     esc, filter_bars, icons, json_ld, page_close, page_open, scripts, stylesheet,
 )
 
@@ -294,37 +294,14 @@ def collection_head(title, desc, canonical, ld, og_image, og_w, og_h, og_alt, in
 </head>'''
 
 
-def shop_next_line():
-    return f'''<section class="section tight" data-shop-next><div class="shell">
-    <p class="lede">{SHOP_NEXT}</p>
-  </div></section>'''
-
-
 def catalog_counts(catalog):
     counts = {kind: 0 for kind, *_rest in CATS}
-    counts['hoodies'] = 0
+    counts['all'] = 0
     for product in catalog:
         if product['category'] in counts:
             counts[product['category']] += 1
-    counts['all'] = sum(counts[kind] for kind, *_rest in CATS)
+            counts['all'] += 1
     return counts
-
-
-def hoodies_panel():
-    return '''<section class="section tight shop-section workbench-panel is-parked" id="hoodies" data-shop-kind="hoodies" aria-labelledby="hoodies-heading">
-  <div class="shell">
-    <div class="section-head">
-      <div>
-        <h2 id="hoodies-heading">Hoodies</h2>
-        <p>Next on the workbench.</p>
-      </div>
-    </div>
-    <div class="workbench-empty">
-      <p>No hoodies are in the collection. Crewneck sweatshirts are the fleece we are making first, planned around $44–$48, and a hoodie waits until that blank is real.</p>
-      <p><a href="mailto:habibicraftsco@gmail.com?subject=Hoodies%20on%20the%20workbench">Email us for a note when a hoodie is ready</a></p>
-    </div>
-  </div>
-</section>'''
 
 
 def write_thin_pages(out_dir):
@@ -391,8 +368,6 @@ def write_shop(out_dir, manifest=None):
         if 'id="stickers"' in block and body:
             body.append('')
         body.append(block)
-    body.append(hoodies_panel())
-    body.append(shop_next_line())
     main = f'''<main id="main">
   <section class="catalog-head"><div class="shell">
     <h1>The shop</h1>
@@ -881,92 +856,52 @@ def write_products(out_dir, manifest=None):
     print(f'Built {built} product pages')
 
 
-# Curated groups. Product slugs are real catalog items. Workbench rows are
-# blanks we have not made, so they never get a price, a product URL, or an
-# add-to-bag control. Crewneck range is the planned retail, not a live SKU.
+# Curated groups. Every slug is a live catalog item.
 CURATED = (
     {
         'slug': 'cozy-warm-minimalism',
         'title': 'Warm Minimalism & Coffee Table Goods',
         'nav': 'Warm minimalism',
-        'description': 'Mugs, cotton totes, and kiss-cut stickers for a quiet table. Crewneck sweatshirts and coasters are next on the workbench.',
-        'lede': 'Mugs, cotton totes, and kiss-cut stickers for a quiet table. Crewnecks and coasters are next on the workbench.',
+        'description': 'Mugs, cotton totes, and kiss-cut stickers for a quiet table.',
+        'lede': 'Mugs, cotton totes, and kiss-cut stickers for a quiet table.',
         'products': (
             'morning-ritual', 'ya-aini', 'baladi',
             'gather-grow', 'early-light',
             'leaf-season-sticker', 'make-something-sticker', 'craft-club-sticker',
-        ),
-        'workbench': (
-            (
-                'Crewneck sweatshirts',
-                'A fleece for the same table. Planned around $44–$48 once the blank is ready. Not for sale yet.',
-                'Crewneck sweatshirts',
-            ),
-            (
-                'Coasters',
-                'A square to sit under the mug. Next on the workbench, not a piece you can order.',
-                'Coasters',
-            ),
         ),
     },
     {
         'slug': 'literary-and-desk',
         'title': 'Reading Nook & Desk Companions',
         'nav': 'Reading nook',
-        'description': 'Totes, mugs, and kiss-cut stickers for a reading chair or a desk. Hardcover journals are next on the workbench.',
-        'lede': 'Totes, mugs, and kiss-cut stickers for a reading chair or a desk. Hardcover journals are next on the workbench.',
+        'description': 'Totes, mugs, and kiss-cut stickers for a reading chair or a desk.',
+        'lede': 'Totes, mugs, and kiss-cut stickers for a reading chair or a desk.',
         'products': (
             'sit-el-kul', 'halawa', 'early-light',
             'morning-ritual', 'ya-dunia',
             'make-something-sticker', 'craft-club-sticker',
-        ),
-        'workbench': (
-            (
-                'Hardcover journals',
-                'A matte journal for the desk, with room for a short wordmark on the cover. Next on the workbench.',
-                'Hardcover journals',
-            ),
         ),
     },
     {
         'slug': 'kitchen-and-hosting',
         'title': 'Kitchen, Tea & Hosting Table',
         'nav': 'Kitchen and hosting',
-        'description': 'Ceramic mugs and cotton totes for tea and a full table. Aprons and coasters are next on the workbench.',
-        'lede': 'Ceramic mugs and cotton totes for tea and a full table. Aprons and coasters are next on the workbench.',
+        'description': 'Ceramic mugs and cotton totes for tea and a full table.',
+        'lede': 'Ceramic mugs and cotton totes for tea and a full table.',
         'products': (
             'knafeh-club', 'maamoul', 'jiran', 'morning-ritual',
             'gather-grow', 'halawa',
-        ),
-        'workbench': (
-            (
-                'Aprons',
-                'An apron for cooking and making, with a small mark on the chest. Next on the workbench.',
-                'Aprons',
-            ),
-            (
-                'Coasters',
-                'Coasters for the mug that is already on the table. Not in the shop yet.',
-                'Coasters',
-            ),
         ),
     },
     {
         'slug': 'stickers-and-caps',
         'title': 'Stickers & Embroidered Dad Hats',
         'nav': 'Stickers and hats',
-        'description': 'Kiss-cut vinyl stickers at $5.99 and unstructured dad hats at $29.99. Beanies are next on the workbench.',
-        'lede': 'Kiss-cut vinyl stickers at $5.99 and unstructured dad hats at $29.99. Beanies are next on the workbench.',
+        'description': 'Kiss-cut vinyl stickers at $5.99 and unstructured dad hats at $29.99.',
+        'lede': 'Kiss-cut vinyl stickers at $5.99 and unstructured dad hats at $29.99.',
         'products': (
             'craft-club-sticker', 'make-something-sticker', 'leaf-season-sticker',
             'habibi-crafts-hat', 'make-something-hat', 'leaf-season-hat',
-        ),
-        'workbench': (
-            (
-                'Beanies',
-                'A cuffed beanie to sit with the dad hats. Next on the workbench, not in the collection.',
-                'Beanies',
-            ),
         ),
     },
 )
@@ -983,16 +918,6 @@ def curated_card(p):
     <p class="status-line">In the collection</p>
   </div>
 </a>'''
-
-
-def workbench_card(title, copy, subject):
-    mailto = 'mailto:habibicraftsco@gmail.com?subject=' + subject.replace(' ', '%20')
-    return f'''<article class="workbench-card">
-  <h3>{esc(title)}</h3>
-  <p class="status-line">Next on the workbench</p>
-  <p>{esc(copy)}</p>
-  <p><a href="{mailto}">Email us for a note when this is ready</a></p>
-</article>'''
 
 
 def collection_page_ld(spec, products, url):
@@ -1042,7 +967,6 @@ def write_collections(out_dir, manifest=None):
             prefix=prefix,
         )
         cards = '\n'.join(curated_card(p) for p in products)
-        bench = '\n'.join(workbench_card(*row) for row in spec['workbench'])
         grid = 'product-grid' if len(products) > 2 else 'product-grid two'
         main = f'''<main id="main">
   <section class="catalog-head"><div class="shell">
@@ -1063,14 +987,6 @@ def write_collections(out_dir, manifest=None):
       </div>
       <div class="{grid}">{cards}</div>
     </div>
-  </section>
-  <section class="section tight" aria-labelledby="workbench-heading">
-    <div class="shell">
-      <div class="section-head">
-        <h2 id="workbench-heading">Next on the workbench</h2>
-      </div>
-      <div class="workbench-grid">{bench}</div>
-    </div>
   </section>'''
         html = page_open(head, collections=True, prefix=prefix) + '\n' + page_close(main, prefix=prefix)
         folder = root / spec['slug']
@@ -1080,7 +996,7 @@ def write_collections(out_dir, manifest=None):
     index_url = f'{BASE}/collections/'
     index_desc = (
         'Four groups from the shop: a quiet table, a reading desk, a hosting table, '
-        'and stickers with embroidered dad hats. Blanks still on the workbench stay marked that way.'
+        'and stickers with embroidered dad hats.'
     )
     index_items = [
         {'slug': spec['slug'], 'name': spec['title']}
@@ -1116,7 +1032,7 @@ def write_collections(out_dir, manifest=None):
   <div class="collection-copy">
     <h3>{esc(spec['title'])}</h3>
     <p>{esc(spec['lede'])}</p>
-    <p class="status-line">{len(products)} in the collection · {len(spec['workbench'])} next on the workbench</p>
+    <p class="status-line">{len(products)} in the collection</p>
   </div>
 </a>''')
     head = collection_head(
@@ -1138,18 +1054,11 @@ def write_collections(out_dir, manifest=None):
       <span aria-current="page">Collections</span>
     </nav>
     <h1>Collections</h1>
-    <p class="lede">Four ways through the shop. Pieces you can open are in the collection. The rest are next on the workbench, and they are not for sale yet.</p>
+    <p class="lede">Four groups from the shop, for a table, a desk, or a gift.</p>
   </div></section>
   <section class="section tight"><div class="shell">
     <div class="collection-hub">
 {chr(10).join(tiles)}
-    </div>
-  </div></section>
-  <section class="section tight"><div class="shell">
-    <div class="workbench-empty">
-      <h2>Still on the bench</h2>
-      <p>Crewneck sweatshirts, planned around $44–$48, plus beanies, coasters, hardcover journals, and aprons. Hoodies are not in the collection. They wait until a crewneck is actually in the shop.</p>
-      <p><a href="mailto:habibicraftsco@gmail.com?subject=Workbench%20note">Email us for a note when a blank is ready</a></p>
     </div>
   </div></section>'''
     html = page_open(head, collections=True, prefix=prefix) + '\n' + page_close(main, prefix=prefix)

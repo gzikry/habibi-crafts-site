@@ -6,13 +6,13 @@ BASE = 'https://habibicraftsco.com'
 # Per-file cache keys on the live pages. bag.js is an ES module, so the tag
 # is type=module. A deferred classic script cannot load it.
 SCRIPT_V = {
-    'styles.css': '34',
+    'styles.css': '35',
     'public-config.js': '11',
     'analytics.js': '10',
     'bag.js': '17',
     'checkout.js': '13',
     'spin.js': '11',
-    'app.js': '13',
+    'app.js': '14',
 }
 
 # og-share.png is the wordmark and ESTD 2024. Home and shop use this alt too.
@@ -22,7 +22,6 @@ ORDERS_NOTE = "We're not taking orders yet. You can still add things to your bag
 ORDERS_NOTE_SHORT = "We're not taking orders yet."
 OPENING_SOON = 'Opening soon'
 SHIP_LINE = 'We print it after you order. It usually ships in 2 to 5 days.'
-SHOP_NEXT = "We're working on sweatshirts and a few other things. They'll show up here when they're ready."
 
 THIN_PAGES = (
     ('sweatshirts.html', 'Sweatshirts'),
@@ -182,7 +181,6 @@ FILTER_PILLS = (
     ('prints', 'Prints', 'prints.html', 'prints', '#prints'),
     ('stickers', 'Stickers', 'stickers.html', 'stickers', '#stickers'),
     ('hats', 'Embroidered Hats', 'hats.html', 'hats', '#hats'),
-    ('hoodies', 'Hoodies', 'shop.html#hoodies', 'hoodies', '#hoodies'),
 )
 
 
@@ -190,6 +188,8 @@ def filter_bars(current, counts, on_shop=False):
     bits = []
     for key, label, href, count_key, shop_href in FILTER_PILLS:
         count = counts[count_key]
+        if key != 'all' and count < 1:
+            continue
         link = shop_href if on_shop else href
         cur = ''
         pressed = ''
@@ -200,12 +200,7 @@ def filter_bars(current, counts, on_shop=False):
             pressed = ' aria-pressed="false"'
         elif href == current:
             cur = ' aria-current="page"'
-        if key == 'hoodies':
-            described = f'{label}, {count} in the collection, next on the workbench'
-        elif key == 'all':
-            described = f'{label}, {count} in the collection'
-        else:
-            described = f'{label}, {count} in the collection'
+        described = f'{label}, {count} in the collection'
         bits.append(
             f'<a class="filter-button" href="{link}" data-filter="{key}" '
             f'aria-label="{esc(described)}"{cur}{pressed}>'
