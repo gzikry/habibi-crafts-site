@@ -8,10 +8,10 @@ const root = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const site = join(root, 'site');
 
 const CURATED = [
-  ['cozy-warm-minimalism', 'Warm Minimalism & Coffee Table Goods', 'Crewneck sweatshirts'],
-  ['literary-and-desk', 'Reading Nook & Desk Companions', 'Hardcover journals'],
-  ['kitchen-and-hosting', 'Kitchen, Tea & Hosting Table', 'Aprons'],
-  ['stickers-and-caps', 'Stickers & Embroidered Dad Hats', 'Beanies'],
+  ['cozy-warm-minimalism', 'Warm Minimalism & Coffee Table Goods'],
+  ['literary-and-desk', 'Reading Nook & Desk Companions'],
+  ['kitchen-and-hosting', 'Kitchen, Tea & Hosting Table'],
+  ['stickers-and-caps', 'Stickers & Embroidered Dad Hats'],
 ];
 
 function read(rel) {
@@ -29,14 +29,13 @@ describe('curated collections', () => {
     const indexLd = jsonLd(index);
     assert.ok(indexLd.some((node) => node['@type'] === 'CollectionPage'));
     assert.ok(indexLd.some((node) => node['@type'] === 'BreadcrumbList'));
-    assert.match(index, /next on the workbench/i);
-    assert.match(index, /Hoodies are not in the collection/);
+    assert.match(index, /Four groups from the shop/);
     assert.doesNotMatch(index, /data-add-bag/);
     assert.doesNotMatch(index, /Printful/i);
     assert.doesNotMatch(index, /Arabic-inspired|Arabic-only|crescent/i);
     assert.doesNotMatch(index, /CHECKOUT_ENABLED" content="true"|data-checkout-enabled="true"/);
 
-    for (const [slug, title, bench] of CURATED) {
+    for (const [slug, title] of CURATED) {
       const html = read(`site/collections/${slug}/index.html`);
       const data = jsonLd(html);
       const page = data.find((node) => node['@type'] === 'CollectionPage');
@@ -51,8 +50,6 @@ describe('curated collections', () => {
       assert.equal(crumbs.itemListElement[1].name, 'Collections');
       assert.equal(crumbs.itemListElement[2].name, title);
       assert.match(html, /In the collection/);
-      assert.match(html, /Next on the workbench/);
-      assert.match(html, new RegExp(bench));
       assert.match(html, /href="\/product-[a-z0-9-]+\.html"/);
       assert.doesNotMatch(html, /data-add-bag/);
       assert.doesNotMatch(html, /schema\.org\/InStock/);
@@ -61,16 +58,13 @@ describe('curated collections', () => {
     }
   });
 
-  it('keeps sticker and hat prices on the live cents, and crewnecks as a plan', () => {
+  it('keeps sticker and hat prices on the live cents', () => {
     const caps = read('site/collections/stickers-and-caps/index.html');
     assert.match(caps, /\$5\.99/);
     assert.match(caps, /\$29\.99/);
     assert.doesNotMatch(caps, /\$6(?!\.)/);
     assert.doesNotMatch(caps, /\$30(?!\.)/);
-    const cozy = read('site/collections/cozy-warm-minimalism/index.html');
-    assert.match(cozy, /\$44–\$48/);
-    assert.match(cozy, /Not for sale yet/);
-    assert.doesNotMatch(cozy, /data-add-bag/);
+    assert.doesNotMatch(read('site/collections/cozy-warm-minimalism/index.html'), /data-add-bag/);
   });
 
   it('lists the collection URLs in the sitemap and leaves thin type pages out', () => {
@@ -104,7 +98,7 @@ describe('curated collections', () => {
     }
   });
 
-  it('filters the shop by type with counts and an empty hoodie state', () => {
+  it('filters the shop by live type counts', () => {
     const catalog = JSON.parse(read('site/product-catalog.json'));
     const counts = {};
     for (const product of catalog) counts[product.category] = (counts[product.category] || 0) + 1;
@@ -118,7 +112,6 @@ describe('curated collections', () => {
       ['prints', 'Prints', counts.prints],
       ['stickers', 'Stickers', counts.stickers],
       ['hats', 'Embroidered Hats', counts.hats],
-      ['hoodies', 'Hoodies', 0],
     ];
     for (const [key, label, count] of pills) {
       assert.match(
@@ -127,11 +120,9 @@ describe('curated collections', () => {
         key,
       );
     }
-    assert.match(shop, /id="hoodies"/);
-    assert.match(shop, /No hoodies are in the collection/);
-    assert.match(shop, /data-shop-kind="hoodies"/);
-    assert.doesNotMatch(shop.slice(shop.indexOf('id="hoodies"'), shop.indexOf('data-shop-next')), /class="product-card/);
-    assert.match(shop, /We're working on sweatshirts and a few other things/);
+    assert.doesNotMatch(shop, /data-filter="hoodies"/);
+    assert.doesNotMatch(shop, /id="hoodies"/);
+    assert.doesNotMatch(shop, /We're working on sweatshirts/);
     assert.match(read('site/index.html'), /href="collections\/cozy-warm-minimalism\/"/);
     assert.match(read('site/public-config.js'), /CHECKOUT_ENABLED:\s*false/);
   });

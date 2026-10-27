@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "node --test api/__tests__/*.test.js",
+    "test": "node --test api/__tests__/*.test.js tests/storefront.test.mjs",
     "dev:api": "node scripts/local-backend.js --once",
     "checkout:local": "node scripts/local-checkout.js",
     "webhook:local": "node scripts/local-webhook.js",

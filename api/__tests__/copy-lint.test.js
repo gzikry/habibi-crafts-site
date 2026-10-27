@@ -98,7 +98,7 @@ describe('storefront copy does not regress the live-site review', () => {
         assert.doesNotMatch(outsideFooter, /husband-and-wife/, name);
       }
     }
-    assert.match(read('shop.html'), new RegExp(SHOP_NEXT.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
+    assert.doesNotMatch(read('shop.html'), new RegExp(SHOP_NEXT.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
     const shopNotes = read('shop.html').split('Coming next').length - 1;
     assert.equal(shopNotes, 0);
   });
