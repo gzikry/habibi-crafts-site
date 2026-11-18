@@ -10,7 +10,7 @@ SCRIPT_V = {
     'public-config.js': '11',
     'analytics.js': '10',
     'bag.js': '18',
-    'checkout.js': '16',
+    'checkout.js': '17',
     'spin.js': '11',
     'app.js': '14',
 }

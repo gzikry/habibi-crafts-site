@@ -27,6 +27,9 @@ function createElement(tag) {
     children: [],
     parentNode: null,
     listeners: {},
+    get firstChild() {
+      return this.children[0] || null;
+    },
     setAttribute(name, value) {
       this.attrs[name] = String(value);
     },
@@ -139,6 +142,7 @@ function bootCheckout({ enabled, search, path = '/cart.html', buttonDisabled = t
   };
   const fetched = [];
   const replaced = [];
+  const timers = [];
   const location = { search, href: `https://habibicraftsco.com${path}${search}` };
   const cleared = { called: false };
   const window = {
@@ -170,11 +174,35 @@ function bootCheckout({ enabled, search, path = '/cart.html', buttonDisabled = t
     URL,
     URLSearchParams,
     encodeURIComponent,
-    setTimeout,
+    AbortController,
+    setTimeout(fn, delay) {
+      if (delay >= 1000) {
+        const handle = { fn, delay, cleared: false };
+        timers.push(handle);
+        return handle;
+      }
+      return setTimeout(fn, delay);
+    },
+    clearTimeout(handle) {
+      if (handle && typeof handle === 'object') {
+        handle.cleared = true;
+        return;
+      }
+      clearTimeout(handle);
+    },
     fetch(url, init) {
       fetched.push({ url: String(url), init });
       if (String(url).includes('/api/checkout-session')) {
         if (paymentStatus === 'throw') return Promise.reject(new Error('network'));
+        if (paymentStatus === 'hang') {
+          return new Promise((_resolve, reject) => {
+            const signal = init && init.signal;
+            const fail = () => reject(Object.assign(new Error('aborted'), { name: 'AbortError' }));
+            if (!signal) return;
+            if (signal.aborted) fail();
+            else signal.addEventListener('abort', fail);
+          });
+        }
         return Promise.resolve({
           ok: paymentStatus !== 'http',
           json: () => Promise.resolve({ id: 'cs_test', payment_status: paymentStatus, status: 'complete' })
@@ -188,7 +216,7 @@ function bootCheckout({ enabled, search, path = '/cart.html', buttonDisabled = t
   };
   vm.createContext(context);
   vm.runInContext(checkoutSource, context);
-  return { store, button, main, lede, fetched, location, replaced, cleared };
+  return { store, button, main, lede, fetched, location, replaced, cleared, timers };
 }
 
 function statusNode(main) {
@@ -248,9 +276,11 @@ describe('checkout client', () => {
     await settle();
     assert.equal(page.store[BAG_KEY], '[]');
     assert.equal(page.cleared.called, true);
-    const wrap = page.main.querySelector('[data-checkout-return]');
+    const shell = page.main.children[0];
+    assert.equal(shell.className, 'shell');
+    assert.equal(shell.statusTextAtInsert, '');
+    const wrap = shell.querySelector('[data-checkout-return]');
     assert.equal(wrap.className, 'hold-panel');
-    assert.equal(wrap.statusTextAtInsert, '');
     const note = statusNode(page.main);
     assert.equal(note.className, 'lede');
     assert.equal(note.textContent, RECEIVED);
@@ -296,6 +326,26 @@ describe('checkout client', () => {
     assert.deepEqual(failed.replaced, ['/']);
   });
 
+  it('shows the unconfirmed notice when the session check times out', async () => {
+    const page = bootCheckout({
+      enabled: true,
+      path: '/',
+      search: '?checkout=success&session_id=cs_slow',
+      paymentStatus: 'hang'
+    });
+    assert.equal(page.timers.length, 1);
+    assert.ok(page.timers[0].delay >= 8000 && page.timers[0].delay <= 10000);
+    assert.equal(page.fetched[0].init.signal.aborted, false);
+    page.timers[0].fn();
+    await settle();
+    assert.equal(page.fetched[0].init.signal.aborted, true);
+    assert.equal(page.store[BAG_KEY], STORED_BAG);
+    assert.equal(page.cleared.called, false);
+    assert.equal(statusNode(page.main).textContent, UNCONFIRMED);
+    assert.equal(page.main.children[0].className, 'shell');
+    assert.deepEqual(page.replaced, ['/']);
+  });
+
   it('keeps the bag on cancel, shows the saved-bag note, and strips the param', async () => {
     const page = bootCheckout({ enabled: true, search: '?checkout=cancelled' });
     await settle();
@@ -303,7 +353,8 @@ describe('checkout client', () => {
     assert.equal(page.cleared.called, false);
     const note = statusNode(page.main);
     assert.equal(note.textContent, CANCELLED);
-    assert.equal(page.main.querySelector('[data-checkout-return]').statusTextAtInsert, '');
+    assert.equal(page.main.children[0].className, 'shell');
+    assert.equal(page.main.children[0].statusTextAtInsert, '');
     assert.equal(page.fetched.length, 0);
     assert.deepEqual(page.replaced, ['/cart.html']);
   });

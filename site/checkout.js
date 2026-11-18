@@ -46,6 +46,8 @@
   function showNotice(kind, message) {
     var main = document.querySelector('main');
     if (!main || main.querySelector('[data-checkout-return]')) return;
+    var shell = document.createElement('div');
+    shell.className = 'shell';
     var wrap = document.createElement('div');
     wrap.className = 'hold-panel';
     wrap.setAttribute('data-checkout-return', kind);
@@ -58,12 +60,13 @@
     dismiss.className = 'bag-remove';
     dismiss.textContent = 'Dismiss';
     dismiss.addEventListener('click', function () {
-      if (wrap.parentNode) wrap.parentNode.removeChild(wrap);
+      if (shell.parentNode) shell.parentNode.removeChild(shell);
       if (!main.hasAttribute('tabindex')) main.setAttribute('tabindex', '-1');
       if (main.focus) main.focus();
     });
     wrap.appendChild(dismiss);
-    main.insertBefore(wrap, main.firstChild);
+    shell.appendChild(wrap);
+    main.insertBefore(shell, main.firstChild);
     setTimeout(function () {
       note.textContent = message;
     }, 0);
@@ -90,13 +93,20 @@
       return;
     }
     var base = String(cfg.CHECKOUT_API_BASE).replace(/\/$/, '');
-    fetch(base + '/api/checkout-session?session_id=' + encodeURIComponent(sessionId))
+    var controller = new AbortController();
+    var timer = setTimeout(function () {
+      controller.abort();
+    }, 9000);
+    fetch(base + '/api/checkout-session?session_id=' + encodeURIComponent(sessionId), {
+      signal: controller.signal
+    })
       .then(function (response) {
         return response.json().then(function (body) {
           return { ok: response.ok, body: body };
         });
       })
       .then(function (result) {
+        clearTimeout(timer);
         if (result.ok && result.body && result.body.payment_status === 'paid') {
           clearBag();
           showNotice('success', SUCCESS);
@@ -106,6 +116,7 @@
         stripCheckoutParams();
       })
       .catch(function () {
+        clearTimeout(timer);
         showNotice('unconfirmed', UNCONFIRMED);
         stripCheckoutParams();
       });
