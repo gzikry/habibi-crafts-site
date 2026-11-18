@@ -1,5 +1,6 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
+import { saleOpen } from '../lib/catalog.js';
 import { execFileSync, spawnSync } from 'node:child_process';
 import { mkdtempSync, readFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -87,6 +88,9 @@ describe('preview build', () => {
 
     const catalog = JSON.parse(read(join(outDir, 'product-catalog.json')));
     const bySlug = Object.fromEntries(catalog.map((product) => [product.slug, product]));
+    for (const product of catalog) {
+      assert.equal(product.purchasable, saleOpen(product.slug), product.slug);
+    }
     assert.equal(bySlug['ya-aini'].purchasable, true);
     assert.equal(bySlug.jiran.purchasable, false);
     assert.equal(bySlug['sit-el-kul'].purchasable, false);
