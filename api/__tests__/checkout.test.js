@@ -54,9 +54,11 @@ describe('catalog contract', () => {
 
   it('resolves tee and onesie sizes', () => {
     const tee = resolveLineItem({ slug: 'khalas-habibi', size: 'L', quantity: 1, price_cents: 2499 });
-    assert.equal(tee.external_variant_id, 'habibi-tee-khalas-habibi-l');
+    assert.equal(tee.external_variant_id, 'habibi-tee-khalas-habibi-natural-l');
+    assert.equal(tee.sync_variant_id, 5471960272);
     const onesie = resolveLineItem({ slug: 'ya-teta', size: '3-6m', quantity: 2 });
-    assert.equal(onesie.external_variant_id, 'habibi-onesie-ya-teta-3-6m');
+    assert.equal(onesie.external_variant_id, 'habibi-baby-ya-teta-3-6m');
+    assert.equal(onesie.sync_variant_id, 5471960286);
     assert.equal(onesie.quantity, 2);
   });
 });
@@ -260,6 +262,35 @@ describe('HTTP handlers', () => {
     assert.equal(body.checkout_url, 'https://checkout.stripe.com/c/pay/cs_test_1');
   });
 
+  it('creates a session without customer_email when contact_email is omitted', async () => {
+    let posted = '';
+    const fetchImpl = async (_url, init) => {
+      posted = init.body.toString();
+      return new Response(JSON.stringify({ id: 'cs_test_email', url: 'https://checkout.stripe.com/c/pay/cs_test_email' }), {
+        status: 200,
+        headers: { 'content-type': 'application/json' }
+      });
+    };
+    const response = await handleCheckout(
+      new Request('https://example.com/api/checkout', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          items: [{ slug: 'ya-aini', quantity: 1, price_cents: 1499 }],
+          idempotency_key: 'no-email',
+          total_amount_cents: 1499
+        })
+      }),
+      { STRIPE_SECRET_KEY: 'sk_test_x', CHECKOUT_ENABLED: 'true', APP_ORIGIN: 'https://habibicraftsco.com' },
+      fetchImpl
+    );
+    assert.equal(response.status, 200);
+    const params = new URLSearchParams(posted);
+    assert.equal(params.has('customer_email'), false);
+    assert.equal(params.get('success_url'), 'https://habibicraftsco.com/?checkout=success&session_id={CHECKOUT_SESSION_ID}');
+    assert.equal(params.get('cancel_url'), 'https://habibicraftsco.com/?checkout=cancelled');
+  });
+
   it('checks out several lines from the server catalog and rejects one tampered price', async () => {
     let posted = '';
     const fetchImpl = async (_url, init) => {
@@ -428,7 +459,8 @@ describe('HTTP handlers', () => {
       assert.equal(init.headers['X-PF-Store-Id'], '18687336');
       const body = JSON.parse(init.body);
       assert.equal(body.recipient.address1, '1 Test Ave');
-      assert.equal(body.items[0].external_variant_id, 'habibi-mug-ya-aini');
+      assert.equal(body.items[0].sync_variant_id, 5471949732);
+      assert.equal('external_variant_id' in body.items[0], false);
       return new Response(JSON.stringify({ result: { id: 77 } }), {
         status: 200,
         headers: { 'content-type': 'application/json' }
@@ -448,10 +480,30 @@ describe('HTTP handlers', () => {
 });
 
 describe('checkout validator', () => {
-  it('requires email, items, and idempotency key', () => {
-    const errors = validateCheckoutInput({});
-    assert.ok(errors.includes('items are required'));
-    assert.ok(errors.includes('valid contact_email is required'));
-    assert.ok(errors.includes('idempotency_key is required'));
+  it('requires items and an idempotency key, and lets Stripe collect a missing email', () => {
+    const missing = validateCheckoutInput({});
+    assert.ok(missing.includes('items are required'));
+    assert.ok(missing.includes('idempotency_key is required'));
+    assert.equal(missing.includes('valid contact_email is required'), false);
+
+    const omitted = validateCheckoutInput({
+      items: [{ slug: 'ya-aini', quantity: 1 }],
+      idempotency_key: 'abc'
+    });
+    assert.deepEqual(omitted, []);
+
+    const empty = validateCheckoutInput({
+      items: [{ slug: 'ya-aini', quantity: 1 }],
+      idempotency_key: 'abc',
+      contact_email: ''
+    });
+    assert.ok(empty.includes('valid contact_email is required'));
+
+    const malformed = validateCheckoutInput({
+      items: [{ slug: 'ya-aini', quantity: 1 }],
+      idempotency_key: 'abc',
+      contact_email: 'not-an-email'
+    });
+    assert.ok(malformed.includes('valid contact_email is required'));
   });
 });
