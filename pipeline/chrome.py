@@ -21,6 +21,7 @@ SHARE_IMAGE_ALT = 'Habibi Crafts Co wordmark, established 2024'
 ORDERS_NOTE = "We're not taking orders yet. You can still add things to your bag."
 ORDERS_NOTE_SHORT = "We're not taking orders yet."
 OPENING_SOON = 'Opening soon'
+COMING_SOON = 'Coming soon'
 SHIP_LINE = 'We print it after you order. It usually ships in 2 to 5 days.'
 
 THIN_PAGES = (

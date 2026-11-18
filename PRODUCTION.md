@@ -41,7 +41,7 @@ Browser flags (not secrets) live in `site/public-config.js` and also default off
 
 ## How George enables the API (same GitHub repo)
 
-GitHub Pages cannot run Stripe webhooks. Use **Cloudflare Pages Functions** against this same `gzikry/habibi-crafts-site` repo. Do not add a second GitHub remote.
+GitHub Pages cannot run Stripe webhooks. Use **Cloudflare Pages** against this same `gzikry/habibi-crafts-site` repo. Do not add a second GitHub remote. The click path, preview variable names, and the Stripe test webhook are in `docs/CLOUDFLARE-SETUP.md`.
 
 1. In Cloudflare: Workers & Pages → Create → Pages → Connect to Git → `gzikry/habibi-crafts-site`.
 2. Build output directory: `site`. Functions come from `/functions` (`wrangler.toml`).
@@ -82,4 +82,4 @@ node scripts/printful-pull-variants.js
 1. **Stripe:** test-mode keys in Cloudflare secrets; webhook URL (step 6 above); later, live keys only when checkout is approved. In the Dashboard, open Settings, then Customer emails, and turn on Successful payments. That is the receipt email. When a checkout request includes `contact_email`, the API also sets `payment_intent_data[receipt_email]`.
 2. **Printful:** paste the existing token into Cloudflare secrets. Run `printful-pull-variants.js` locally to fill `sync_variant_id` values, then set matching `external_variant_id`s on the ignored drafts if they are not set yet. Keep drafts ignored.
 3. **AdSense:** apply / wait for approval. Put the exact `ads.txt` line Google gives you into `site/ads.txt`. Set `ADSENSE_PUBLISHER_ID` and only then flip `ADSENSE_ENABLED` in host env **and** `site/public-config.js`.
-4. **Go-live (later, explicit):** `CHECKOUT_ENABLED=true` in host env and `site/public-config.js`, set `CHECKOUT_API_BASE`, switch product JSON-LD from `OutOfStock` to `InStock`, change button copy, set `PRINTFUL_CONFIRM_ORDERS=true` only when drafts look right. Also drop the product-page note "We're not taking orders yet." This branch leaves that sentence in the built pages. The preview branch removes it in `pipeline/chrome.py` when checkout is on.
+4. **Go-live (later, explicit):** `CHECKOUT_ENABLED=true` in the host env and `site/public-config.js`, set `CHECKOUT_API_BASE`, and change the cart button copy. Only `LAUNCH_SLUGS` that are not in `HOLD_SLUGS` (`api/lib/catalog.js`) become purchasable and `InStock`. The three dad hats stay in `HOLD_SLUGS` until their colorway and art are finished. Remove a hat from `HOLD_SLUGS` when that hat is ready. Set `PRINTFUL_CONFIRM_ORDERS=true` only when drafts look right. Preview builds keep `PRINTFUL_CONFIRM_ORDERS` false. Product pages drop "We're not taking orders yet" when checkout is on, via `pipeline/chrome.py`.
