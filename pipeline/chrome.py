@@ -9,8 +9,8 @@ SCRIPT_V = {
     'styles.css': '35',
     'public-config.js': '11',
     'analytics.js': '10',
-    'bag.js': '17',
-    'checkout.js': '13',
+    'bag.js': '18',
+    'checkout.js': '17',
     'spin.js': '11',
     'app.js': '14',
 }
