@@ -7,6 +7,7 @@ function env(source, key, fallback = '') {
 }
 
 function previewRuntime(source) {
+  if (env(source, 'CF_PAGES_BRANCH', '') === 'main') return false;
   if (flag(source, 'HABIBI_PREVIEW', false)) return true;
   const branch = env(source, 'CF_PAGES_BRANCH', '');
   return Boolean(branch) && branch !== 'main';

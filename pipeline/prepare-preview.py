@@ -83,9 +83,10 @@ def patch_html(out, enabled):
         text = text.replace(f'content="{INDEX_ROBOTS}"', 'content="noindex,nofollow"')
         text = text.replace('content="noindex,follow"', 'content="noindex,nofollow"')
         if enabled and path.name == 'cart.html':
-            if CART_BEFORE not in text:
+            if CART_BEFORE in text:
+                text = text.replace(CART_BEFORE, CART_AFTER, 1)
+            elif 'Check out' not in text:
                 raise SystemExit(f'cart checkout button missing in {path}')
-            text = text.replace(CART_BEFORE, CART_AFTER, 1)
         path.write_text(text)
 
 

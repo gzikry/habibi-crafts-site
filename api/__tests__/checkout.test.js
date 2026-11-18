@@ -88,6 +88,10 @@ describe('config flags', () => {
       /APP_ORIGIN is required/
     );
     assert.equal(
+      readConfig({ HABIBI_PREVIEW: '1', CF_PAGES_BRANCH: 'main' }).appOrigin,
+      'https://habibicraftsco.com'
+    );
+    assert.equal(
       readConfig({ HABIBI_PREVIEW: '1', APP_ORIGIN: 'https://shop.example/' }).appOrigin,
       'https://shop.example'
     );

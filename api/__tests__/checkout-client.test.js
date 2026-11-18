@@ -14,7 +14,6 @@ const RECEIVED = 'Thank you, your order is in. Your receipt is on its way by ema
 const UNCONFIRMED = "We couldn't confirm your order yet. If your payment went through, your receipt will arrive by email. Your bag is still here.";
 const CANCELLED = "Checkout cancelled. Your bag is saved for when you're ready.";
 const CLOSED = "We're not taking orders yet.";
-const OPEN_FAQ = 'Yes. Add a piece from the shop to your bag and check out.';
 const BAG_KEY = 'habibi-bag';
 const STORED_BAG = JSON.stringify([{ slug: 'ya-aini', size: 'default', quantity: 1 }]);
 
@@ -255,8 +254,8 @@ describe('checkout client', () => {
 
   it('drops the closed cart copy when checkout is on', () => {
     const page = bootCheckout({ enabled: true, search: '' });
-    assert.equal(page.lede.textContent, '');
-    assert.equal(page.faq.textContent, OPEN_FAQ);
+    assert.equal(page.lede.textContent, CLOSED);
+    assert.equal(page.faq.textContent, CLOSED);
     assert.equal(page.button.textContent, 'Check out');
     assert.equal(page.button.disabled, false);
     assert.equal(page.store[BAG_KEY], STORED_BAG);

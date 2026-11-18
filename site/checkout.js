@@ -10,8 +10,6 @@
   var SUCCESS = 'Thank you, your order is in. Your receipt is on its way by email.';
   var CANCELLED = "Checkout cancelled. Your bag is saved for when you're ready.";
   var UNCONFIRMED = "We couldn't confirm your order yet. If your payment went through, your receipt will arrive by email. Your bag is still here.";
-  var CLOSED = "We're not taking orders yet.";
-  var OPEN_FAQ = 'Yes. Add a piece from the shop to your bag and check out.';
 
   function lock(button) {
     button.disabled = true;
@@ -27,16 +25,6 @@
     button.classList.remove('browse-mode');
     button.setAttribute('data-checkout-enabled', 'true');
     if (button.textContent === 'Opening soon') button.textContent = 'Check out';
-  }
-
-  function openCartCopy() {
-    document.querySelectorAll('.lede').forEach(function (node) {
-      if (node.textContent === CLOSED) node.textContent = '';
-    });
-    document.querySelectorAll('p').forEach(function (node) {
-      if (String(node.className).split(/\s+/).indexOf('lede') !== -1) return;
-      if (node.textContent === CLOSED) node.textContent = OPEN_FAQ;
-    });
   }
 
   function stripCheckoutParams() {
@@ -127,10 +115,7 @@
       });
   }
 
-  if (enabled) {
-    openCartCopy();
-    handleReturn();
-  }
+  if (enabled) handleReturn();
 
   document.querySelectorAll('[data-checkout]').forEach(function (button) {
     if (!enabled) {

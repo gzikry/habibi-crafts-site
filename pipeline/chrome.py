@@ -7,7 +7,7 @@ BASE = 'https://habibicraftsco.com'
 # Per-file cache keys on the live pages. bag.js is an ES module, so the tag
 # is type=module. A deferred classic script cannot load it.
 SCRIPT_V = {
-    'styles.css': '35',
+    'styles.css': '36',
     'public-config.js': '11',
     'analytics.js': '10',
     'bag.js': '18',
@@ -28,6 +28,14 @@ EMAIL_US = (
     '<p class="checkout-note">Want a name on it? '
     '<a href="mailto:habibicraftsco@gmail.com">Email us</a>.</p>'
 )
+QUESTIONS_EMAIL = (
+    '<p class="checkout-note">Questions? '
+    '<a href="mailto:habibicraftsco@gmail.com">Email us</a>.</p>'
+)
+WANT_ONE = (
+    '<p class="checkout-note">Want one? '
+    '<a href="mailto:habibicraftsco@gmail.com">Email us</a>.</p>'
+)
 
 
 def env_on(name):
@@ -35,6 +43,8 @@ def env_on(name):
 
 
 def preview_requested():
+    if os.environ.get('CF_PAGES_BRANCH', '').strip() == 'main':
+        return False
     if env_on('HABIBI_PREVIEW'):
         return True
     if os.environ.get('CF_PAGES', '').strip() == '1':
@@ -48,10 +58,50 @@ def orders_copy(checkout_on, short=False):
     return ORDERS_NOTE_SHORT if short else ORDERS_NOTE
 
 
-def faq_html(html, checkout_on):
-    if not checkout_on:
-        return html
-    return html.replace("We're not taking orders yet.", OPEN_FAQ)
+def open_shop_html(html):
+    replacements = (
+        (
+            "We're not taking orders yet. When we start, you'll get tracking by email after the carrier scans the package. ",
+            "You'll get tracking by email after the carrier scans the package. ",
+        ),
+        (
+            "We're not taking orders yet. You can still add things to your bag.",
+            'You can add things to your bag and check out.',
+        ),
+        (
+            'This page will take a card when we start taking orders. It does not collect payment today, and there is no form to submit.',
+            'Checkout opens from your bag. Stripe collects the card, and there is no form on this page.',
+        ),
+        (
+            'Tracking arrives by email when we start taking orders.',
+            'Tracking arrives by email after the carrier scans your parcel.',
+        ),
+        (
+            'When we start taking orders, a tracking note will come after the carrier scans your parcel.',
+            'A tracking note comes by email after the carrier scans your parcel.',
+        ),
+        (
+            'When we start taking orders, a <a href="tracking.html">tracking note</a> will arrive by email after the carrier scans your package.',
+            'A <a href="tracking.html">tracking note</a> arrives by email after the carrier scans your package.',
+        ),
+        (
+            'When we start taking orders, a tracking note will arrive by email after the carrier scans your package.',
+            'A tracking note arrives by email after the carrier scans your package.',
+        ),
+        (
+            '<button class="button browse-mode" type="button" disabled data-checkout data-bag-checkout aria-disabled="true">Opening soon</button>',
+            '<button class="button" type="button" data-checkout data-bag-checkout>Check out</button>',
+        ),
+        (
+            "We're not taking orders yet.",
+            OPEN_FAQ,
+        ),
+    )
+    for old, new in replacements:
+        html = html.replace(old, new)
+    return html
+
+
 SHIP_LINE = 'We print it after you order. It usually ships in 2 to 5 days.'
 
 THIN_PAGES = (

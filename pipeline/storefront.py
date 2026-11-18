@@ -13,8 +13,9 @@ from datetime import date
 from pfangles import order as order_angles
 from root import angles_dir, cents_decimal, format_cents, repo_root, site_dir, without_retired_back
 from chrome import (
-    BASE, COMING_SOON, EMAIL_US, SHARE_IMAGE_ALT, SHIP_LINE, THIN_PAGES,
-    esc, faq_html, filter_bars, icons, json_ld, orders_copy, page_close, page_open,
+    BASE, COMING_SOON, EMAIL_US, QUESTIONS_EMAIL, SHARE_IMAGE_ALT, SHIP_LINE, THIN_PAGES,
+    WANT_ONE,
+    esc, filter_bars, icons, json_ld, open_shop_html, orders_copy, page_close, page_open,
     preview_requested, scripts, stylesheet,
 )
 
@@ -176,9 +177,23 @@ LAUNCH_SLUGS = js_slug_list('LAUNCH_SLUGS')
 HOLD_SLUGS = js_slug_list('HOLD_SLUGS')
 
 
+def wrangler_preview_value(name):
+    text = (ROOT / 'wrangler.toml').read_text()
+    section = re.search(r'\[env\.preview\.vars\](.*?)(\n\[|\Z)', text, re.S)
+    if not section:
+        return None
+    found = re.search(rf'^{re.escape(name)}\s*=\s*"([^"]*)"', section.group(1), re.M)
+    return found.group(1) if found else None
+
+
 def checkout_enabled():
     if preview_requested():
-        return env_on('CHECKOUT_ENABLED')
+        raw = os.environ.get('CHECKOUT_ENABLED')
+        if raw is None or str(raw).strip() == '':
+            raw = wrangler_preview_value('CHECKOUT_ENABLED')
+        if raw is None or str(raw).strip() == '':
+            return True
+        return str(raw).strip().lower() not in {'0', 'false', 'no', 'off'}
     text = (SITE / 'public-config.js').read_text()
     config = re.search(r'CHECKOUT_ENABLED:\s*(true|false)', text)
     window_flag = re.search(r'HABIBI_CHECKOUT_ENABLED\s*=\s*(true|false)', text)
@@ -666,7 +681,7 @@ def write_home(out_dir, manifest=None):
   </section>'''
     html = page_open(head, home=True) + '\n' + page_close(main)
     (out_dir / 'index.html').write_text(html)
-    write_faq(out_dir)
+    write_open_pages(out_dir)
     print(f'index.html ({len(products)} products)')
 
 
@@ -845,8 +860,12 @@ def write_products(out_dir, manifest=None):
             note = orders_copy(False, short=True)
         charge = f'<p class="checkout-note">{note}</p>' if note else ''
         personalize = ''
-        if kind == 'mugs' or (checkout_enabled() and not selling):
+        if kind == 'mugs':
             personalize = EMAIL_US
+        elif checkout_enabled() and kind in ('totes', 'stickers'):
+            personalize = WANT_ONE
+        elif checkout_enabled() and not selling:
+            personalize = QUESTIONS_EMAIL
         buy_parts = [part for part in (size_block(p), actions, charge, personalize) if part]
         buy = '\n      '.join(buy_parts)
         eyebrow = meta[6] if kind != 'hats' else 'Dad hat'
@@ -924,13 +943,15 @@ def write_storefront_catalog(out_dir):
         dest.write_bytes(src.read_bytes())
 
 
-def write_faq(out_dir):
-    src = SITE / 'faq.html'
-    raw = src.read_bytes()
-    if not checkout_enabled():
-        (out_dir / 'faq.html').write_bytes(raw)
-        return
-    (out_dir / 'faq.html').write_text(faq_html(raw.decode(), True))
+def write_open_pages(out_dir):
+    for name in ('faq.html', 'shipping.html', 'checkout.html', 'tracking.html', 'cart.html'):
+        src = SITE / name
+        raw = src.read_bytes()
+        dest = out_dir / name
+        if not checkout_enabled():
+            dest.write_bytes(raw)
+        else:
+            dest.write_text(open_shop_html(raw.decode()))
 
 
 # Curated groups. Every slug is a live catalog item.

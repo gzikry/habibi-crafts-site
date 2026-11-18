@@ -2,7 +2,7 @@ import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import { saleOpen } from '../lib/catalog.js';
 import { execFileSync, spawnSync } from 'node:child_process';
-import { mkdtempSync, readFileSync } from 'node:fs';
+import { mkdtempSync, readFileSync, readdirSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -84,6 +84,7 @@ describe('preview build', () => {
     const cart = read(join(outDir, 'cart.html'));
     assert.match(cart, /data-checkout data-bag-checkout>Check out</);
     assert.doesNotMatch(cart, /Opening soon/);
+    assert.doesNotMatch(cart, /not taking orders/i);
     assert.match(cart, /noindex,nofollow/);
 
     const catalog = JSON.parse(read(join(outDir, 'product-catalog.json')));
@@ -100,8 +101,27 @@ describe('preview build', () => {
     const yaAini = read(join(outDir, 'product-ya-aini.html'));
     assert.doesNotMatch(yaAini, /We're not taking orders yet/);
     assert.match(yaAini, /<li>Preview<\/li>/);
-    const coming = read(join(outDir, 'product-sit-el-kul.html'));
-    assert.match(coming, /Email us/);
+    const tote = read(join(outDir, 'product-sit-el-kul.html'));
+    assert.match(tote, /Want one\? <a href="mailto:habibicraftsco@gmail.com">Email us<\/a>/);
+    assert.doesNotMatch(tote, /Want a name on it/);
+    const sticker = read(join(outDir, 'product-leaf-season-sticker.html'));
+    assert.match(sticker, /Want one\?/);
+    const other = read(join(outDir, 'product-warm-embrace.html'));
+    assert.match(other, /Questions\? <a href="mailto:habibicraftsco@gmail.com">Email us<\/a>/);
+    assert.doesNotMatch(other, /Want a name on it/);
+    assert.doesNotMatch(other, /Want one\?/);
+    const banned = [/not taking orders/i, /does not collect payment/i, /when we start taking orders/i];
+    function walk(dir) {
+      for (const entry of readdirSync(dir, { withFileTypes: true })) {
+        const path = join(dir, entry.name);
+        if (entry.isDirectory()) walk(path);
+        else if (/\.(html|js|json|txt|xml|css)$/i.test(entry.name)) {
+          const text = read(path);
+          for (const pattern of banned) assert.doesNotMatch(text, pattern, path);
+        }
+      }
+    }
+    walk(outDir);
     const faq = read(join(outDir, 'faq.html'));
     assert.doesNotMatch(faq, /We're not taking orders yet/);
     assert.match(faq, /Yes\. Add a piece from the shop to your bag and check out\./);
@@ -127,6 +147,56 @@ describe('preview build', () => {
     assert.match(read(join(outDir, 'robots.txt')), /Disallow: \//);
     assert.match(read(join(outDir, 'index.html')), /<li>Preview<\/li>/);
     assert.match(read(join(root, 'site/public-config.js')), /CHECKOUT_ENABLED:\s*false/);
+  });
+
+  it('the product builder writes purchasable from the sale rule', () => {
+    const outDir = mkdtempSync(join(tmpdir(), 'habibi-builder-'));
+    const env = { ...process.env, HABIBI_PREVIEW: '1' };
+    delete env.CHECKOUT_ENABLED;
+    execFileSync('python3', ['pipeline/build-products.py', '--out', outDir], {
+      cwd: root,
+      env
+    });
+    const catalog = JSON.parse(read(join(outDir, 'product-catalog.json')));
+    for (const product of catalog) {
+      assert.equal(product.purchasable, saleOpen(product.slug), product.slug);
+    }
+    assert.equal(catalog.find((product) => product.slug === 'ya-aini').purchasable, true);
+    assert.equal(catalog.find((product) => product.slug === 'jiran').purchasable, false);
+    assert.equal(catalog.find((product) => product.slug === 'habibi-crafts-hat').purchasable, false);
+  });
+
+  it('a preview build turns checkout on when CHECKOUT_ENABLED is unset', () => {
+    const outDir = mkdtempSync(join(tmpdir(), 'habibi-default-on-'));
+    const env = { ...process.env, HABIBI_PREVIEW: '1' };
+    delete env.CHECKOUT_ENABLED;
+    execFileSync('python3', ['pipeline/prepare-preview.py', '--out', outDir], {
+      cwd: root,
+      env
+    });
+    const cart = read(join(outDir, 'cart.html'));
+    assert.match(cart, />Check out</);
+    assert.doesNotMatch(cart, /Opening soon/);
+    const config = read(join(outDir, 'public-config.js'));
+    assert.match(config, /CHECKOUT_ENABLED:\s*true/);
+    assert.match(read(join(root, 'site/public-config.js')), /CHECKOUT_ENABLED:\s*false/);
+  });
+
+  it('does not treat main as a preview even when HABIBI_PREVIEW is set', () => {
+    const out = execFileSync('python3', ['-c', `
+import os, sys
+os.environ['HABIBI_PREVIEW'] = '1'
+os.environ['CF_PAGES_BRANCH'] = 'main'
+sys.path.insert(0, 'pipeline')
+from chrome import preview_requested
+assert preview_requested() is False
+os.environ['CF_PAGES'] = '1'
+assert preview_requested() is False
+os.environ['CF_PAGES_BRANCH'] = 'feature-preview'
+assert preview_requested() is True
+print('ok')
+`], { cwd: root, encoding: 'utf8' });
+    assert.match(out, /ok/);
   });
 
   it('refuses a production parity check when preview env vars are set', () => {
@@ -162,8 +232,10 @@ describe('preview build', () => {
     assert.equal(result.status, 2);
     const script = read(join(root, 'scripts/preview-smoke.sh'));
     assert.match(script, /\/api\/health/);
-    assert.match(script, /\/api\/checkout/);
-    assert.match(script, /checkout\.session\.completed|checkout_url/);
+    assert.match(script, /\/cart\.html/);
+    assert.match(script, /Check out/);
+    assert.match(script, /Access did not block \/api\/checkout/);
+    assert.match(script, /missing_stripe_signature/);
     assert.doesNotMatch(script, /sk_live_|sk_test_|whsec_|PRINTFUL_API_TOKEN=/);
   });
 });

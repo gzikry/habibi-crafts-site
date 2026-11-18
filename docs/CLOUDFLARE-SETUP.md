@@ -64,18 +64,29 @@ In the Pages project, open **Settings**, then **Environment variables**. Add onl
 
 You can add the same four names to **Production** later. Production checkout stays off until you say so.
 
-## Lock the preview to your email
+## Lock the preview hostnames
+
+Protect only the preview aliases, `*.<project>.pages.dev`. Do not add `habibicraftsco.com`, the apex `<project>.pages.dev` production hostname, or `*.pages.dev`.
 
 1. In the Cloudflare dashboard, open **Zero Trust**.
 2. Open **Access**, then **Applications**, then **Add an application**.
-3. Choose **Self-hosted**.
-4. Set the application domain to the preview host, `<project>.pages.dev`. Include every subdomain of that host.
-5. Add a policy named Allow shop email. Set the action to **Allow**. Set the include rule to **Emails** and the value to `habibicraftsco@gmail.com`. That is the shop address already published on the site. Use a different email here if that is the inbox you actually read.
-6. Add a second policy named Stripe webhook. Set the action to **Bypass**. Limit it to the path `/api/webhook`, so Stripe can post `checkout.session.completed`.
-7. For the login method, **One-time PIN** is enough.
-8. Save the application.
+3. Choose **Self-hosted**. Name it Habibi preview.
+4. Set the application domain to `<project>.pages.dev` and the subdomain to `*`. That matches branch and commit preview hosts only. Leave the path empty so the whole preview site is covered. Do not add another hostname.
+5. Add one policy. Name it Allow shop email. Action **Allow**. Include rule **Emails**, value `habibicraftsco@gmail.com`. That is the shop address already on the site. Use another email if that is the inbox you read.
+6. Login method: **One-time PIN**.
+7. Save this application.
 
-A stranger who opens the preview is asked for that email. `scripts/preview-smoke.sh` from a machine that has not passed Access will be blocked. After the one-time pin, place the test order in the browser.
+## Let Stripe reach the webhook
+
+Add a second Access application. Do not put a Bypass policy on the preview application above. A path bypass on that same app is easy to apply to every path.
+
+1. **Add an application** again. Choose **Self-hosted**. Name it Habibi preview webhook.
+2. Use the same domain `<project>.pages.dev` and subdomain `*`.
+3. Set the path to `/api/webhook`.
+4. Add one policy. Name it Stripe webhook. Action **Bypass**.
+5. Save this application.
+
+Cloudflare uses the application with the more specific path for `/api/webhook`, so Stripe can post `checkout.session.completed`. Every other preview URL still asks for the shop email. The public site on `habibicraftsco.com` is not in either application.
 
 ## Point Stripe at the preview
 
@@ -99,7 +110,7 @@ From this repo, after the preview deployment is green:
 scripts/preview-smoke.sh https://<branch>.<project>.pages.dev
 ```
 
-The command calls `/api/health` and then creates one test Checkout Session for Ya Aini. Health must report checkout enabled. The create call must return a checkout URL.
+The command checks four things. `/api/health` must report checkout enabled. `/cart.html` must say Check out. An unauthenticated `POST /api/checkout` must be blocked by Access and must not return a checkout URL. `POST /api/webhook` with no Stripe signature must return HTTP 400 and `missing_stripe_signature`, which shows the webhook bypass reached the function.
 
 The preview pages send `noindex` and `robots.txt` disallows the whole host.
 
