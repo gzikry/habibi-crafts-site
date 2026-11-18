@@ -7,6 +7,9 @@
     window.HABIBI_CHECKOUT_ENABLED === true &&
     cfg.CHECKOUT_ENABLED === true &&
     Boolean(cfg.CHECKOUT_API_BASE);
+  var SUCCESS = 'Thank you, your order is in. Your receipt is on its way by email.';
+  var CANCELLED = "Checkout cancelled. Your bag is saved for when you're ready.";
+  var CLOSED = "We're not taking orders yet.";
 
   function lock(button) {
     button.disabled = true;
@@ -16,23 +19,92 @@
     button.textContent = 'Opening soon';
   }
 
-  if (enabled) {
-    var checkoutState = new URLSearchParams(window.location.search).get('checkout');
-    if (checkoutState === 'success') {
-      localStorage.setItem('habibi-bag', '[]');
-      var main = document.querySelector('main');
-      if (main && !main.querySelector('[data-checkout-return]')) {
-        var wrap = document.createElement('div');
-        wrap.className = 'shell';
-        var note = document.createElement('p');
-        note.className = 'lede';
-        note.setAttribute('role', 'status');
-        note.setAttribute('data-checkout-return', 'success');
-        note.textContent = 'Order received, thank you. A confirmation email is on its way.';
-        wrap.appendChild(note);
-        main.insertBefore(wrap, main.firstChild);
-      }
+  function openButton(button) {
+    button.disabled = false;
+    button.removeAttribute('aria-disabled');
+    button.classList.remove('browse-mode');
+    button.setAttribute('data-checkout-enabled', 'true');
+    if (button.textContent === 'Opening soon') button.textContent = 'Check out';
+  }
+
+  function openCartCopy() {
+    document.querySelectorAll('.lede').forEach(function (node) {
+      if (node.textContent === CLOSED) node.textContent = '';
+    });
+  }
+
+  function stripCheckoutParams() {
+    if (!window.history || !window.history.replaceState || !window.location) return;
+    var url = new URL(window.location.href);
+    if (!url.searchParams.has('checkout') && !url.searchParams.has('session_id')) return;
+    url.searchParams.delete('checkout');
+    url.searchParams.delete('session_id');
+    window.history.replaceState({}, '', url.pathname + url.search + url.hash);
+  }
+
+  function showNotice(kind, message) {
+    var main = document.querySelector('main');
+    if (!main || main.querySelector('[data-checkout-return]')) return;
+    var wrap = document.createElement('div');
+    wrap.className = 'shell';
+    wrap.setAttribute('data-checkout-return', kind);
+    var note = document.createElement('p');
+    note.className = 'status-line';
+    note.setAttribute('role', 'status');
+    wrap.appendChild(note);
+    var dismiss = document.createElement('button');
+    dismiss.type = 'button';
+    dismiss.className = 'bag-remove';
+    dismiss.textContent = 'Dismiss';
+    dismiss.addEventListener('click', function () {
+      if (wrap.parentNode) wrap.parentNode.removeChild(wrap);
+    });
+    wrap.appendChild(dismiss);
+    main.insertBefore(wrap, main.firstChild);
+    note.textContent = message;
+  }
+
+  function clearBag() {
+    localStorage.setItem('habibi-bag', '[]');
+    if (window.HabibiBag && window.HabibiBag.clear) window.HabibiBag.clear();
+  }
+
+  function handleReturn() {
+    var params = new URLSearchParams(window.location.search);
+    var checkoutState = params.get('checkout');
+    if (checkoutState !== 'success' && checkoutState !== 'cancelled') return;
+    if (checkoutState === 'cancelled') {
+      showNotice('cancelled', CANCELLED);
+      stripCheckoutParams();
+      return;
     }
+    var sessionId = params.get('session_id');
+    if (!sessionId) {
+      stripCheckoutParams();
+      return;
+    }
+    var base = String(cfg.CHECKOUT_API_BASE).replace(/\/$/, '');
+    fetch(base + '/api/checkout-session?session_id=' + encodeURIComponent(sessionId))
+      .then(function (response) {
+        return response.json().then(function (body) {
+          return { ok: response.ok, body: body };
+        });
+      })
+      .then(function (result) {
+        if (result.ok && result.body && result.body.payment_status === 'paid') {
+          clearBag();
+          showNotice('success', SUCCESS);
+        }
+        stripCheckoutParams();
+      })
+      .catch(function () {
+        stripCheckoutParams();
+      });
+  }
+
+  if (enabled) {
+    openCartCopy();
+    handleReturn();
   }
 
   document.querySelectorAll('[data-checkout]').forEach(function (button) {
@@ -40,7 +112,7 @@
       lock(button);
       return;
     }
-    button.setAttribute('data-checkout-enabled', 'true');
+    openButton(button);
     button.addEventListener('click', function () {
       if (!cfg.CHECKOUT_ENABLED || window.HABIBI_CHECKOUT_ENABLED !== true) return;
       var items;

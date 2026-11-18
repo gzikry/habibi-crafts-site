@@ -67,7 +67,10 @@ export function encodeStripeCheckoutBody({ lineItems, successUrl, cancelUrl, cus
   params.set('cancel_url', cancelUrl);
   params.set('billing_address_collection', 'required');
   params.append('shipping_address_collection[allowed_countries][0]', 'US');
-  if (customerEmail) params.set('customer_email', customerEmail);
+  if (customerEmail) {
+    params.set('customer_email', customerEmail);
+    params.set('payment_intent_data[receipt_email]', customerEmail);
+  }
   if (idempotencyKey) params.set('client_reference_id', String(idempotencyKey).slice(0, 200));
 
   lineItems.forEach((item, index) => {

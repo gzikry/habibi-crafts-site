@@ -148,6 +148,8 @@ describe('Stripe helpers', () => {
     assert.equal(body.get('line_items[0][price_data][unit_amount]'), '1499');
     assert.equal(body.get('shipping_address_collection[allowed_countries][0]'), 'US');
     assert.equal(body.has('line_items'), false);
+    assert.equal(body.get('customer_email'), 'buyer@example.com');
+    assert.equal(body.get('payment_intent_data[receipt_email]'), 'buyer@example.com');
   });
 
   it('encodes standard shipping at 3899 cents and free shipping at 3900', () => {
@@ -287,8 +289,9 @@ describe('HTTP handlers', () => {
     assert.equal(response.status, 200);
     const params = new URLSearchParams(posted);
     assert.equal(params.has('customer_email'), false);
+    assert.equal(params.has('payment_intent_data[receipt_email]'), false);
     assert.equal(params.get('success_url'), 'https://habibicraftsco.com/?checkout=success&session_id={CHECKOUT_SESSION_ID}');
-    assert.equal(params.get('cancel_url'), 'https://habibicraftsco.com/?checkout=cancelled');
+    assert.equal(params.get('cancel_url'), 'https://habibicraftsco.com/cart.html?checkout=cancelled');
   });
 
   it('checks out several lines from the server catalog and rejects one tampered price', async () => {
@@ -326,6 +329,8 @@ describe('HTTP handlers', () => {
     assert.equal(params.get('shipping_options[0][shipping_rate_data][display_name]'), 'Free US shipping');
     assert.match(params.get('metadata[cart]'), /ya-aini/);
     assert.match(params.get('metadata[cart]'), /halawa/);
+    assert.equal(params.get('customer_email'), 'buyer@example.com');
+    assert.equal(params.get('payment_intent_data[receipt_email]'), 'buyer@example.com');
 
     let called = false;
     const tampered = await handleCheckout(
@@ -505,5 +510,20 @@ describe('checkout validator', () => {
       contact_email: 'not-an-email'
     });
     assert.ok(malformed.includes('valid contact_email is required'));
+
+    const padded = {
+      items: [{ slug: 'ya-aini', quantity: 1 }],
+      idempotency_key: 'abc',
+      contact_email: '  buyer@example.com  '
+    };
+    assert.deepEqual(validateCheckoutInput(padded), []);
+    assert.equal(padded.contact_email, 'buyer@example.com');
+
+    const blank = validateCheckoutInput({
+      items: [{ slug: 'ya-aini', quantity: 1 }],
+      idempotency_key: 'abc',
+      contact_email: '   '
+    });
+    assert.ok(blank.includes('valid contact_email is required'));
   });
 });

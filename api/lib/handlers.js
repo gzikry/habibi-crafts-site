@@ -11,6 +11,12 @@ import {
 } from './stripe.js';
 import { shippingFromStripeSession, validateCheckoutInput, validateShipping } from './validator.js';
 
+function withSessionPlaceholder(url) {
+  if (String(url).includes('session_id={CHECKOUT_SESSION_ID}')) return url;
+  const joiner = String(url).includes('?') ? '&' : '?';
+  return `${url}${joiner}session_id={CHECKOUT_SESSION_ID}`;
+}
+
 function envFrom(requestEnv) {
   return readConfig(requestEnv || process.env);
 }
@@ -72,8 +78,8 @@ export async function handleCheckout(request, requestEnv, fetchImpl = fetch) {
 
   const stripeBody = encodeStripeCheckoutBody({
     lineItems: resolved,
-    successUrl: `${config.appOrigin}/?checkout=success&session_id={CHECKOUT_SESSION_ID}`,
-    cancelUrl: `${config.appOrigin}/?checkout=cancelled`,
+    successUrl: withSessionPlaceholder(`${config.appOrigin}/?checkout=success`),
+    cancelUrl: `${config.appOrigin}/cart.html?checkout=cancelled`,
     customerEmail: body.contact_email,
     idempotencyKey: body.idempotency_key,
     shipping: shippingRateForSubtotal(computedTotal),

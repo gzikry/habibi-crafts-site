@@ -19,9 +19,10 @@ export function shippingCharge(cents) {
   return 'Shipping ' + formatCents(SHIPPING_CENTS);
 }
 
-function boot() {
+  function boot() {
   var bySlug = {};
   var state = [];
+  var cleared = false;
 
   function save() {
     localStorage.setItem(KEY, JSON.stringify(state));
@@ -204,11 +205,18 @@ function boot() {
     });
   }
 
+  function clear() {
+    cleared = true;
+    state = [];
+    save();
+  }
+
   window.HabibiBag = {
     checkoutItems: checkoutItems,
     formatCents: formatCents,
     shippingProgress: shippingProgress,
-    subtotal: subtotal
+    subtotal: subtotal,
+    clear: clear
   };
 
   fetch('/product-catalog.json')
@@ -227,6 +235,7 @@ function boot() {
       }).map(function (line) {
         return { slug: line.slug, size: line.size, quantity: line.quantity };
       });
+      if (cleared) state = [];
       localStorage.setItem(KEY, JSON.stringify(state));
       wireAdd();
       badge();

@@ -1,6 +1,7 @@
 export function validateCheckoutInput(body) {
   const errors = [];
   if (!body?.items?.length) errors.push('items are required');
+  if (typeof body?.contact_email === 'string') body.contact_email = body.contact_email.trim();
   if (body?.contact_email != null && !/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(body.contact_email)) {
     errors.push('valid contact_email is required');
   }
