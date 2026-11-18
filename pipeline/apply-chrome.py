@@ -68,7 +68,9 @@ def refresh(path, prefix=''):
     for old in range(18, int(style_v)):
         html = html.replace(f'styles.css?v={old}', f'styles.css?v={style_v}')
     html = html.replace('Habibi Crafts Co. Mugs, tees, totes, and more.', share_image_alt)
-    html = html.replace('checkout.js?v=12', 'checkout.js?v=13')
+    checkout_v = SCRIPT_V['checkout.js']
+    for old in range(1, int(checkout_v)):
+        html = html.replace(f'checkout.js?v={old}', f'checkout.js?v={checkout_v}')
     bag_v = SCRIPT_V['bag.js']
     for old in range(1, int(bag_v)):
         html = html.replace(f'bag.js?v={old}', f'bag.js?v={bag_v}')

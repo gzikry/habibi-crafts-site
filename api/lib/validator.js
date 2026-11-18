@@ -1,7 +1,7 @@
 export function validateCheckoutInput(body) {
   const errors = [];
   if (!body?.items?.length) errors.push('items are required');
-  if (!/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(body?.contact_email || '')) {
+  if (body?.contact_email != null && !/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(body.contact_email)) {
     errors.push('valid contact_email is required');
   }
   if (!body?.idempotency_key) errors.push('idempotency_key is required');

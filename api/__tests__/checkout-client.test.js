@@ -102,6 +102,7 @@ function bootCheckout({ enabled, search, buttonDisabled = true }) {
   button.setAttribute('aria-disabled', 'true');
   const document = {
     children: [main, button],
+    createElement,
     querySelector(selector) {
       return queryAll(this, selector)[0] || null;
     },

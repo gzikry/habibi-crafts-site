@@ -16,6 +16,25 @@
     button.textContent = 'Opening soon';
   }
 
+  if (enabled) {
+    var checkoutState = new URLSearchParams(window.location.search).get('checkout');
+    if (checkoutState === 'success') {
+      localStorage.setItem('habibi-bag', '[]');
+      var main = document.querySelector('main');
+      if (main && !main.querySelector('[data-checkout-return]')) {
+        var wrap = document.createElement('div');
+        wrap.className = 'shell';
+        var note = document.createElement('p');
+        note.className = 'lede';
+        note.setAttribute('role', 'status');
+        note.setAttribute('data-checkout-return', 'success');
+        note.textContent = 'Order received, thank you. A confirmation email is on its way.';
+        wrap.appendChild(note);
+        main.insertBefore(wrap, main.firstChild);
+      }
+    }
+  }
+
   document.querySelectorAll('[data-checkout]').forEach(function (button) {
     if (!enabled) {
       lock(button);
@@ -36,7 +55,6 @@
       if (!items.length || !cfg.CHECKOUT_API_BASE) return;
       var payload = {
         items: items,
-        contact_email: '',
         idempotency_key: 'ui-' + Date.now()
       };
       if (items.every(function (item) { return typeof item.price_cents === 'number'; })) {

@@ -1,7 +1,7 @@
 {
   "currency": "USD",
   "printful_store_id": "18687336",
-  "notes": "Live storefront SKUs only. Ignored Printful drafts stay ignored. Fall SKUs are not listed. sync_variant_id is filled by scripts/printful-pull-variants.js on a machine that has PRINTFUL_API_TOKEN \u2014 never commit the token.",
+  "notes": "Live storefront SKUs only. Ignored Printful drafts stay ignored. Fall SKUs are not listed. sync_variant_id is the Printful sync variant for each size. Never commit a Printful token.",
   "products": {
     "ya-aini": {
       "external_id": "habibi-mug-ya-aini",
@@ -17,9 +17,9 @@
       },
       "variants": {
         "default": {
-          "external_variant_id": "habibi-mug-ya-aini",
+          "external_variant_id": "habibi-mug-ya-aini-11oz",
           "catalog_variant_id": 1320,
-          "sync_variant_id": null
+          "sync_variant_id": 5471949732
         }
       }
     },
@@ -37,9 +37,9 @@
       },
       "variants": {
         "default": {
-          "external_variant_id": "habibi-mug-baladi",
+          "external_variant_id": "habibi-mug-baladi-11oz",
           "catalog_variant_id": 1320,
-          "sync_variant_id": null
+          "sync_variant_id": 5471949745
         }
       }
     },
@@ -57,9 +57,9 @@
       },
       "variants": {
         "default": {
-          "external_variant_id": "habibi-mug-ya-dunia",
+          "external_variant_id": "habibi-mug-ya-dunia-11oz",
           "catalog_variant_id": 1320,
-          "sync_variant_id": null
+          "sync_variant_id": 5471949753
         }
       }
     },
@@ -77,9 +77,9 @@
       },
       "variants": {
         "default": {
-          "external_variant_id": "habibi-mug-jiran",
+          "external_variant_id": "habibi-mug-jiran-11oz",
           "catalog_variant_id": 1320,
-          "sync_variant_id": null
+          "sync_variant_id": 5471949778
         }
       }
     },
@@ -97,9 +97,9 @@
       },
       "variants": {
         "default": {
-          "external_variant_id": "habibi-mug-maamoul",
+          "external_variant_id": "habibi-mug-maamoul-11oz",
           "catalog_variant_id": 1320,
-          "sync_variant_id": null
+          "sync_variant_id": 5471960297
         }
       }
     },
@@ -117,9 +117,9 @@
       },
       "variants": {
         "default": {
-          "external_variant_id": "habibi-mug-knafeh-club",
+          "external_variant_id": "habibi-mug-knafeh-club-11oz",
           "catalog_variant_id": 1320,
-          "sync_variant_id": null
+          "sync_variant_id": 5471977632
         }
       }
     },
@@ -139,24 +139,24 @@
       },
       "variants": {
         "S": {
-          "external_variant_id": "habibi-tee-khalas-habibi-s",
+          "external_variant_id": "habibi-tee-khalas-habibi-natural-s",
           "catalog_variant_id": 14682,
-          "sync_variant_id": null
+          "sync_variant_id": 5471960270
         },
         "M": {
-          "external_variant_id": "habibi-tee-khalas-habibi-m",
+          "external_variant_id": "habibi-tee-khalas-habibi-natural-m",
           "catalog_variant_id": 14683,
-          "sync_variant_id": null
+          "sync_variant_id": 5471960271
         },
         "L": {
-          "external_variant_id": "habibi-tee-khalas-habibi-l",
+          "external_variant_id": "habibi-tee-khalas-habibi-natural-l",
           "catalog_variant_id": 14684,
-          "sync_variant_id": null
+          "sync_variant_id": 5471960272
         },
         "XL": {
-          "external_variant_id": "habibi-tee-khalas-habibi-xl",
+          "external_variant_id": "habibi-tee-khalas-habibi-natural-xl",
           "catalog_variant_id": 14685,
-          "sync_variant_id": null
+          "sync_variant_id": 5471960273
         }
       }
     },
@@ -176,24 +176,24 @@
       },
       "variants": {
         "S": {
-          "external_variant_id": "habibi-tee-ya-habayeb-s",
+          "external_variant_id": "habibi-tee-ya-habayeb-natural-s",
           "catalog_variant_id": 14682,
-          "sync_variant_id": null
+          "sync_variant_id": 5471977606
         },
         "M": {
-          "external_variant_id": "habibi-tee-ya-habayeb-m",
+          "external_variant_id": "habibi-tee-ya-habayeb-natural-m",
           "catalog_variant_id": 14683,
-          "sync_variant_id": null
+          "sync_variant_id": 5471977608
         },
         "L": {
-          "external_variant_id": "habibi-tee-ya-habayeb-l",
+          "external_variant_id": "habibi-tee-ya-habayeb-natural-l",
           "catalog_variant_id": 14684,
-          "sync_variant_id": null
+          "sync_variant_id": 5471977610
         },
         "XL": {
-          "external_variant_id": "habibi-tee-ya-habayeb-xl",
+          "external_variant_id": "habibi-tee-ya-habayeb-natural-xl",
           "catalog_variant_id": 14685,
-          "sync_variant_id": null
+          "sync_variant_id": 5471977611
         }
       }
     },
@@ -300,19 +300,19 @@
       },
       "variants": {
         "3-6m": {
-          "external_variant_id": "habibi-onesie-ya-teta-3-6m",
+          "external_variant_id": "habibi-baby-ya-teta-3-6m",
           "catalog_variant_id": 9438,
-          "sync_variant_id": null
+          "sync_variant_id": 5471960286
         },
         "6-12m": {
-          "external_variant_id": "habibi-onesie-ya-teta-6-12m",
+          "external_variant_id": "habibi-baby-ya-teta-6-12m",
           "catalog_variant_id": 9439,
-          "sync_variant_id": null
+          "sync_variant_id": 5471960287
         },
         "12-18m": {
-          "external_variant_id": "habibi-onesie-ya-teta-12-18m",
+          "external_variant_id": "habibi-baby-ya-teta-12-18m",
           "catalog_variant_id": 9440,
-          "sync_variant_id": null
+          "sync_variant_id": 5471960288
         }
       }
     },
@@ -331,19 +331,19 @@
       },
       "variants": {
         "3-6m": {
-          "external_variant_id": "habibi-onesie-amoura-3-6m",
+          "external_variant_id": "habibi-baby-amoura-3-6m",
           "catalog_variant_id": 9438,
-          "sync_variant_id": null
+          "sync_variant_id": 5471977620
         },
         "6-12m": {
-          "external_variant_id": "habibi-onesie-amoura-6-12m",
+          "external_variant_id": "habibi-baby-amoura-6-12m",
           "catalog_variant_id": 9439,
-          "sync_variant_id": null
+          "sync_variant_id": 5471977622
         },
         "12-18m": {
-          "external_variant_id": "habibi-onesie-amoura-12-18m",
+          "external_variant_id": "habibi-baby-amoura-12-18m",
           "catalog_variant_id": 9440,
-          "sync_variant_id": null
+          "sync_variant_id": 5471977623
         }
       }
     },
@@ -361,9 +361,9 @@
       },
       "variants": {
         "default": {
-          "external_variant_id": "habibi-print-beit-el-hobb",
+          "external_variant_id": "habibi-poster-beit-el-hobb-12x16",
           "catalog_variant_id": 1349,
-          "sync_variant_id": null
+          "sync_variant_id": 5471960294
         }
       }
     },
@@ -381,9 +381,9 @@
       },
       "variants": {
         "default": {
-          "external_variant_id": "habibi-print-dar-el-hawa",
+          "external_variant_id": "habibi-poster-dar-el-hawa-12x16",
           "catalog_variant_id": 1349,
-          "sync_variant_id": null
+          "sync_variant_id": 5471977627
         }
       }
     },
