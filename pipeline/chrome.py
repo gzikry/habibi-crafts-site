@@ -1,4 +1,5 @@
 import json
+import os
 from pathlib import Path
 
 BASE = 'https://habibicraftsco.com'
@@ -6,11 +7,11 @@ BASE = 'https://habibicraftsco.com'
 # Per-file cache keys on the live pages. bag.js is an ES module, so the tag
 # is type=module. A deferred classic script cannot load it.
 SCRIPT_V = {
-    'styles.css': '35',
+    'styles.css': '37',
     'public-config.js': '11',
     'analytics.js': '10',
     'bag.js': '18',
-    'checkout.js': '17',
+    'checkout.js': '19',
     'spin.js': '11',
     'app.js': '14',
 }
@@ -21,6 +22,96 @@ SHARE_IMAGE_ALT = 'Habibi Crafts Co wordmark, established 2024'
 ORDERS_NOTE = "We're not taking orders yet. You can still add things to your bag."
 ORDERS_NOTE_SHORT = "We're not taking orders yet."
 OPENING_SOON = 'Opening soon'
+COMING_SOON = 'Coming soon'
+OPEN_FAQ = 'Yes. Add a piece from the shop to your bag and check out.'
+EMAIL_US = (
+    '<p class="checkout-note">Want a name on it? '
+    '<a href="mailto:habibicraftsco@gmail.com">Email us</a>.</p>'
+)
+QUESTIONS_EMAIL = (
+    '<p class="checkout-note">Questions? '
+    '<a href="mailto:habibicraftsco@gmail.com">Email us</a>.</p>'
+)
+WANT_ONE = (
+    '<p class="checkout-note">Want one? '
+    '<a href="mailto:habibicraftsco@gmail.com">Email us</a>.</p>'
+)
+
+
+def env_on(name):
+    return os.environ.get(name, '').strip().lower() in {'1', 'true', 'yes', 'on'}
+
+
+def preview_requested():
+    if os.environ.get('CF_PAGES_BRANCH', '').strip() == 'main':
+        return False
+    if env_on('HABIBI_PREVIEW'):
+        return True
+    if os.environ.get('CF_PAGES', '').strip() == '1':
+        return os.environ.get('CF_PAGES_BRANCH', '').strip() != 'main'
+    return False
+
+
+def orders_copy(checkout_on, short=False):
+    if checkout_on:
+        return ''
+    return ORDERS_NOTE_SHORT if short else ORDERS_NOTE
+
+
+def open_shop_html(html, page=''):
+    replacements = (
+        (
+            "We're not taking orders yet. When we start, you'll get tracking by email after the carrier scans the package. ",
+            "You'll get tracking by email after the carrier scans the package. ",
+        ),
+        (
+            "We're not taking orders yet. You can still add things to your bag.",
+            'You can add things to your bag and check out.',
+        ),
+        (
+            'This page will take a card when we start taking orders. It does not collect payment today, and there is no form to submit.',
+            'Stripe collects the card, and there is no form on this page.',
+        ),
+        (
+            'Tracking arrives by email when we start taking orders.',
+            'Tracking arrives by email after the carrier scans your parcel.',
+        ),
+        (
+            'When we start taking orders, a tracking note will come after the carrier scans your parcel.',
+            'A tracking note comes by email after the carrier scans your parcel.',
+        ),
+        (
+            'When we start taking orders, a <a href="tracking.html">tracking note</a> will arrive by email after the carrier scans your package.',
+            'A <a href="tracking.html">tracking note</a> arrives by email after the carrier scans your package.',
+        ),
+        (
+            'When we start taking orders, a tracking note will arrive by email after the carrier scans your package.',
+            'A tracking note arrives by email after the carrier scans your package.',
+        ),
+        (
+            '<h1>Your bag</h1>\n    <p class="lede">We\'re not taking orders yet.</p>',
+            '<h1>Your bag</h1>\n    <p class="lede">Review your bag, then check out.</p>',
+        ),
+        (
+            '<h1>Checkout</h1>\n    <p class="lede">We\'re not taking orders yet.</p>',
+            '<h1>Checkout</h1>\n    <p class="lede">Checkout opens from your bag.</p>',
+        ),
+        (
+            'There is nothing to look up today. There are no order numbers and no carrier links yet.',
+            'Your email has the tracking link, with the order number and the carrier.',
+        ),
+        (
+            '<button class="button browse-mode" type="button" disabled data-checkout data-bag-checkout aria-disabled="true">Opening soon</button>',
+            '<button class="button" type="button" data-checkout data-bag-checkout>Check out</button>',
+        ),
+    )
+    for old, new in replacements:
+        html = html.replace(old, new)
+    if page == 'faq.html':
+        html = html.replace("We're not taking orders yet.", OPEN_FAQ)
+    return html
+
+
 SHIP_LINE = 'We print it after you order. It usually ships in 2 to 5 days.'
 
 THIN_PAGES = (
@@ -122,11 +213,12 @@ def nav(home=False, shop=False, collections=False, prefix=''):
 
 
 def trust(prefix=''):
+    preview = '\n      <li>Preview</li>' if preview_requested() else ''
     return f'''<div class="trust-strip" role="note">
   <div class="shell">
     <ul class="trust-chips">
       <li>Made to order</li>
-      <li>Ships in the US</li>
+      <li>Ships in the US</li>{preview}
     </ul>
   </div>
 </div>'''

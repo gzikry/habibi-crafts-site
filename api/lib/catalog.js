@@ -6,6 +6,30 @@ export const products = Object.fromEntries(
   Object.entries(catalog.products).map(([key, value]) => [key, { ...value, slug: key }])
 );
 
+export const LAUNCH_SLUGS = [
+  'halawa',
+  'early-light',
+  'ya-aini',
+  'baladi',
+  'khalas-habibi',
+  'ya-teta',
+  'beit-el-hobb',
+  'habibi-crafts-hat',
+  'make-something-hat',
+  'leaf-season-hat'
+];
+
+export const HOLD_SLUGS = [
+  'habibi-crafts-hat',
+  'make-something-hat',
+  'leaf-season-hat'
+];
+
+export function saleOpen(slug) {
+  if (typeof slug !== 'string' || slug.trim() === '' || slug !== slug.trim()) return false;
+  return LAUNCH_SLUGS.includes(slug) && !HOLD_SLUGS.includes(slug);
+}
+
 export const LIVE_SLUGS = [
   'ya-aini',
   'baladi',
@@ -34,7 +58,8 @@ export function resolveVariant(product, size) {
   return product.variants[key] || null;
 }
 
-export function resolveLineItem(raw) {
+export function resolveLineItem(raw, options = {}) {
+  const enforceSale = options.enforceSale !== false;
   const slug = raw?.slug;
   const product = products[slug];
   if (!product) return { error: `unknown product ${slug || ''}` };
@@ -44,6 +69,7 @@ export function resolveLineItem(raw) {
   if (!Number.isInteger(quantity) || quantity < 1 || quantity > 20) {
     return { error: `invalid quantity for ${slug}` };
   }
+  if (enforceSale && !saleOpen(slug)) return { error: `not available for checkout ${slug}` };
   if (raw.price_cents != null && raw.price_cents !== product.price) {
     return { error: `price mismatch ${slug}`, status: 409 };
   }

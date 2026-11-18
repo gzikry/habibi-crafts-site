@@ -6,14 +6,17 @@ keeps catalog order. A manifest, when present, supplies angle names and
 drops the retired tote backs.
 """
 import json
+import os
 import re
 from datetime import date
 
 from pfangles import order as order_angles
 from root import angles_dir, cents_decimal, format_cents, repo_root, site_dir, without_retired_back
 from chrome import (
-    BASE, ORDERS_NOTE, ORDERS_NOTE_SHORT, SHARE_IMAGE_ALT, SHIP_LINE, THIN_PAGES,
-    esc, filter_bars, icons, json_ld, page_close, page_open, scripts, stylesheet,
+    BASE, COMING_SOON, EMAIL_US, QUESTIONS_EMAIL, SHARE_IMAGE_ALT, SHIP_LINE, THIN_PAGES,
+    WANT_ONE,
+    esc, filter_bars, icons, json_ld, open_shop_html, orders_copy, page_close, page_open,
+    preview_requested, scripts, stylesheet,
 )
 
 # Hand-written pages use this for og-share.png. Home and shop keep their own alts.
@@ -145,7 +148,52 @@ def mockup(slug):
     return f"assets/mockups/{slug}.png?v={SNAPSHOT['mockups'][slug]}"
 
 
+INDEX_ROBOTS = 'index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1'
+
+
+def env_on(name):
+    return os.environ.get(name, '').strip().lower() in {'1', 'true', 'yes', 'on'}
+
+
+def js_slug_list(name):
+    text = (ROOT / 'api' / 'lib' / 'catalog.js').read_text()
+    match = re.search(rf'export const {name} = \[([\s\S]*?)\]', text)
+    if not match:
+        raise RuntimeError(f'missing {name} in api/lib/catalog.js')
+    slugs = re.findall(r"'([^']+)'", match.group(1))
+    known = {
+        product['slug']
+        for product in json.loads((SITE / 'product-catalog.json').read_text())
+    }
+    for slug in slugs:
+        if not isinstance(slug, str) or not slug.strip() or slug != slug.strip():
+            raise RuntimeError(f'{name} has a slug that is not plain text')
+        if slug not in known:
+            raise RuntimeError(f'{name} slug {slug} is not in product-catalog.json')
+    return slugs
+
+
+LAUNCH_SLUGS = js_slug_list('LAUNCH_SLUGS')
+HOLD_SLUGS = js_slug_list('HOLD_SLUGS')
+
+
+def wrangler_preview_value(name):
+    text = (ROOT / 'wrangler.toml').read_text()
+    section = re.search(r'\[env\.preview\.vars\](.*?)(\n\[|\Z)', text, re.S)
+    if not section:
+        return None
+    found = re.search(rf'^{re.escape(name)}\s*=\s*"([^"]*)"', section.group(1), re.M)
+    return found.group(1) if found else None
+
+
 def checkout_enabled():
+    if preview_requested():
+        raw = os.environ.get('CHECKOUT_ENABLED')
+        if raw is None or str(raw).strip() == '':
+            raw = wrangler_preview_value('CHECKOUT_ENABLED')
+        if raw is None or str(raw).strip() == '':
+            return True
+        return str(raw).strip().lower() not in {'0', 'false', 'no', 'off'}
     text = (SITE / 'public-config.js').read_text()
     config = re.search(r'CHECKOUT_ENABLED:\s*(true|false)', text)
     window_flag = re.search(r'HABIBI_CHECKOUT_ENABLED\s*=\s*(true|false)', text)
@@ -155,9 +203,23 @@ def checkout_enabled():
     )
 
 
+def for_sale(product):
+    slug = product.get('slug')
+    if not isinstance(slug, str) or not slug.strip():
+        return False
+    if checkout_enabled():
+        return slug in LAUNCH_SLUGS and slug not in HOLD_SLUGS
+    return product.get('purchasable') is True
+
+
+def robots_content():
+    if preview_requested():
+        return 'noindex,nofollow'
+    return INDEX_ROBOTS
+
+
 def offer_availability(p):
-    in_stock = checkout_enabled() and p.get('purchasable') is True
-    state = 'InStock' if in_stock else 'OutOfStock'
+    state = 'InStock' if checkout_enabled() and for_sale(p) else 'OutOfStock'
     return f'https://schema.org/{state}'
 
 
@@ -270,7 +332,7 @@ def collection_head(title, desc, canonical, ld, og_image, og_w, og_h, og_alt, in
 <meta name="theme-color" content="#7d2e21">
 <title>{esc(title)}</title>
 <meta name="description" content="{esc(desc)}">
-<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+<meta name="robots" content="{robots_content()}">
 <link rel="canonical" href="{canonical}">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Habibi Crafts Co">
@@ -313,7 +375,7 @@ def write_thin_pages(out_dir):
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{esc(label)} | Habibi Crafts Co</title>
-<meta name="robots" content="noindex,follow">
+<meta name="robots" content="{'noindex,nofollow' if preview_requested() else 'noindex,follow'}">
 <meta http-equiv="refresh" content="0; url=/shop.html">
 <link rel="canonical" href="{BASE}/shop.html">
 </head>
@@ -506,7 +568,7 @@ def write_home(out_dir, manifest=None):
 <meta name="theme-color" content="#7d2e21">
 <title>{esc(title)}</title>
 <meta name="description" content="{esc(desc)}">
-<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+<meta name="robots" content="{robots_content()}">
 <link rel="canonical" href="{BASE}/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Habibi Crafts Co">
@@ -619,6 +681,7 @@ def write_home(out_dir, manifest=None):
   </section>'''
     html = page_open(head, home=True) + '\n' + page_close(main)
     (out_dir / 'index.html').write_text(html)
+    write_open_pages(out_dir)
     print(f'index.html ({len(products)} products)')
 
 
@@ -651,8 +714,7 @@ def details_for(p):
 
 
 def size_block(p):
-    # Chips only belong next to Add to bag. Details still lists the sizes.
-    if p.get('purchasable') is not True:
+    if not for_sale(p):
         return ''
     kind = p['category']
     if kind == 'tees':
@@ -780,22 +842,30 @@ def write_products(out_dir, manifest=None):
         subtitle = TYPE_DESC[kind]
         desc = p.get('description') or f"{p['name']}. {subtitle}."
         url = f"{BASE}/product-{p['slug']}.html"
-        if p.get('purchasable') is True:
+        selling = for_sale(p)
+        if selling:
             actions = (
                 f'<div class="actions"><button class="button" type="button" data-add-bag '
                 f'data-product-slug="{p["slug"]}">Add to bag</button></div>'
             )
-            note = ORDERS_NOTE
+            note = orders_copy(checkout_enabled())
+        elif checkout_enabled():
+            actions = (
+                f'<div class="actions"><button class="button browse-mode" type="button" disabled '
+                f'aria-disabled="true">{COMING_SOON}</button></div>'
+            )
+            note = ''
         else:
             actions = ''
-            note = ORDERS_NOTE_SHORT
-        charge = f'<p class="checkout-note">{note}</p>'
+            note = orders_copy(False, short=True)
+        charge = f'<p class="checkout-note">{note}</p>' if note else ''
         personalize = ''
         if kind == 'mugs':
-            personalize = (
-                '<p class="checkout-note">Want a name on it? '
-                '<a href="mailto:habibicraftsco@gmail.com">Email us</a>.</p>'
-            )
+            personalize = EMAIL_US
+        elif checkout_enabled() and not selling and kind in ('totes', 'stickers'):
+            personalize = WANT_ONE
+        elif checkout_enabled() and not selling:
+            personalize = QUESTIONS_EMAIL
         buy_parts = [part for part in (size_block(p), actions, charge, personalize) if part]
         buy = '\n      '.join(buy_parts)
         eyebrow = meta[6] if kind != 'hats' else 'Dad hat'
@@ -809,7 +879,7 @@ def write_products(out_dir, manifest=None):
 <meta name="theme-color" content="#7d2e21">
 <title>{esc(p['name'])} | Habibi Crafts Co</title>
 <meta name="description" content="{esc(desc)}">
-<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+<meta name="robots" content="{robots_content()}">
 <link rel="canonical" href="{url}">
 <meta property="og:type" content="product">
 <meta property="og:site_name" content="Habibi Crafts Co">
@@ -854,6 +924,34 @@ def write_products(out_dir, manifest=None):
         (out_dir / f'product-{p["slug"]}.html').write_text(html)
         built += 1
     print(f'Built {built} product pages')
+    write_storefront_catalog(out_dir)
+
+
+def write_storefront_catalog(out_dir):
+    src = SITE / 'product-catalog.json'
+    catalog = json.loads(src.read_text())
+    changed = False
+    for product in catalog:
+        sale = for_sale(product)
+        if product.get('purchasable') is not sale:
+            product['purchasable'] = sale
+            changed = True
+    dest = out_dir / 'product-catalog.json'
+    if changed:
+        dest.write_text(json.dumps(catalog, indent=2) + '\n')
+    else:
+        dest.write_bytes(src.read_bytes())
+
+
+def write_open_pages(out_dir):
+    for name in ('faq.html', 'shipping.html', 'checkout.html', 'tracking.html', 'cart.html'):
+        src = SITE / name
+        raw = src.read_bytes()
+        dest = out_dir / name
+        if not checkout_enabled():
+            dest.write_bytes(raw)
+        else:
+            dest.write_text(open_shop_html(raw.decode(), name))
 
 
 # Curated groups. Every slug is a live catalog item.
@@ -1149,7 +1247,9 @@ def write_sitemap(out_dir):
            '        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">\n'
            + '\n'.join(urls) + '\n</urlset>\n')
     (out_dir / 'sitemap.xml').write_text(xml)
-    (out_dir / 'robots.txt').write_text(
-        f'User-agent: *\nAllow: /\n\nSitemap: {BASE}/sitemap.xml\n'
-    )
+    if preview_requested():
+        robots = 'User-agent: *\nDisallow: /\n'
+    else:
+        robots = f'User-agent: *\nAllow: /\n\nSitemap: {BASE}/sitemap.xml\n'
+    (out_dir / 'robots.txt').write_text(robots)
     print(f'sitemap.xml: {xml.count("<url>")} urls')

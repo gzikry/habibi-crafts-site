@@ -73,6 +73,30 @@ describe('config flags', () => {
     assert.equal(config.stripeSecretKey, '');
   });
 
+  it('keeps the production origin and fails closed when a preview omits APP_ORIGIN', () => {
+    assert.equal(readConfig({}).appOrigin, 'https://habibicraftsco.com');
+    assert.equal(
+      readConfig({ CF_PAGES_URL: 'https://prod.pages.dev' }).appOrigin,
+      'https://habibicraftsco.com'
+    );
+    assert.throws(
+      () => readConfig({ HABIBI_PREVIEW: '1', CF_PAGES_URL: 'https://abc.pages.dev/' }),
+      /APP_ORIGIN is required/
+    );
+    assert.throws(
+      () => readConfig({ CF_PAGES_BRANCH: 'preview' }),
+      /APP_ORIGIN is required/
+    );
+    assert.equal(
+      readConfig({ HABIBI_PREVIEW: '1', CF_PAGES_BRANCH: 'main' }).appOrigin,
+      'https://habibicraftsco.com'
+    );
+    assert.equal(
+      readConfig({ HABIBI_PREVIEW: '1', APP_ORIGIN: 'https://shop.example/' }).appOrigin,
+      'https://shop.example'
+    );
+  });
+
   it('does not invent publisher ids or Stripe keys', () => {
     const config = readConfig({});
     assert.equal(config.adsensePublisherId, '');
@@ -481,6 +505,47 @@ describe('HTTP handlers', () => {
       fetchImpl
     );
     assert.equal(result.result.id, 77);
+  });
+
+  it('fulfills a paid held slug and warns instead of refusing it', async () => {
+    const warnings = [];
+    const original = console.warn;
+    console.warn = (...args) => warnings.push(args.join(' '));
+    const session = {
+      id: 'cs_test_hat',
+      payment_status: 'paid',
+      metadata: {
+        idempotency_key: 'order-hat',
+        cart: encodeCartMetadata([{ slug: 'habibi-crafts-hat', quantity: 1, size: 'default' }])
+      },
+      customer_details: { name: 'Ada', email: 'ada@example.com' },
+      shipping_details: {
+        name: 'Ada',
+        address: { line1: '1 Test Ave', city: 'LA', state: 'CA', country: 'US', postal_code: '90001' }
+      }
+    };
+    try {
+      const result = await fulfillPaidSession(
+        session,
+        readConfig({
+          PRINTFUL_API_TOKEN: 'pf_x',
+          PRINTFUL_STORE_ID: '18687336',
+          PRINTFUL_CONFIRM_ORDERS: 'false'
+        }),
+        async (_url, init) => {
+          const body = JSON.parse(init.body);
+          assert.equal(body.items[0].sync_variant_id, 5506375453);
+          return new Response(JSON.stringify({ result: { id: 88 } }), {
+            status: 200,
+            headers: { 'content-type': 'application/json' }
+          });
+        }
+      );
+      assert.equal(result.result.id, 88);
+      assert.match(warnings.join('\n'), /fulfilling held slug habibi-crafts-hat/);
+    } finally {
+      console.warn = original;
+    }
   });
 });
 

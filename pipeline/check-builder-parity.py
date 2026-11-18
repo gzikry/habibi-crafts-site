@@ -5,6 +5,7 @@ import sys
 import tempfile
 from pathlib import Path
 
+from chrome import preview_requested
 from root import angles_dir, repo_root, site_dir
 
 ROOT = repo_root()
@@ -18,6 +19,12 @@ BUILDERS = (
 
 
 def main():
+    if preview_requested():
+        print(
+            'refusing preview env for a production parity check: '
+            'HABIBI_PREVIEW or CF_PAGES_BRANCH is not a production build'
+        )
+        sys.exit(2)
     notes = []
     if not (angles_dir() / 'manifest.json').exists():
         notes.append(

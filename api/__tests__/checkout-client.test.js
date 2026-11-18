@@ -88,9 +88,11 @@ function createElement(tag) {
 
 function matches(el, selector) {
   if (selector === 'main') return el.tag === 'main';
+  if (selector === 'p') return el.tag === 'p';
   if (selector === '.lede') return String(el.className).split(/\s+/).includes('lede');
   if (selector === '[data-checkout]') return el.hasAttribute('data-checkout');
   if (selector === '[data-checkout-return]') return el.hasAttribute('data-checkout-return');
+  if (selector === '[data-checkout-error]') return el.hasAttribute('data-checkout-error');
   if (selector === '[role=status]') return el.getAttribute('role') === 'status';
   if (selector === 'button') return el.tag === 'button';
   return false;
@@ -121,8 +123,11 @@ function bootCheckout({ enabled, search, path = '/cart.html', buttonDisabled = t
   const lede = createElement('p');
   lede.className = 'lede';
   lede.textContent = CLOSED;
+  const faq = createElement('p');
+  faq.textContent = CLOSED;
   const main = createElement('main');
   main.appendChild(lede);
+  main.appendChild(faq);
   const button = createElement('button');
   button.disabled = buttonDisabled;
   button.textContent = 'Opening soon';
@@ -192,6 +197,13 @@ function bootCheckout({ enabled, search, path = '/cart.html', buttonDisabled = t
     },
     fetch(url, init) {
       fetched.push({ url: String(url), init });
+      if (paymentStatus === 'http500' && String(url).endsWith('/api/checkout')) {
+        return Promise.resolve({
+          ok: false,
+          status: 500,
+          json: () => Promise.resolve({ error: 'server' })
+        });
+      }
       if (String(url).includes('/api/checkout-session')) {
         if (paymentStatus === 'throw') return Promise.reject(new Error('network'));
         if (paymentStatus === 'hang') {
@@ -216,7 +228,7 @@ function bootCheckout({ enabled, search, path = '/cart.html', buttonDisabled = t
   };
   vm.createContext(context);
   vm.runInContext(checkoutSource, context);
-  return { store, button, main, lede, fetched, location, replaced, cleared, timers };
+  return { store, button, main, lede, faq, fetched, location, replaced, cleared, timers };
 }
 
 function statusNode(main) {
@@ -240,6 +252,7 @@ describe('checkout client', () => {
     assert.equal(page.store[BAG_KEY], STORED_BAG);
     assert.equal(page.main.querySelector('[data-checkout-return]'), null);
     assert.equal(page.lede.textContent, CLOSED);
+    assert.equal(page.faq.textContent, CLOSED);
     assert.equal(page.button.textContent, 'Opening soon');
     assert.equal(page.button.disabled, true);
     assert.deepEqual(page.replaced, []);
@@ -247,12 +260,27 @@ describe('checkout client', () => {
     assert.equal(page.fetched.length, 0);
   });
 
-  it('drops the closed cart copy when checkout is on', () => {
+  it('enables the checkout button and leaves the closed copy in place when checkout is on', () => {
     const page = bootCheckout({ enabled: true, search: '' });
-    assert.equal(page.lede.textContent, '');
+    assert.equal(page.lede.textContent, CLOSED);
+    assert.equal(page.faq.textContent, CLOSED);
     assert.equal(page.button.textContent, 'Check out');
     assert.equal(page.button.disabled, false);
     assert.equal(page.store[BAG_KEY], STORED_BAG);
+  });
+
+  it('re-enables the button and explains when checkout returns 500', async () => {
+    const page = bootCheckout({ enabled: true, search: '', paymentStatus: 'http500' });
+    page.button.click();
+    await flush();
+    assert.equal(page.button.disabled, false);
+    assert.equal(page.button.textContent, 'Check out');
+    assert.equal(page.button.getAttribute('aria-disabled'), null);
+    const note = page.main.querySelector('[data-checkout-error]');
+    assert.equal(note.textContent, 'Something went wrong. Please try again.');
+    assert.equal(note.getAttribute('role'), 'status');
+    assert.equal(page.store[BAG_KEY], STORED_BAG);
+    assert.equal(page.fetched.length, 1);
   });
 
   it('omits contact_email so Stripe Checkout collects it', async () => {
