@@ -1,0 +1,255 @@
+[
+  {
+    "slug": "ya-aini",
+    "name": "Ya Aini",
+    "category": "mugs",
+    "price": 1499,
+    "printful_id": 462528261,
+    "subtitle": "11 oz mug.",
+    "description": "Ya Aini means roughly \"my dear\" in Arabic: an everyday endearment you'll hear at family tables. Printed on an 11 oz white glossy ceramic mug that's dishwasher and microwave safe. We print it after you order.",
+    "purchasable": true
+  },
+  {
+    "slug": "baladi",
+    "name": "Baladi",
+    "category": "mugs",
+    "price": 1499,
+    "printful_id": 462528274,
+    "subtitle": "11 oz mug.",
+    "description": "Baladi means \"my country\" or \"from back home.\" It's the word for anything local and traditional. A small reminder of home on an 11 oz white ceramic mug, dishwasher and microwave safe, printed after you order.",
+    "purchasable": true
+  },
+  {
+    "slug": "ya-dunia",
+    "name": "Ya Dunia",
+    "category": "mugs",
+    "price": 1499,
+    "printful_id": 462528282,
+    "subtitle": "11 oz mug.",
+    "description": "Ya Dunia is the quiet sigh of \"oh, life\" when things don't go the way you pictured. It's for slow mornings, long thoughts, and missing how things used to be. 11 oz white ceramic mug, dishwasher and microwave safe, printed after you order.",
+    "purchasable": true
+  },
+  {
+    "slug": "jiran",
+    "name": "Jiran",
+    "category": "mugs",
+    "price": 1499,
+    "printful_id": 462528284,
+    "subtitle": "11 oz mug.",
+    "description": "Jiran means \"neighbors\" in Arabic, for the people next door who feel like family. A thoughtful housewarming or thank-you gift. 11 oz white ceramic mug, dishwasher and microwave safe, printed after you order.",
+    "purchasable": true
+  },
+  {
+    "slug": "maamoul",
+    "name": "Maamoul",
+    "category": "mugs",
+    "price": 1499,
+    "printful_id": 462532463,
+    "subtitle": "11 oz mug.",
+    "description": "Named for maamoul, the date- or nut-filled shortbread cookies baked for the holidays. Pour a coffee and pretend there's a plate of them nearby. 11 oz white ceramic mug, dishwasher and microwave safe, printed after you order.",
+    "purchasable": true
+  },
+  {
+    "slug": "knafeh-club",
+    "name": "Knafeh Club",
+    "category": "mugs",
+    "price": 1499,
+    "printful_id": 462540373,
+    "subtitle": "11 oz mug.",
+    "description": "Welcome to the Knafeh Club, for people who know that the syrup-soaked cheese pastry is the best part of any celebration. 11 oz white ceramic mug, dishwasher and microwave safe, printed after you order.",
+    "purchasable": true
+  },
+  {
+    "slug": "morning-ritual",
+    "name": "Morning Ritual",
+    "category": "mugs",
+    "price": 1499,
+    "printful_id": 471225077,
+    "subtitle": "11 oz mug.",
+    "description": "Morning Ritual mug for the first coffee of the day. 11 oz ceramic, dishwasher and microwave safe, printed after you order.",
+    "purchasable": false
+  },
+  {
+    "slug": "khalas-habibi",
+    "name": "Khalas Habibi",
+    "category": "tees",
+    "price": 2499,
+    "printful_id": 462532457,
+    "subtitle": "Unisex tee.",
+    "description": "Khalas Habibi means \"that's it, my dear\": the friendly way to end the discussion. A unisex cotton tee with a front print, sizes S\u2013XL, printed after you order.",
+    "purchasable": true
+  },
+  {
+    "slug": "ya-habayeb",
+    "name": "Ya Habayeb",
+    "category": "tees",
+    "price": 2499,
+    "printful_id": 462540352,
+    "subtitle": "Unisex tee.",
+    "description": "Ya Habayeb is how you greet a room full of people you love: \"hey, my dear ones!\" A unisex cotton tee with a front print, sizes S\u2013XL, printed after you order.",
+    "purchasable": true
+  },
+  {
+    "slug": "warm-embrace",
+    "name": "Warm Embrace",
+    "category": "tees",
+    "price": 2499,
+    "printful_id": 471226873,
+    "subtitle": "Unisex tee.",
+    "description": "Warm Embrace tee: soft unisex cotton, sizes S\u2013XL, front print, printed after you order.",
+    "purchasable": false
+  },
+  {
+    "slug": "halawa",
+    "name": "Halawa",
+    "category": "totes",
+    "price": 3199,
+    "printful_id": 476520396,
+    "subtitle": "Cotton tote.",
+    "description": "Halawa means \"sweetness\" in Arabic. Carry a little of it everywhere. A cotton tote, one size, front print, printed after you order.",
+    "purchasable": true
+  },
+  {
+    "slug": "sit-el-kul",
+    "name": "Sit El Kul",
+    "category": "totes",
+    "price": 3199,
+    "printful_id": 476520375,
+    "subtitle": "Cotton tote.",
+    "description": "Sit El Kul means \"the best woman of all.\" It's what people call the mom or grandmother who holds everyone together. A cotton tote, one size, front print, printed after you order.",
+    "purchasable": true
+  },
+  {
+    "slug": "early-light",
+    "name": "Early Light",
+    "category": "totes",
+    "price": 3199,
+    "printful_id": 476520353,
+    "subtitle": "Cotton tote.",
+    "description": "Early Light cotton tote: one size, front print, printed after you order. An everyday carryall.",
+    "purchasable": true
+  },
+  {
+    "slug": "gather-grow",
+    "name": "Gather & Grow",
+    "category": "totes",
+    "price": 3199,
+    "printful_id": 476520279,
+    "subtitle": "Cotton tote.",
+    "description": "Gather & Grow cotton tote for market days and garden hauls. One size, front print, printed after you order.",
+    "purchasable": true
+  },
+  {
+    "slug": "ya-teta",
+    "name": "Ya Teta",
+    "category": "baby",
+    "price": 2799,
+    "printful_id": 462532461,
+    "subtitle": "Baby onesie.",
+    "description": "Ya Teta: \"Oh, Grandma!\" For the littlest one to wear on visits to Teta. A white cotton onesie in 3\u20136, 6\u201312 or 12\u201318 months, printed after you order.",
+    "purchasable": true
+  },
+  {
+    "slug": "amoura",
+    "name": "Amoura",
+    "category": "baby",
+    "price": 2799,
+    "printful_id": 462540363,
+    "subtitle": "Baby onesie.",
+    "purchasable": true
+  },
+  {
+    "slug": "garden-gate",
+    "name": "Garden Gate",
+    "category": "baby",
+    "price": 2799,
+    "printful_id": 471225103,
+    "subtitle": "Baby onesie.",
+    "description": "Garden Gate baby onesie: white cotton, 3\u20136, 6\u201312 or 12\u201318 months, printed after you order.",
+    "purchasable": false
+  },
+  {
+    "slug": "beit-el-hobb",
+    "name": "Beit El Hobb",
+    "category": "prints",
+    "price": 2399,
+    "printful_id": 462532462,
+    "subtitle": "12 \u00d7 16 print.",
+    "description": "Beit El Hobb means \"house of love.\" Hang it by the door of a home that is one. A 12 \u00d7 16 in matte print (frame not included), printed after you order.",
+    "purchasable": true
+  },
+  {
+    "slug": "dar-el-hawa",
+    "name": "Dar El Hawa",
+    "category": "prints",
+    "price": 2399,
+    "printful_id": 462540368,
+    "subtitle": "12 \u00d7 16 print.",
+    "description": "Dar El Hawa means \"house of love,\" said the romantic way. Hang it where you start and end every day together. A 12 \u00d7 16 in matte print (frame not included), printed after you order.",
+    "purchasable": true
+  },
+  {
+    "slug": "starlight",
+    "name": "Starlight",
+    "category": "prints",
+    "price": 2399,
+    "printful_id": 471225105,
+    "subtitle": "12 \u00d7 16 print.",
+    "description": "Starlight wall print, 12 \u00d7 16 in matte (frame not included), printed after you order.",
+    "purchasable": false
+  },
+  {
+    "slug": "craft-club-sticker",
+    "name": "Craft Club",
+    "category": "stickers",
+    "price": 599,
+    "subtitle": "Vinyl sticker.",
+    "description": "Craft Club vinyl sticker, about 3 in, kiss-cut. For makers and their laptops, bottles, and sketchbooks.",
+    "purchasable": false
+  },
+  {
+    "slug": "make-something-sticker",
+    "name": "Make Something",
+    "category": "stickers",
+    "price": 599,
+    "subtitle": "Vinyl sticker.",
+    "description": "Make Something vinyl sticker, about 3 in, kiss-cut. A small nudge for makers, printed after you order.",
+    "purchasable": false
+  },
+  {
+    "slug": "leaf-season-sticker",
+    "name": "Leaf Season",
+    "category": "stickers",
+    "price": 599,
+    "subtitle": "Vinyl sticker.",
+    "description": "Leaf Season vinyl sticker, about 3 in, kiss-cut, for fall lovers, printed after you order.",
+    "purchasable": false
+  },
+  {
+    "slug": "habibi-crafts-hat",
+    "name": "Habibi Crafts",
+    "category": "hats",
+    "price": 2999,
+    "subtitle": "Unstructured dad hat.",
+    "description": "Our name on a hat. Habibi means \"my dear,\" and that's how we think about everyone who shops with us. A black unstructured dad hat, one size, adjustable, embroidered after you order.",
+    "purchasable": true
+  },
+  {
+    "slug": "make-something-hat",
+    "name": "Make Something",
+    "category": "hats",
+    "price": 2999,
+    "subtitle": "Unstructured dad hat.",
+    "description": "Make Something dad hat: black, unstructured, one size adjustable, embroidered after you order.",
+    "purchasable": true
+  },
+  {
+    "slug": "leaf-season-hat",
+    "name": "Leaf Season",
+    "category": "hats",
+    "price": 2999,
+    "subtitle": "Unstructured dad hat.",
+    "description": "Leaf Season dad hat: black, unstructured, one size adjustable, embroidered after you order.",
+    "purchasable": true
+  }
+]
