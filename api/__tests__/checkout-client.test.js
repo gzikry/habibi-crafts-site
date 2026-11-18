@@ -14,6 +14,7 @@ const RECEIVED = 'Thank you, your order is in. Your receipt is on its way by ema
 const UNCONFIRMED = "We couldn't confirm your order yet. If your payment went through, your receipt will arrive by email. Your bag is still here.";
 const CANCELLED = "Checkout cancelled. Your bag is saved for when you're ready.";
 const CLOSED = "We're not taking orders yet.";
+const OPEN_FAQ = 'Yes. Add a piece from the shop to your bag and check out.';
 const BAG_KEY = 'habibi-bag';
 const STORED_BAG = JSON.stringify([{ slug: 'ya-aini', size: 'default', quantity: 1 }]);
 
@@ -88,6 +89,7 @@ function createElement(tag) {
 
 function matches(el, selector) {
   if (selector === 'main') return el.tag === 'main';
+  if (selector === 'p') return el.tag === 'p';
   if (selector === '.lede') return String(el.className).split(/\s+/).includes('lede');
   if (selector === '[data-checkout]') return el.hasAttribute('data-checkout');
   if (selector === '[data-checkout-return]') return el.hasAttribute('data-checkout-return');
@@ -121,8 +123,11 @@ function bootCheckout({ enabled, search, path = '/cart.html', buttonDisabled = t
   const lede = createElement('p');
   lede.className = 'lede';
   lede.textContent = CLOSED;
+  const faq = createElement('p');
+  faq.textContent = CLOSED;
   const main = createElement('main');
   main.appendChild(lede);
+  main.appendChild(faq);
   const button = createElement('button');
   button.disabled = buttonDisabled;
   button.textContent = 'Opening soon';
@@ -216,7 +221,7 @@ function bootCheckout({ enabled, search, path = '/cart.html', buttonDisabled = t
   };
   vm.createContext(context);
   vm.runInContext(checkoutSource, context);
-  return { store, button, main, lede, fetched, location, replaced, cleared, timers };
+  return { store, button, main, lede, faq, fetched, location, replaced, cleared, timers };
 }
 
 function statusNode(main) {
@@ -240,6 +245,7 @@ describe('checkout client', () => {
     assert.equal(page.store[BAG_KEY], STORED_BAG);
     assert.equal(page.main.querySelector('[data-checkout-return]'), null);
     assert.equal(page.lede.textContent, CLOSED);
+    assert.equal(page.faq.textContent, CLOSED);
     assert.equal(page.button.textContent, 'Opening soon');
     assert.equal(page.button.disabled, true);
     assert.deepEqual(page.replaced, []);
@@ -250,6 +256,7 @@ describe('checkout client', () => {
   it('drops the closed cart copy when checkout is on', () => {
     const page = bootCheckout({ enabled: true, search: '' });
     assert.equal(page.lede.textContent, '');
+    assert.equal(page.faq.textContent, OPEN_FAQ);
     assert.equal(page.button.textContent, 'Check out');
     assert.equal(page.button.disabled, false);
     assert.equal(page.store[BAG_KEY], STORED_BAG);

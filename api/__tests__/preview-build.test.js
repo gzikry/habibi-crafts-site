@@ -89,10 +89,65 @@ describe('preview build', () => {
     const bySlug = Object.fromEntries(catalog.map((product) => [product.slug, product]));
     assert.equal(bySlug['ya-aini'].purchasable, true);
     assert.equal(bySlug.jiran.purchasable, false);
+    assert.equal(bySlug['sit-el-kul'].purchasable, false);
     assert.equal(bySlug['habibi-crafts-hat'].purchasable, false);
+    assert.equal(bySlug['make-something-hat'].purchasable, false);
+    assert.equal(bySlug['leaf-season-hat'].purchasable, false);
+    const yaAini = read(join(outDir, 'product-ya-aini.html'));
+    assert.doesNotMatch(yaAini, /We're not taking orders yet/);
+    assert.match(yaAini, /<li>Preview<\/li>/);
+    const coming = read(join(outDir, 'product-sit-el-kul.html'));
+    assert.match(coming, /Email us/);
+    const faq = read(join(outDir, 'faq.html'));
+    assert.doesNotMatch(faq, /We're not taking orders yet/);
+    assert.match(faq, /Yes\. Add a piece from the shop to your bag and check out\./);
+    assert.match(read(join(root, 'site/faq.html')), /We're not taking orders yet/);
+    assert.doesNotMatch(read(join(root, 'site/index.html')), /<li>Preview<\/li>/);
     const committed = JSON.parse(read(join(root, 'site/product-catalog.json')));
     const committedHat = committed.find((product) => product.slug === 'habibi-crafts-hat');
     assert.equal(committedHat.purchasable, true);
+  });
+
+  it('treats a non-main Cloudflare branch as a preview even without HABIBI_PREVIEW', () => {
+    const outDir = mkdtempSync(join(tmpdir(), 'habibi-cf-preview-'));
+    const env = { ...process.env };
+    delete env.HABIBI_PREVIEW;
+    delete env.CHECKOUT_ENABLED;
+    env.CF_PAGES = '1';
+    env.CF_PAGES_BRANCH = 'feature-preview';
+    execFileSync('python3', ['pipeline/prepare-preview.py', '--out', outDir], {
+      cwd: root,
+      env
+    });
+    assert.match(read(join(outDir, 'product-ya-aini.html')), /noindex,nofollow/);
+    assert.match(read(join(outDir, 'robots.txt')), /Disallow: \//);
+    assert.match(read(join(outDir, 'index.html')), /<li>Preview<\/li>/);
+    assert.match(read(join(root, 'site/public-config.js')), /CHECKOUT_ENABLED:\s*false/);
+  });
+
+  it('refuses a production parity check when preview env vars are set', () => {
+    const result = spawnSync('python3', ['pipeline/check-builder-parity.py'], {
+      cwd: root,
+      encoding: 'utf8',
+      env: { ...process.env, HABIBI_PREVIEW: '1', CHECKOUT_ENABLED: 'true' }
+    });
+    assert.equal(result.status, 2);
+    assert.match(`${result.stdout}\n${result.stderr}`, /refusing preview env/);
+  });
+
+  it('documents preview vars in wrangler and requires APP_ORIGIN', () => {
+    const wrangler = read(join(root, 'wrangler.toml'));
+    assert.match(wrangler, /\[env\.preview\.vars\]/);
+    assert.match(wrangler, /HABIBI_PREVIEW = "1"/);
+    assert.match(wrangler, /CHECKOUT_ENABLED = "true"/);
+    assert.doesNotMatch(wrangler, /STRIPE_SECRET_KEY|sk_live_|sk_test_|PRINTFUL_API_TOKEN =/);
+    const doc = read(join(root, 'docs/CLOUDFLARE-SETUP.md'));
+    assert.match(doc, /APP_ORIGIN` is required/);
+    assert.match(doc, /Zero Trust/);
+    assert.match(doc, /HOLD_SLUGS/);
+    assert.match(doc, /Create deployment/);
+    assert.match(doc, /STRIPE_PUBLISHABLE_KEY/);
+    assert.doesNotMatch(doc, /replaces the file/);
   });
 
   it('smoke script requires a preview URL and names the health and checkout routes', () => {

@@ -6,12 +6,17 @@ function env(source, key, fallback = '') {
   return value == null || value === '' ? fallback : String(value);
 }
 
+function previewRuntime(source) {
+  if (flag(source, 'HABIBI_PREVIEW', false)) return true;
+  const branch = env(source, 'CF_PAGES_BRANCH', '');
+  return Boolean(branch) && branch !== 'main';
+}
+
 function appOrigin(source) {
   const set = env(source, 'APP_ORIGIN', '');
   if (set) return set.replace(/\/$/, '');
-  if (flag(source, 'HABIBI_PREVIEW', false)) {
-    const pagesUrl = env(source, 'CF_PAGES_URL', '');
-    if (pagesUrl) return pagesUrl.replace(/\/$/, '');
+  if (previewRuntime(source)) {
+    throw new Error('APP_ORIGIN is required when the preview is on');
   }
   return 'https://habibicraftsco.com';
 }

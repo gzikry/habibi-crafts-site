@@ -10,3 +10,15 @@ compatibility_flags = ["nodejs_compat"]
 [vars]
 PRINTFUL_STORE_ID = "18687336"
 PRINTFUL_CONFIRM_ORDERS = "false"
+CHECKOUT_ENABLED = "false"
+ADSENSE_ENABLED = "false"
+
+# Non-secret preview settings live here. Encrypted secrets stay in the
+# Cloudflare dashboard. APP_ORIGIN is required before a preview can take
+# payment. Set it to that preview's origin. There is no production fallback.
+[env.preview.vars]
+HABIBI_PREVIEW = "1"
+CHECKOUT_ENABLED = "true"
+PRINTFUL_STORE_ID = "18687336"
+PRINTFUL_CONFIRM_ORDERS = "false"
+ADSENSE_ENABLED = "false"

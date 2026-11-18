@@ -1,4 +1,5 @@
 import json
+import os
 from pathlib import Path
 
 BASE = 'https://habibicraftsco.com'
@@ -22,6 +23,35 @@ ORDERS_NOTE = "We're not taking orders yet. You can still add things to your bag
 ORDERS_NOTE_SHORT = "We're not taking orders yet."
 OPENING_SOON = 'Opening soon'
 COMING_SOON = 'Coming soon'
+OPEN_FAQ = 'Yes. Add a piece from the shop to your bag and check out.'
+EMAIL_US = (
+    '<p class="checkout-note">Want a name on it? '
+    '<a href="mailto:habibicraftsco@gmail.com">Email us</a>.</p>'
+)
+
+
+def env_on(name):
+    return os.environ.get(name, '').strip().lower() in {'1', 'true', 'yes', 'on'}
+
+
+def preview_requested():
+    if env_on('HABIBI_PREVIEW'):
+        return True
+    if os.environ.get('CF_PAGES', '').strip() == '1':
+        return os.environ.get('CF_PAGES_BRANCH', '').strip() != 'main'
+    return False
+
+
+def orders_copy(checkout_on, short=False):
+    if checkout_on:
+        return ''
+    return ORDERS_NOTE_SHORT if short else ORDERS_NOTE
+
+
+def faq_html(html, checkout_on):
+    if not checkout_on:
+        return html
+    return html.replace("We're not taking orders yet.", OPEN_FAQ)
 SHIP_LINE = 'We print it after you order. It usually ships in 2 to 5 days.'
 
 THIN_PAGES = (
@@ -123,11 +153,12 @@ def nav(home=False, shop=False, collections=False, prefix=''):
 
 
 def trust(prefix=''):
+    preview = '\n      <li>Preview</li>' if preview_requested() else ''
     return f'''<div class="trust-strip" role="note">
   <div class="shell">
     <ul class="trust-chips">
       <li>Made to order</li>
-      <li>Ships in the US</li>
+      <li>Ships in the US</li>{preview}
     </ul>
   </div>
 </div>'''

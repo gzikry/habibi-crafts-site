@@ -49,6 +49,9 @@ describe('launch set', () => {
     for (const slug of HOLD_SLUGS) assert.equal(saleOpen(slug), false, slug);
     assert.equal(saleOpen('jiran'), false);
     assert.equal(saleOpen('sit-el-kul'), false);
+    assert.equal(saleOpen(''), false);
+    assert.equal(saleOpen(' ya-aini'), false);
+    assert.equal(saleOpen(1499), false);
   });
 
   it('refuses every slug while checkout is off', async () => {

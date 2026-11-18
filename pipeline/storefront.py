@@ -13,8 +13,9 @@ from datetime import date
 from pfangles import order as order_angles
 from root import angles_dir, cents_decimal, format_cents, repo_root, site_dir, without_retired_back
 from chrome import (
-    BASE, COMING_SOON, ORDERS_NOTE, ORDERS_NOTE_SHORT, SHARE_IMAGE_ALT, SHIP_LINE, THIN_PAGES,
-    esc, filter_bars, icons, json_ld, page_close, page_open, scripts, stylesheet,
+    BASE, COMING_SOON, EMAIL_US, SHARE_IMAGE_ALT, SHIP_LINE, THIN_PAGES,
+    esc, faq_html, filter_bars, icons, json_ld, orders_copy, page_close, page_open,
+    preview_requested, scripts, stylesheet,
 )
 
 # Hand-written pages use this for og-share.png. Home and shop keep their own alts.
@@ -153,16 +154,22 @@ def env_on(name):
     return os.environ.get(name, '').strip().lower() in {'1', 'true', 'yes', 'on'}
 
 
-def preview_requested():
-    return env_on('HABIBI_PREVIEW')
-
-
 def js_slug_list(name):
     text = (ROOT / 'api' / 'lib' / 'catalog.js').read_text()
     match = re.search(rf'export const {name} = \[([\s\S]*?)\]', text)
     if not match:
         raise RuntimeError(f'missing {name} in api/lib/catalog.js')
-    return re.findall(r"'([^']+)'", match.group(1))
+    slugs = re.findall(r"'([^']+)'", match.group(1))
+    known = {
+        product['slug']
+        for product in json.loads((SITE / 'product-catalog.json').read_text())
+    }
+    for slug in slugs:
+        if not isinstance(slug, str) or not slug.strip() or slug != slug.strip():
+            raise RuntimeError(f'{name} has a slug that is not plain text')
+        if slug not in known:
+            raise RuntimeError(f'{name} slug {slug} is not in product-catalog.json')
+    return slugs
 
 
 LAUNCH_SLUGS = js_slug_list('LAUNCH_SLUGS')
@@ -182,8 +189,10 @@ def checkout_enabled():
 
 
 def for_sale(product):
+    slug = product.get('slug')
+    if not isinstance(slug, str) or not slug.strip():
+        return False
     if checkout_enabled():
-        slug = product['slug']
         return slug in LAUNCH_SLUGS and slug not in HOLD_SLUGS
     return product.get('purchasable') is True
 
@@ -657,6 +666,7 @@ def write_home(out_dir, manifest=None):
   </section>'''
     html = page_open(head, home=True) + '\n' + page_close(main)
     (out_dir / 'index.html').write_text(html)
+    write_faq(out_dir)
     print(f'index.html ({len(products)} products)')
 
 
@@ -817,12 +827,13 @@ def write_products(out_dir, manifest=None):
         subtitle = TYPE_DESC[kind]
         desc = p.get('description') or f"{p['name']}. {subtitle}."
         url = f"{BASE}/product-{p['slug']}.html"
-        if for_sale(p):
+        selling = for_sale(p)
+        if selling:
             actions = (
                 f'<div class="actions"><button class="button" type="button" data-add-bag '
                 f'data-product-slug="{p["slug"]}">Add to bag</button></div>'
             )
-            note = ORDERS_NOTE
+            note = orders_copy(checkout_enabled())
         elif checkout_enabled():
             actions = (
                 f'<div class="actions"><button class="button browse-mode" type="button" disabled '
@@ -831,14 +842,11 @@ def write_products(out_dir, manifest=None):
             note = ''
         else:
             actions = ''
-            note = ORDERS_NOTE_SHORT
+            note = orders_copy(False, short=True)
         charge = f'<p class="checkout-note">{note}</p>' if note else ''
         personalize = ''
-        if kind == 'mugs':
-            personalize = (
-                '<p class="checkout-note">Want a name on it? '
-                '<a href="mailto:habibicraftsco@gmail.com">Email us</a>.</p>'
-            )
+        if kind == 'mugs' or (checkout_enabled() and not selling):
+            personalize = EMAIL_US
         buy_parts = [part for part in (size_block(p), actions, charge, personalize) if part]
         buy = '\n      '.join(buy_parts)
         eyebrow = meta[6] if kind != 'hats' else 'Dad hat'
@@ -897,6 +905,32 @@ def write_products(out_dir, manifest=None):
         (out_dir / f'product-{p["slug"]}.html').write_text(html)
         built += 1
     print(f'Built {built} product pages')
+    write_storefront_catalog(out_dir)
+
+
+def write_storefront_catalog(out_dir):
+    src = SITE / 'product-catalog.json'
+    catalog = json.loads(src.read_text())
+    changed = False
+    for product in catalog:
+        sale = for_sale(product)
+        if product.get('purchasable') is not sale:
+            product['purchasable'] = sale
+            changed = True
+    dest = out_dir / 'product-catalog.json'
+    if changed:
+        dest.write_text(json.dumps(catalog, indent=2) + '\n')
+    else:
+        dest.write_bytes(src.read_bytes())
+
+
+def write_faq(out_dir):
+    src = SITE / 'faq.html'
+    raw = src.read_bytes()
+    if not checkout_enabled():
+        (out_dir / 'faq.html').write_bytes(raw)
+        return
+    (out_dir / 'faq.html').write_text(faq_html(raw.decode(), True))
 
 
 # Curated groups. Every slug is a live catalog item.

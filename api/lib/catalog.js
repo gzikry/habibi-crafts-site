@@ -26,6 +26,7 @@ export const HOLD_SLUGS = [
 ];
 
 export function saleOpen(slug) {
+  if (typeof slug !== 'string' || slug.trim() === '' || slug !== slug.trim()) return false;
   return LAUNCH_SLUGS.includes(slug) && !HOLD_SLUGS.includes(slug);
 }
 
@@ -57,7 +58,8 @@ export function resolveVariant(product, size) {
   return product.variants[key] || null;
 }
 
-export function resolveLineItem(raw) {
+export function resolveLineItem(raw, options = {}) {
+  const enforceSale = options.enforceSale !== false;
   const slug = raw?.slug;
   const product = products[slug];
   if (!product) return { error: `unknown product ${slug || ''}` };
@@ -67,7 +69,7 @@ export function resolveLineItem(raw) {
   if (!Number.isInteger(quantity) || quantity < 1 || quantity > 20) {
     return { error: `invalid quantity for ${slug}` };
   }
-  if (!saleOpen(slug)) return { error: `not available for checkout ${slug}` };
+  if (enforceSale && !saleOpen(slug)) return { error: `not available for checkout ${slug}` };
   if (raw.price_cents != null && raw.price_cents !== product.price) {
     return { error: `price mismatch ${slug}`, status: 409 };
   }

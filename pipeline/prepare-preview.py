@@ -17,6 +17,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from root import repo_root, site_dir
+from chrome import preview_requested
 from storefront import checkout_enabled, for_sale
 
 INDEX_ROBOTS = 'index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1'
@@ -98,8 +99,8 @@ def patch_catalog(out):
 
 
 def main():
-    if not env_on('HABIBI_PREVIEW'):
-        print('HABIBI_PREVIEW is not 1. Leaving site/ unchanged.')
+    if not preview_requested():
+        print('Not a preview build. Leaving site/ unchanged.')
         return
     out = output_dir()
     site = site_dir()

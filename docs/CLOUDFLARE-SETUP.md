@@ -31,44 +31,51 @@ On the setup screen:
 5. Leave the root directory as the repository root.
 6. Select **Save and Deploy**.
 
-The build command does nothing when `HABIBI_PREVIEW` is unset, so the production deployment publishes the committed site with checkout off. A preview deployment sets that variable and rebuilds the preview pages in the build workspace.
+The build command does nothing on a production build of `main`. A preview build is any Cloudflare build whose `CF_PAGES_BRANCH` is not `main`, and any build with `HABIBI_PREVIEW=1`. Those builds noindex the pages.
 
 `functions/api` is the Pages Functions directory. You do not copy those files by hand.
 
-## Set preview variables
+## Start a preview deployment
 
-1. Open the Pages project.
-2. Open **Settings**, then **Environment variables**.
-3. Add each name below to the **Preview** environment. Leave **Encrypt** off for these. They are not secrets.
+1. Push a branch other than `main`, or open the Pages project, then **Deployments**, then **Create deployment**, and choose that branch.
+2. Cloudflare builds it as a Preview deployment. The production branch `main` is not a preview.
+3. After it finishes, copy the branch URL. It looks like `https://<branch>.<project>.pages.dev`.
 
-| Name | Preview value |
-| --- | --- |
-| `HABIBI_PREVIEW` | `1` |
-| `CHECKOUT_ENABLED` | `true` |
-| `CHECKOUT_API_BASE` | Leave empty on the first build. The build uses `CF_PAGES_URL`. After you have the branch URL, you may set this to `https://<branch>.<project>.pages.dev` with no trailing slash. |
-| `APP_ORIGIN` | The same preview origin, with no trailing slash. |
-| `PRINTFUL_STORE_ID` | `18687336` |
-| `PRINTFUL_CONFIRM_ORDERS` | `false` |
-| `ADSENSE_ENABLED` | `false` |
+## Set the required preview origin
 
-`wrangler.toml` already sets `PRINTFUL_STORE_ID` and `PRINTFUL_CONFIRM_ORDERS` to those values. A dashboard value for the same name replaces the file for that environment.
+Non-secret preview values live in `wrangler.toml` under `[env.preview.vars]`. The dashboard does not replace those file values. `APP_ORIGIN` is required. Until you set it, a preview API call fails closed and does not send Stripe or CORS at habibicraftsco.com.
 
-Do not add `HABIBI_PREVIEW` to **Production**. Leave production `CHECKOUT_ENABLED` unset, or set it to `false`.
+1. Open `wrangler.toml`.
+2. Under `[env.preview.vars]`, add `APP_ORIGIN` set to the preview origin from the deployment, with no trailing slash.
+3. Commit that line and push the preview branch so the next build picks it up.
+
+`CHECKOUT_API_BASE` can stay empty. The preview build fills the browser config from `CF_PAGES_URL`, which exists only while the build is running.
 
 ## Add the secrets
 
-On the same **Environment variables** screen, add these to **Preview** with **Encrypt** turned on. Paste the values from Stripe and Printful. Do not put them in git, in `site/`, or in this document.
+In the Pages project, open **Settings**, then **Environment variables**. Add only these names to **Preview**, with **Encrypt** turned on. Do not put them in `wrangler.toml`, in `site/`, or in this document.
 
 | Name | Where the value comes from |
 | --- | --- |
 | `STRIPE_SECRET_KEY` | Stripe test secret key |
 | `STRIPE_WEBHOOK_SECRET` | Signing secret of the test webhook below |
-| `STRIPE_PUBLISHABLE_KEY` | Stripe test publishable key. The preview pages leave this blank. The secret is for the host only. |
+| `STRIPE_PUBLISHABLE_KEY` | Stripe test publishable key. This is not the secret key. Store it here if the host needs it. The preview HTML leaves it empty because the browser is sent to Stripe Checkout and does not load Stripe.js. |
 | `PRINTFUL_API_TOKEN` | The existing Printful token |
 
 You can add the same four names to **Production** later. Production checkout stays off until you say so.
 
-Select **Save**. Open **Deployments** and retry the preview deployment so the build sees the new names.
+## Lock the preview to your email
+
+1. In the Cloudflare dashboard, open **Zero Trust**.
+2. Open **Access**, then **Applications**, then **Add an application**.
+3. Choose **Self-hosted**.
+4. Set the application domain to the preview host, `<project>.pages.dev`. Include every subdomain of that host.
+5. Add a policy named Allow shop email. Set the action to **Allow**. Set the include rule to **Emails** and the value to `habibicraftsco@gmail.com`. That is the shop address already published on the site. Use a different email here if that is the inbox you actually read.
+6. Add a second policy named Stripe webhook. Set the action to **Bypass**. Limit it to the path `/api/webhook`, so Stripe can post `checkout.session.completed`.
+7. For the login method, **One-time PIN** is enough.
+8. Save the application.
+
+A stranger who opens the preview is asked for that email. `scripts/preview-smoke.sh` from a machine that has not passed Access will be blocked. After the one-time pin, place the test order in the browser.
 
 ## Point Stripe at the preview
 
@@ -98,11 +105,11 @@ The preview pages send `noindex` and `robots.txt` disallows the whole host.
 
 ## What the preview sells
 
-The open launch set is Halawa, Early Light, Ya Aini, Baladi, Khalas Habibi, Ya Teta, and Beit El Hobb. Those pages show **Add to bag** and `InStock` on a preview build.
+`LAUNCH_SLUGS` in `api/lib/catalog.js` is the launch set George chose. It includes Halawa, Early Light, Ya Aini, Baladi, Khalas Habibi, Ya Teta, Beit El Hobb, and the three dad hats. Those seven open products show **Add to bag** and `InStock` on a checkout-on preview.
 
-The three dad hats are in the launch list and also in `HOLD_SLUGS` in `api/lib/catalog.js`, because their colorway and art are still being revised. A preview shows **Coming soon** for the hats, and the API refuses them. Delete a hat from `HOLD_SLUGS` when that hat is ready to sell.
+`HOLD_SLUGS` is the subset of that launch list whose colorway and art are still being revised. Today it is the three dad hats. A product sells only when its slug is in `LAUNCH_SLUGS` and not in `HOLD_SLUGS`. The hats stay in the launch list so the shop still shows them, and they stay unsellable until you delete a hat from `HOLD_SLUGS`.
 
-Every other product shows **Coming soon** and stays `OutOfStock`.
+Every other product, and every held hat, shows **Coming soon** and stays `OutOfStock`. The bag catalog marks those rows not purchasable, so they cannot be added.
 
 ## Add the api host later
 

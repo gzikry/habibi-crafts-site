@@ -1,5 +1,5 @@
 import { readConfig } from './config.js';
-import { decodeCartMetadata, encodeCartMetadata, resolveLineItem } from './catalog.js';
+import { HOLD_SLUGS, decodeCartMetadata, encodeCartMetadata, resolveLineItem } from './catalog.js';
 import { corsHeaders, json, text } from './http.js';
 import { createPrintfulOrder } from './printful.js';
 import {
@@ -138,8 +138,11 @@ export async function fulfillPaidSession(session, config, fetchImpl = fetch) {
   const cart = decodeCartMetadata(session.metadata?.cart);
   const items = [];
   for (const raw of cart) {
-    const item = resolveLineItem(raw);
+    const item = resolveLineItem(raw, { enforceSale: false });
     if (item.error) throw new Error(item.error);
+    if (HOLD_SLUGS.includes(item.slug)) {
+      console.warn(`fulfilling held slug ${item.slug}`);
+    }
     items.push(item);
   }
   if (!items.length) throw new Error('cart metadata missing from Stripe session');
