@@ -252,7 +252,7 @@ describe('checkout client', () => {
     assert.equal(page.fetched.length, 0);
   });
 
-  it('drops the closed cart copy when checkout is on', () => {
+  it('enables the checkout button and leaves the closed copy in place when checkout is on', () => {
     const page = bootCheckout({ enabled: true, search: '' });
     assert.equal(page.lede.textContent, CLOSED);
     assert.equal(page.faq.textContent, CLOSED);

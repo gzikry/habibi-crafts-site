@@ -64,29 +64,27 @@ In the Pages project, open **Settings**, then **Environment variables**. Add onl
 
 You can add the same four names to **Production** later. Production checkout stays off until you say so.
 
-## Lock the preview hostnames
+## Lock the preview deployments
 
-Protect only the preview aliases, `*.<project>.pages.dev`. Do not add `habibicraftsco.com`, the apex `<project>.pages.dev` production hostname, or `*.pages.dev`.
+Protect preview deployments from the Pages project. Do not create a self-hosted Access application on the `pages.dev` hostname. That zone is not one you own, so a handmade application there does not lock the preview.
 
-1. In the Cloudflare dashboard, open **Zero Trust**.
-2. Open **Access**, then **Applications**, then **Add an application**.
-3. Choose **Self-hosted**. Name it Habibi preview.
-4. Set the application domain to `<project>.pages.dev` and the subdomain to `*`. That matches branch and commit preview hosts only. Leave the path empty so the whole preview site is covered. Do not add another hostname.
-5. Add one policy. Name it Allow shop email. Action **Allow**. Include rule **Emails**, value `habibicraftsco@gmail.com`. That is the shop address already on the site. Use another email if that is the inbox you read.
-6. Login method: **One-time PIN**.
-7. Save this application.
+1. Open the Pages project.
+2. Open **Settings**, then **General**.
+3. Select **Enable access policy**.
+4. This covers preview deployments only. It leaves `habibicraftsco.com` and the production `<project>.pages.dev` hostname open. Do not add those.
+5. Open the Access application this created. Set one Allow policy for `habibicraftsco@gmail.com` with **One-time PIN**. Use another email if that is the inbox you read.
 
 ## Let Stripe reach the webhook
 
-Add a second Access application. Do not put a Bypass policy on the preview application above. A path bypass on that same app is easy to apply to every path.
+Stripe cannot pass the preview login. Add a separate Access application for `/api/webhook` with **Bypass**. Do not add that Bypass to the preview application. A Bypass on the preview application opens the whole preview.
 
-1. **Add an application** again. Choose **Self-hosted**. Name it Habibi preview webhook.
-2. Use the same domain `<project>.pages.dev` and subdomain `*`.
-3. Set the path to `/api/webhook`.
-4. Add one policy. Name it Stripe webhook. Action **Bypass**.
+1. In **Zero Trust**, open **Access**, then **Applications**, then **Add an application**.
+2. Choose **Self-hosted**. Name it Habibi preview webhook.
+3. Set the public hostname to the preview host you are testing, and set the path to `/api/webhook` only.
+4. Add one policy. Name it Stripe webhook. Action **Bypass**. Include **Everyone**.
 5. Save this application.
 
-Cloudflare uses the application with the more specific path for `/api/webhook`, so Stripe can post `checkout.session.completed`. Every other preview URL still asks for the shop email. The public site on `habibicraftsco.com` is not in either application.
+Cloudflare uses the application with the more specific path for `/api/webhook`, so Stripe can post `checkout.session.completed`. Every other preview URL still asks for the shop email. The public site is not in this application. The unsigned webhook still fails closed: `POST /api/webhook` with no Stripe signature returns HTTP 400 and `missing_stripe_signature`.
 
 ## Point Stripe at the preview
 
@@ -110,7 +108,19 @@ From this repo, after the preview deployment is green:
 scripts/preview-smoke.sh https://<branch>.<project>.pages.dev
 ```
 
-The command checks four things. `/api/health` must report checkout enabled. `/cart.html` must say Check out. An unauthenticated `POST /api/checkout` must be blocked by Access and must not return a checkout URL. `POST /api/webhook` with no Stripe signature must return HTTP 400 and `missing_stripe_signature`, which shows the webhook bypass reached the function.
+The command runs two groups.
+
+Unauthenticated, every run:
+
+- `POST /api/checkout` is blocked by Access and does not return a checkout URL.
+- `POST /api/webhook` with no Stripe signature returns HTTP 400 and `missing_stripe_signature`.
+
+Authenticated, when a Cloudflare Access credential is in the environment:
+
+- `/api/health` reports checkout enabled.
+- `/cart.html` says Check out.
+
+Set `CF_ACCESS_CLIENT_ID` and `CF_ACCESS_CLIENT_SECRET` for a service token, or set `CF_AUTHORIZATION` to the `CF_Authorization` cookie. If neither is set, the script skips the authenticated checks and says so.
 
 The preview pages send `noindex` and `robots.txt` disallows the whole host.
 

@@ -114,6 +114,12 @@ def main():
     (out / 'public-config.js').write_text(public_config(enabled, api_base()))
     patch_html(out, enabled)
     patch_catalog(out)
+    if enabled:
+        script = out / 'checkout.js'
+        closed = script.read_text()
+        if 'Opening soon' not in closed:
+            raise SystemExit('checkout.js closed label missing')
+        script.write_text(closed.replace('Opening soon', 'Try again'))
     (out / 'robots.txt').write_text('User-agent: *\nDisallow: /\n')
     (out / '_headers').write_text('/*\n  X-Robots-Tag: noindex, nofollow\n')
     print(f'preview build wrote {out}')

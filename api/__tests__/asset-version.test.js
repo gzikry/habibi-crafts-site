@@ -12,7 +12,8 @@ describe('asset versions', () => {
       cwd: root,
       encoding: 'utf8',
     });
-    assert.match(out, /styles\.css=36/);
+    assert.match(out, /styles\.css=37/);
+    assert.match(out, /checkout\.js=18/);
     assert.match(out, /script and stylesheet versions match, and images are versioned/);
   });
 });

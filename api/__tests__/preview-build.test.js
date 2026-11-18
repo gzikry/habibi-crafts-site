@@ -1,8 +1,9 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import { saleOpen } from '../lib/catalog.js';
-import { execFileSync, spawnSync } from 'node:child_process';
+import { execFile, execFileSync, spawnSync } from 'node:child_process';
 import { mkdtempSync, readFileSync, readdirSync } from 'node:fs';
+import { createServer } from 'node:http';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -83,9 +84,19 @@ describe('preview build', () => {
 
     const cart = read(join(outDir, 'cart.html'));
     assert.match(cart, /data-checkout data-bag-checkout>Check out</);
+    assert.match(cart, /<p class="lede">Review your bag, then check out\.<\/p>/);
     assert.doesNotMatch(cart, /Opening soon/);
     assert.doesNotMatch(cart, /not taking orders/i);
+    assert.doesNotMatch(cart, /Yes\. Add a piece from the shop/);
     assert.match(cart, /noindex,nofollow/);
+    const checkout = read(join(outDir, 'checkout.html'));
+    assert.match(checkout, /<p class="lede">Checkout opens from your bag\.<\/p>/);
+    assert.match(checkout, /Stripe collects the card/);
+    assert.doesNotMatch(checkout, /Yes\. Add a piece from the shop/);
+    const tracking = read(join(outDir, 'tracking.html'));
+    assert.doesNotMatch(tracking, /nothing to look up today/i);
+    assert.match(tracking, /Your email has the tracking link, with the order number and the carrier\./);
+    assert.doesNotMatch(read(join(outDir, 'shipping.html')), /Yes\. Add a piece from the shop/);
 
     const catalog = JSON.parse(read(join(outDir, 'product-catalog.json')));
     const bySlug = Object.fromEntries(catalog.map((product) => [product.slug, product]));
@@ -103,14 +114,28 @@ describe('preview build', () => {
     assert.match(yaAini, /<li>Preview<\/li>/);
     const tote = read(join(outDir, 'product-sit-el-kul.html'));
     assert.match(tote, /Want one\? <a href="mailto:habibicraftsco@gmail.com">Email us<\/a>/);
+    assert.doesNotMatch(tote, /Add to bag/);
     assert.doesNotMatch(tote, /Want a name on it/);
+    const halawa = read(join(outDir, 'product-halawa.html'));
+    assert.match(halawa, /Add to bag/);
+    assert.doesNotMatch(halawa, /Want one\?/);
+    assert.doesNotMatch(halawa, /Email us/);
+    const early = read(join(outDir, 'product-early-light.html'));
+    assert.match(early, /Add to bag/);
+    assert.doesNotMatch(early, /Want one\?/);
     const sticker = read(join(outDir, 'product-leaf-season-sticker.html'));
     assert.match(sticker, /Want one\?/);
     const other = read(join(outDir, 'product-warm-embrace.html'));
     assert.match(other, /Questions\? <a href="mailto:habibicraftsco@gmail.com">Email us<\/a>/);
     assert.doesNotMatch(other, /Want a name on it/);
     assert.doesNotMatch(other, /Want one\?/);
-    const banned = [/not taking orders/i, /does not collect payment/i, /when we start taking orders/i];
+    const banned = [
+      /not taking orders/i,
+      /does not collect payment/i,
+      /when we start taking orders/i,
+      /nothing to look up today/i,
+      /Opening soon/
+    ];
     function walk(dir) {
       for (const entry of readdirSync(dir, { withFileTypes: true })) {
         const path = join(dir, entry.name);
@@ -214,14 +239,23 @@ print('ok')
     assert.match(wrangler, /\[env\.preview\.vars\]/);
     assert.match(wrangler, /HABIBI_PREVIEW = "1"/);
     assert.match(wrangler, /CHECKOUT_ENABLED = "true"/);
+    assert.match(wrangler, /non-main Cloudflare branch is a preview/);
+    assert.doesNotMatch(wrangler, /does nothing unless HABIBI_PREVIEW=1/);
     assert.doesNotMatch(wrangler, /STRIPE_SECRET_KEY|sk_live_|sk_test_|PRINTFUL_API_TOKEN =/);
     const doc = read(join(root, 'docs/CLOUDFLARE-SETUP.md'));
     assert.match(doc, /APP_ORIGIN` is required/);
+    assert.match(doc, /Enable access policy/);
+    assert.match(doc, /Settings\*\*, then \*\*General\*\*/);
     assert.match(doc, /Zero Trust/);
+    assert.match(doc, /\/api\/webhook/);
+    assert.match(doc, /Bypass/);
+    assert.match(doc, /CF_ACCESS_CLIENT_ID/);
+    assert.match(doc, /CF_AUTHORIZATION/);
     assert.match(doc, /HOLD_SLUGS/);
     assert.match(doc, /Create deployment/);
     assert.match(doc, /STRIPE_PUBLISHABLE_KEY/);
     assert.doesNotMatch(doc, /replaces the file/);
+    assert.doesNotMatch(doc, /Set the application domain/);
   });
 
   it('smoke script requires a preview URL and names the health and checkout routes', () => {
@@ -236,6 +270,107 @@ print('ok')
     assert.match(script, /Check out/);
     assert.match(script, /Access did not block \/api\/checkout/);
     assert.match(script, /missing_stripe_signature/);
+    assert.match(script, /Skipping authenticated checks/);
+    assert.match(script, /CF_ACCESS_CLIENT_ID/);
+    assert.match(script, /CF_AUTHORIZATION/);
     assert.doesNotMatch(script, /sk_live_|sk_test_|whsec_|PRINTFUL_API_TOKEN=/);
+    const healthAt = script.indexOf('GET ${base}/api/health');
+    const checkoutAt = script.indexOf('POST ${base}/api/checkout');
+    assert.ok(checkoutAt > 0 && checkoutAt < healthAt);
+  });
+
+  it('gives cart and checkout their own ledes and limits the FAQ answer to faq.html', () => {
+    const out = execFileSync('python3', ['-c', `
+import sys
+sys.path.insert(0, 'pipeline')
+from chrome import open_shop_html
+cart = '<h1>Your bag</h1>\\n    <p class="lede">We\\'re not taking orders yet.</p>'
+cart_out = open_shop_html(cart, 'cart.html')
+assert 'Review your bag, then check out.' in cart_out
+assert 'Yes. Add a piece' not in cart_out
+checkout = '<h1>Checkout</h1>\\n    <p class="lede">We\\'re not taking orders yet.</p>'
+checkout_out = open_shop_html(checkout, 'checkout.html')
+assert 'Checkout opens from your bag.' in checkout_out
+assert 'Yes. Add a piece' not in checkout_out
+phrase = "<p>We're not taking orders yet.</p>"
+assert phrase == open_shop_html(phrase, 'shipping.html')
+faq = open_shop_html(phrase, 'faq.html')
+assert 'Yes. Add a piece from the shop to your bag and check out.' in faq
+print('ok')
+`], { cwd: root, encoding: 'utf8' });
+    assert.match(out, /ok/);
+  });
+
+  it('skips authenticated smoke checks unless an Access credential is set', async () => {
+    const hits = [];
+    const server = createServer((req, res) => {
+      const chunks = [];
+      req.on('data', (chunk) => chunks.push(chunk));
+      req.on('end', () => {
+        hits.push({
+          method: req.method,
+          url: req.url,
+          client: req.headers['cf-access-client-id'] || '',
+          cookie: req.headers.cookie || ''
+        });
+        if (req.url === '/api/checkout') {
+          res.writeHead(403, { 'content-type': 'text/html' });
+          res.end('<html>Cloudflare Access</html>');
+          return;
+        }
+        if (req.url === '/api/webhook') {
+          res.writeHead(400, { 'content-type': 'application/json' });
+          res.end('{"error":"missing_stripe_signature"}');
+          return;
+        }
+        if (req.url === '/api/health') {
+          res.writeHead(200, { 'content-type': 'application/json' });
+          res.end('{"status":"ok","checkout_enabled":true}');
+          return;
+        }
+        if (req.url === '/cart.html') {
+          res.writeHead(200, { 'content-type': 'text/html' });
+          res.end('<button>Check out</button>');
+          return;
+        }
+        res.writeHead(404);
+        res.end('no');
+      });
+    });
+    await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
+    const port = server.address().port;
+    const baseEnv = { ...process.env };
+    delete baseEnv.CF_ACCESS_CLIENT_ID;
+    delete baseEnv.CF_ACCESS_CLIENT_SECRET;
+    delete baseEnv.CF_AUTHORIZATION;
+    function runSmoke(env) {
+      return new Promise((resolve) => {
+        execFile('sh', ['scripts/preview-smoke.sh', `http://127.0.0.1:${port}`], {
+          cwd: root,
+          env
+        }, (error, stdout, stderr) => {
+          resolve({ status: error && error.code ? error.code : 0, stdout, stderr });
+        });
+      });
+    }
+    try {
+      const skipped = await runSmoke(baseEnv);
+      assert.equal(skipped.status, 0, `${skipped.stdout}\n${skipped.stderr}`);
+      assert.match(skipped.stdout, /Skipping authenticated checks/);
+      assert.deepEqual(hits.map((hit) => hit.url), ['/api/checkout', '/api/webhook']);
+      hits.length = 0;
+      const authed = await runSmoke({
+        ...baseEnv,
+        CF_ACCESS_CLIENT_ID: 'preview-id',
+        CF_ACCESS_CLIENT_SECRET: 'preview-secret'
+      });
+      assert.equal(authed.status, 0, `${authed.stdout}\n${authed.stderr}`);
+      assert.deepEqual(hits.map((hit) => hit.url), ['/api/checkout', '/api/webhook', '/api/health', '/cart.html']);
+      assert.equal(hits[0].client, '');
+      assert.equal(hits[2].client, 'preview-id');
+      assert.equal(hits[3].client, 'preview-id');
+    } finally {
+      await new Promise((resolve) => server.close(resolve));
+    }
   });
 });

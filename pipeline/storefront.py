@@ -862,7 +862,7 @@ def write_products(out_dir, manifest=None):
         personalize = ''
         if kind == 'mugs':
             personalize = EMAIL_US
-        elif checkout_enabled() and kind in ('totes', 'stickers'):
+        elif checkout_enabled() and not selling and kind in ('totes', 'stickers'):
             personalize = WANT_ONE
         elif checkout_enabled() and not selling:
             personalize = QUESTIONS_EMAIL
@@ -951,7 +951,7 @@ def write_open_pages(out_dir):
         if not checkout_enabled():
             dest.write_bytes(raw)
         else:
-            dest.write_text(open_shop_html(raw.decode()))
+            dest.write_text(open_shop_html(raw.decode(), name))
 
 
 # Curated groups. Every slug is a live catalog item.

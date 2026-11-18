@@ -1,7 +1,7 @@
 # Cloudflare Pages serves site/ and functions/api from this repo.
 # GitHub Pages still publishes site/ from main. Do not add a second GitHub remote.
 # Build command: python3 pipeline/prepare-preview.py
-# That command does nothing unless HABIBI_PREVIEW=1. See docs/CLOUDFLARE-SETUP.md.
+# That command does nothing on main. A non-main Cloudflare branch is a preview, and so is HABIBI_PREVIEW=1. See docs/CLOUDFLARE-SETUP.md.
 name = "habibi-crafts-api"
 pages_build_output_dir = "site"
 compatibility_date = "2026-09-01"

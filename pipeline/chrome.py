@@ -7,11 +7,11 @@ BASE = 'https://habibicraftsco.com'
 # Per-file cache keys on the live pages. bag.js is an ES module, so the tag
 # is type=module. A deferred classic script cannot load it.
 SCRIPT_V = {
-    'styles.css': '36',
+    'styles.css': '37',
     'public-config.js': '11',
     'analytics.js': '10',
     'bag.js': '18',
-    'checkout.js': '17',
+    'checkout.js': '18',
     'spin.js': '11',
     'app.js': '14',
 }
@@ -58,7 +58,7 @@ def orders_copy(checkout_on, short=False):
     return ORDERS_NOTE_SHORT if short else ORDERS_NOTE
 
 
-def open_shop_html(html):
+def open_shop_html(html, page=''):
     replacements = (
         (
             "We're not taking orders yet. When we start, you'll get tracking by email after the carrier scans the package. ",
@@ -89,16 +89,26 @@ def open_shop_html(html):
             'A tracking note arrives by email after the carrier scans your package.',
         ),
         (
-            '<button class="button browse-mode" type="button" disabled data-checkout data-bag-checkout aria-disabled="true">Opening soon</button>',
-            '<button class="button" type="button" data-checkout data-bag-checkout>Check out</button>',
+            '<h1>Your bag</h1>\n    <p class="lede">We\'re not taking orders yet.</p>',
+            '<h1>Your bag</h1>\n    <p class="lede">Review your bag, then check out.</p>',
         ),
         (
-            "We're not taking orders yet.",
-            OPEN_FAQ,
+            '<h1>Checkout</h1>\n    <p class="lede">We\'re not taking orders yet.</p>',
+            '<h1>Checkout</h1>\n    <p class="lede">Checkout opens from your bag.</p>',
+        ),
+        (
+            'There is nothing to look up today. There are no order numbers and no carrier links yet.',
+            'Your email has the tracking link, with the order number and the carrier.',
+        ),
+        (
+            '<button class="button browse-mode" type="button" disabled data-checkout data-bag-checkout aria-disabled="true">Opening soon</button>',
+            '<button class="button" type="button" data-checkout data-bag-checkout>Check out</button>',
         ),
     )
     for old, new in replacements:
         html = html.replace(old, new)
+    if page == 'faq.html':
+        html = html.replace("We're not taking orders yet.", OPEN_FAQ)
     return html
 
 
