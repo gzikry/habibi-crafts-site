@@ -19,7 +19,7 @@ export function shippingCharge(cents) {
   return 'Shipping ' + formatCents(SHIPPING_CENTS);
 }
 
-  function boot() {
+function boot() {
   var bySlug = {};
   var state = [];
   var cleared = false;

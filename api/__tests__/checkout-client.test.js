@@ -11,6 +11,7 @@ const checkoutSource = readFileSync(
 );
 
 const RECEIVED = 'Thank you, your order is in. Your receipt is on its way by email.';
+const UNCONFIRMED = "We couldn't confirm your order yet. If your payment went through, your receipt will arrive by email. Your bag is still here.";
 const CANCELLED = "Checkout cancelled. Your bag is saved for when you're ready.";
 const CLOSED = "We're not taking orders yet.";
 const BAG_KEY = 'habibi-bag';
@@ -64,6 +65,9 @@ function createElement(tag) {
     click() {
       if (this.disabled) return;
       for (const fn of this.listeners.click || []) fn();
+    },
+    focus() {
+      this.focused = true;
     }
   };
   el.classList = {
@@ -166,11 +170,13 @@ function bootCheckout({ enabled, search, path = '/cart.html', buttonDisabled = t
     URL,
     URLSearchParams,
     encodeURIComponent,
+    setTimeout,
     fetch(url, init) {
       fetched.push({ url: String(url), init });
       if (String(url).includes('/api/checkout-session')) {
+        if (paymentStatus === 'throw') return Promise.reject(new Error('network'));
         return Promise.resolve({
-          ok: true,
+          ok: paymentStatus !== 'http',
           json: () => Promise.resolve({ id: 'cs_test', payment_status: paymentStatus, status: 'complete' })
         });
       }
@@ -193,6 +199,11 @@ function statusNode(main) {
 
 function flush() {
   return new Promise((resolve) => setTimeout(resolve, 0));
+}
+
+async function settle() {
+  await flush();
+  await flush();
 }
 
 describe('checkout client', () => {
@@ -234,26 +245,30 @@ describe('checkout client', () => {
       search: '?checkout=success&session_id=cs_test'
     });
     assert.equal(page.store[BAG_KEY], STORED_BAG);
-    await flush();
+    await settle();
     assert.equal(page.store[BAG_KEY], '[]');
     assert.equal(page.cleared.called, true);
     const wrap = page.main.querySelector('[data-checkout-return]');
+    assert.equal(wrap.className, 'hold-panel');
     assert.equal(wrap.statusTextAtInsert, '');
     const note = statusNode(page.main);
+    assert.equal(note.className, 'lede');
     assert.equal(note.textContent, RECEIVED);
     assert.equal(note.getAttribute('role'), 'status');
     assert.deepEqual(page.replaced, ['/']);
     const dismiss = wrap.querySelector('button');
     dismiss.click();
     assert.equal(page.main.querySelector('[data-checkout-return]'), null);
+    assert.equal(page.main.getAttribute('tabindex'), '-1');
+    assert.equal(page.main.focused, true);
   });
 
-  it('keeps the bag for a success link with no session or an unpaid session', async () => {
+  it('keeps the bag and explains when the payment cannot be confirmed', async () => {
     const missing = bootCheckout({ enabled: true, path: '/', search: '?checkout=success' });
-    await flush();
+    await settle();
     assert.equal(missing.store[BAG_KEY], STORED_BAG);
     assert.equal(missing.fetched.length, 0);
-    assert.equal(statusNode(missing.main), null);
+    assert.equal(statusNode(missing.main).textContent, UNCONFIRMED);
     assert.deepEqual(missing.replaced, ['/']);
 
     const unpaid = bootCheckout({
@@ -262,16 +277,28 @@ describe('checkout client', () => {
       search: '?checkout=success&session_id=cs_unpaid',
       paymentStatus: 'unpaid'
     });
-    await flush();
+    await settle();
     assert.equal(unpaid.store[BAG_KEY], STORED_BAG);
     assert.equal(unpaid.cleared.called, false);
-    assert.equal(statusNode(unpaid.main), null);
+    assert.equal(statusNode(unpaid.main).textContent, UNCONFIRMED);
     assert.equal(unpaid.fetched[0].url, 'https://habibicraftsco.com/api/checkout-session?session_id=cs_unpaid');
     assert.deepEqual(unpaid.replaced, ['/']);
+
+    const failed = bootCheckout({
+      enabled: true,
+      path: '/',
+      search: '?checkout=success&session_id=cs_down',
+      paymentStatus: 'throw'
+    });
+    await settle();
+    assert.equal(failed.store[BAG_KEY], STORED_BAG);
+    assert.equal(statusNode(failed.main).textContent, UNCONFIRMED);
+    assert.deepEqual(failed.replaced, ['/']);
   });
 
-  it('keeps the bag on cancel, shows the saved-bag note, and strips the param', () => {
+  it('keeps the bag on cancel, shows the saved-bag note, and strips the param', async () => {
     const page = bootCheckout({ enabled: true, search: '?checkout=cancelled' });
+    await settle();
     assert.equal(page.store[BAG_KEY], STORED_BAG);
     assert.equal(page.cleared.called, false);
     const note = statusNode(page.main);

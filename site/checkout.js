@@ -9,6 +9,7 @@
     Boolean(cfg.CHECKOUT_API_BASE);
   var SUCCESS = 'Thank you, your order is in. Your receipt is on its way by email.';
   var CANCELLED = "Checkout cancelled. Your bag is saved for when you're ready.";
+  var UNCONFIRMED = "We couldn't confirm your order yet. If your payment went through, your receipt will arrive by email. Your bag is still here.";
   var CLOSED = "We're not taking orders yet.";
 
   function lock(button) {
@@ -46,10 +47,10 @@
     var main = document.querySelector('main');
     if (!main || main.querySelector('[data-checkout-return]')) return;
     var wrap = document.createElement('div');
-    wrap.className = 'shell';
+    wrap.className = 'hold-panel';
     wrap.setAttribute('data-checkout-return', kind);
     var note = document.createElement('p');
-    note.className = 'status-line';
+    note.className = 'lede';
     note.setAttribute('role', 'status');
     wrap.appendChild(note);
     var dismiss = document.createElement('button');
@@ -58,10 +59,14 @@
     dismiss.textContent = 'Dismiss';
     dismiss.addEventListener('click', function () {
       if (wrap.parentNode) wrap.parentNode.removeChild(wrap);
+      if (!main.hasAttribute('tabindex')) main.setAttribute('tabindex', '-1');
+      if (main.focus) main.focus();
     });
     wrap.appendChild(dismiss);
     main.insertBefore(wrap, main.firstChild);
-    note.textContent = message;
+    setTimeout(function () {
+      note.textContent = message;
+    }, 0);
   }
 
   function clearBag() {
@@ -80,6 +85,7 @@
     }
     var sessionId = params.get('session_id');
     if (!sessionId) {
+      showNotice('unconfirmed', UNCONFIRMED);
       stripCheckoutParams();
       return;
     }
@@ -94,10 +100,13 @@
         if (result.ok && result.body && result.body.payment_status === 'paid') {
           clearBag();
           showNotice('success', SUCCESS);
+        } else {
+          showNotice('unconfirmed', UNCONFIRMED);
         }
         stripCheckoutParams();
       })
       .catch(function () {
+        showNotice('unconfirmed', UNCONFIRMED);
         stripCheckoutParams();
       });
   }
