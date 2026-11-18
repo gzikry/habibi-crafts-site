@@ -1,6 +1,6 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
-import { LIVE_SLUGS, products, resolveLineItem } from '../lib/catalog.js';
+import { LIVE_SLUGS, products, resolveLineItem, saleOpen } from '../lib/catalog.js';
 
 const EXPECTED = {
   'ya-aini': { default: [5471949732, 'habibi-mug-ya-aini-11oz'] },
@@ -57,6 +57,10 @@ describe('Printful sync variants', () => {
         assert.equal(variant.sync_variant_id, syncVariantId, `${slug} ${size}`);
         assert.equal(variant.external_variant_id, externalVariantId, `${slug} ${size}`);
         const line = resolveLineItem({ slug, size, quantity: 1 });
+        if (!saleOpen(slug)) {
+          assert.match(line.error, /not available for checkout/, `${slug} ${size}`);
+          continue;
+        }
         assert.equal(line.sync_variant_id, syncVariantId, `${slug} ${size}`);
         assert.equal(line.external_variant_id, externalVariantId, `${slug} ${size}`);
       }

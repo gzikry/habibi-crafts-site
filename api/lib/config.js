@@ -6,6 +6,16 @@ function env(source, key, fallback = '') {
   return value == null || value === '' ? fallback : String(value);
 }
 
+function appOrigin(source) {
+  const set = env(source, 'APP_ORIGIN', '');
+  if (set) return set.replace(/\/$/, '');
+  if (flag(source, 'HABIBI_PREVIEW', false)) {
+    const pagesUrl = env(source, 'CF_PAGES_URL', '');
+    if (pagesUrl) return pagesUrl.replace(/\/$/, '');
+  }
+  return 'https://habibicraftsco.com';
+}
+
 function flag(source, key, defaultValue = false) {
   const raw = source?.[key];
   if (raw == null || raw === '') return defaultValue;
@@ -26,7 +36,7 @@ export function readConfig(source = process.env) {
     checkoutEnabled: flag(source, 'CHECKOUT_ENABLED', false),
     adsenseEnabled: flag(source, 'ADSENSE_ENABLED', false),
     printfulConfirmOrders: flag(source, 'PRINTFUL_CONFIRM_ORDERS', false),
-    appOrigin: env(source, 'APP_ORIGIN', 'https://habibicraftsco.com')
+    appOrigin: appOrigin(source)
   };
 }
 

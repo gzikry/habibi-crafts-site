@@ -73,6 +73,19 @@ describe('config flags', () => {
     assert.equal(config.stripeSecretKey, '');
   });
 
+  it('keeps the production origin unless a preview build asks for the pages URL', () => {
+    assert.equal(readConfig({}).appOrigin, 'https://habibicraftsco.com');
+    assert.equal(
+      readConfig({ CF_PAGES_URL: 'https://prod.pages.dev' }).appOrigin,
+      'https://habibicraftsco.com'
+    );
+    assert.equal(
+      readConfig({ HABIBI_PREVIEW: '1', CF_PAGES_URL: 'https://abc.pages.dev/' }).appOrigin,
+      'https://abc.pages.dev'
+    );
+    assert.equal(readConfig({ APP_ORIGIN: 'https://shop.example/' }).appOrigin, 'https://shop.example');
+  });
+
   it('does not invent publisher ids or Stripe keys', () => {
     const config = readConfig({});
     assert.equal(config.adsensePublisherId, '');
