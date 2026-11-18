@@ -11,7 +11,7 @@ SCRIPT_V = {
     'public-config.js': '11',
     'analytics.js': '10',
     'bag.js': '18',
-    'checkout.js': '18',
+    'checkout.js': '19',
     'spin.js': '11',
     'app.js': '14',
 }
@@ -70,7 +70,7 @@ def open_shop_html(html, page=''):
         ),
         (
             'This page will take a card when we start taking orders. It does not collect payment today, and there is no form to submit.',
-            'Checkout opens from your bag. Stripe collects the card, and there is no form on this page.',
+            'Stripe collects the card, and there is no form on this page.',
         ),
         (
             'Tracking arrives by email when we start taking orders.',

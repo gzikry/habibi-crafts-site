@@ -91,6 +91,7 @@ describe('preview build', () => {
     assert.match(cart, /noindex,nofollow/);
     const checkout = read(join(outDir, 'checkout.html'));
     assert.match(checkout, /<p class="lede">Checkout opens from your bag\.<\/p>/);
+    assert.equal(checkout.split('Checkout opens from your bag.').length - 1, 1);
     assert.match(checkout, /Stripe collects the card/);
     assert.doesNotMatch(checkout, /Yes\. Add a piece from the shop/);
     const tracking = read(join(outDir, 'tracking.html'));
@@ -249,6 +250,11 @@ print('ok')
     assert.match(doc, /Zero Trust/);
     assert.match(doc, /\/api\/webhook/);
     assert.match(doc, /Bypass/);
+    assert.match(doc, /only for the path `\/api\/webhook`/);
+    assert.match(doc, /stripe listen --forward-to/);
+    assert.match(doc, /proves the bypass/);
+    assert.match(doc, /Service Auth/);
+    assert.match(doc, /Create Service Token/);
     assert.match(doc, /CF_ACCESS_CLIENT_ID/);
     assert.match(doc, /CF_AUTHORIZATION/);
     assert.match(doc, /HOLD_SLUGS/);
@@ -270,7 +276,8 @@ print('ok')
     assert.match(script, /Check out/);
     assert.match(script, /Access did not block \/api\/checkout/);
     assert.match(script, /missing_stripe_signature/);
-    assert.match(script, /Skipping authenticated checks/);
+    assert.match(script, /SKIPPED authenticated checks/);
+    assert.match(script, /Access rejected the service token or cookie/);
     assert.match(script, /CF_ACCESS_CLIENT_ID/);
     assert.match(script, /CF_AUTHORIZATION/);
     assert.doesNotMatch(script, /sk_live_|sk_test_|whsec_|PRINTFUL_API_TOKEN=/);
@@ -356,7 +363,7 @@ print('ok')
     try {
       const skipped = await runSmoke(baseEnv);
       assert.equal(skipped.status, 0, `${skipped.stdout}\n${skipped.stderr}`);
-      assert.match(skipped.stdout, /Skipping authenticated checks/);
+      assert.match(skipped.stdout, /SKIPPED authenticated checks/);
       assert.deepEqual(hits.map((hit) => hit.url), ['/api/checkout', '/api/webhook']);
       hits.length = 0;
       const authed = await runSmoke({
@@ -369,6 +376,42 @@ print('ok')
       assert.equal(hits[0].client, '');
       assert.equal(hits[2].client, 'preview-id');
       assert.equal(hits[3].client, 'preview-id');
+    } finally {
+      await new Promise((resolve) => server.close(resolve));
+    }
+  });
+
+  it('says when Access rejects the smoke token', async () => {
+    const server = createServer((req, res) => {
+      req.resume();
+      if (req.url === '/api/checkout') {
+        res.writeHead(403, { 'content-type': 'text/html' });
+        res.end('<html>Cloudflare Access</html>');
+        return;
+      }
+      if (req.url === '/api/webhook') {
+        res.writeHead(400, { 'content-type': 'application/json' });
+        res.end('{"error":"missing_stripe_signature"}');
+        return;
+      }
+      res.writeHead(401, { 'content-type': 'text/plain' });
+      res.end('unauthorized');
+    });
+    await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
+    const port = server.address().port;
+    const env = { ...process.env, CF_ACCESS_CLIENT_ID: 'bad-id', CF_ACCESS_CLIENT_SECRET: 'bad-secret' };
+    delete env.CF_AUTHORIZATION;
+    try {
+      const result = await new Promise((resolve) => {
+        execFile('sh', ['scripts/preview-smoke.sh', `http://127.0.0.1:${port}`], {
+          cwd: root,
+          env
+        }, (error, stdout, stderr) => {
+          resolve({ status: error && error.code ? error.code : 0, stdout, stderr });
+        });
+      });
+      assert.equal(result.status, 1, `${result.stdout}\n${result.stderr}`);
+      assert.match(`${result.stdout}\n${result.stderr}`, /Access rejected the service token or cookie for \/api\/health \(HTTP 401\)/);
     } finally {
       await new Promise((resolve) => server.close(resolve));
     }

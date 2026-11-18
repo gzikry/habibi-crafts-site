@@ -61,16 +61,41 @@ elif [ -n "${CF_AUTHORIZATION:-}" ]; then
     curl "$@" -H "Cookie: CF_Authorization=${CF_AUTHORIZATION}"
   }
 else
-  echo "Skipping authenticated checks (/api/health and /cart.html Check out). Set CF_ACCESS_CLIENT_ID and CF_ACCESS_CLIENT_SECRET, or CF_AUTHORIZATION."
+  echo "SKIPPED authenticated checks (/api/health and /cart.html Check out). Set CF_ACCESS_CLIENT_ID and CF_ACCESS_CLIENT_SECRET, or CF_AUTHORIZATION."
   exit 0
 fi
 
+reject_access() {
+  echo "Access rejected the service token or cookie for $1 (HTTP $2)." >&2
+  exit 1
+}
+
 echo "GET ${base}/api/health"
-health=$(auth_curl -fsS "${base}/api/health")
+health_body=$(mktemp)
+health_code=$(auth_curl -sS -o "$health_body" -w '%{http_code}' "${base}/api/health" || true)
+echo "HTTP ${health_code}"
+case "$health_code" in
+  401|403) rm -f "$health_body"; reject_access /api/health "$health_code" ;;
+esac
+health=$(cat "$health_body")
+rm -f "$health_body"
 printf '%s\n' "$health"
-printf '%s' "$health" | grep -q '"status":"ok"'
+if ! printf '%s' "$health" | grep -q '"status":"ok"'; then
+  echo "Authenticated /api/health did not report status ok (HTTP ${health_code})." >&2
+  exit 1
+fi
 printf '%s' "$health" | grep -q '"checkout_enabled":true'
 
 echo "GET ${base}/cart.html"
-cart=$(auth_curl -fsS "${base}/cart.html")
-printf '%s' "$cart" | grep -q 'Check out'
+cart_body=$(mktemp)
+cart_code=$(auth_curl -sS -o "$cart_body" -w '%{http_code}' "${base}/cart.html" || true)
+echo "HTTP ${cart_code}"
+case "$cart_code" in
+  401|403) rm -f "$cart_body"; reject_access /cart.html "$cart_code" ;;
+esac
+cart=$(cat "$cart_body")
+rm -f "$cart_body"
+if ! printf '%s' "$cart" | grep -q 'Check out'; then
+  echo "Authenticated /cart.html did not say Check out (HTTP ${cart_code}). If this is an Access login page, the service token or cookie was rejected." >&2
+  exit 1
+fi

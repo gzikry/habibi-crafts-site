@@ -19,6 +19,24 @@
     button.textContent = 'Opening soon';
   }
 
+  function fail(button) {
+    button.disabled = false;
+    button.removeAttribute('aria-disabled');
+    button.classList.remove('browse-mode');
+    button.textContent = 'Check out';
+    var host = button.parentNode || document.querySelector('main');
+    if (!host || !host.appendChild) return;
+    var note = host.querySelector('[data-checkout-error]');
+    if (!note) {
+      note = document.createElement('p');
+      note.className = 'checkout-note';
+      note.setAttribute('role', 'status');
+      note.setAttribute('data-checkout-error', '');
+      host.appendChild(note);
+    }
+    note.textContent = 'Something went wrong. Please try again.';
+  }
+
   function openButton(button) {
     button.disabled = false;
     button.removeAttribute('aria-disabled');
@@ -151,11 +169,13 @@
         body: JSON.stringify(payload)
       }).then(function (response) {
         return response.json().then(function (body) {
-          if (body.checkout_url) window.location = body.checkout_url;
-          else lock(button);
+          if (response.ok && body && body.checkout_url) window.location = body.checkout_url;
+          else fail(button);
+        }, function () {
+          fail(button);
         });
       }).catch(function () {
-        lock(button);
+        fail(button);
       });
     });
   });

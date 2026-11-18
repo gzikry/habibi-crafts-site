@@ -92,6 +92,7 @@ function matches(el, selector) {
   if (selector === '.lede') return String(el.className).split(/\s+/).includes('lede');
   if (selector === '[data-checkout]') return el.hasAttribute('data-checkout');
   if (selector === '[data-checkout-return]') return el.hasAttribute('data-checkout-return');
+  if (selector === '[data-checkout-error]') return el.hasAttribute('data-checkout-error');
   if (selector === '[role=status]') return el.getAttribute('role') === 'status';
   if (selector === 'button') return el.tag === 'button';
   return false;
@@ -196,6 +197,13 @@ function bootCheckout({ enabled, search, path = '/cart.html', buttonDisabled = t
     },
     fetch(url, init) {
       fetched.push({ url: String(url), init });
+      if (paymentStatus === 'http500' && String(url).endsWith('/api/checkout')) {
+        return Promise.resolve({
+          ok: false,
+          status: 500,
+          json: () => Promise.resolve({ error: 'server' })
+        });
+      }
       if (String(url).includes('/api/checkout-session')) {
         if (paymentStatus === 'throw') return Promise.reject(new Error('network'));
         if (paymentStatus === 'hang') {
@@ -259,6 +267,20 @@ describe('checkout client', () => {
     assert.equal(page.button.textContent, 'Check out');
     assert.equal(page.button.disabled, false);
     assert.equal(page.store[BAG_KEY], STORED_BAG);
+  });
+
+  it('re-enables the button and explains when checkout returns 500', async () => {
+    const page = bootCheckout({ enabled: true, search: '', paymentStatus: 'http500' });
+    page.button.click();
+    await flush();
+    assert.equal(page.button.disabled, false);
+    assert.equal(page.button.textContent, 'Check out');
+    assert.equal(page.button.getAttribute('aria-disabled'), null);
+    const note = page.main.querySelector('[data-checkout-error]');
+    assert.equal(note.textContent, 'Something went wrong. Please try again.');
+    assert.equal(note.getAttribute('role'), 'status');
+    assert.equal(page.store[BAG_KEY], STORED_BAG);
+    assert.equal(page.fetched.length, 1);
   });
 
   it('omits contact_email so Stripe Checkout collects it', async () => {

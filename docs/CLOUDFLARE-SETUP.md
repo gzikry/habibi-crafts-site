@@ -66,7 +66,7 @@ You can add the same four names to **Production** later. Production checkout sta
 
 ## Lock the preview deployments
 
-Protect preview deployments from the Pages project. Do not create a self-hosted Access application on the `pages.dev` hostname. That zone is not one you own, so a handmade application there does not lock the preview.
+Protect preview deployments from the Pages project. Do not create a self-hosted Access application on the `pages.dev` zone. You do not own that zone, so a handmade application there does not lock the preview, and the domain menu may not list it.
 
 1. Open the Pages project.
 2. Open **Settings**, then **General**.
@@ -74,17 +74,29 @@ Protect preview deployments from the Pages project. Do not create a self-hosted 
 4. This covers preview deployments only. It leaves `habibicraftsco.com` and the production `<project>.pages.dev` hostname open. Do not add those.
 5. Open the Access application this created. Set one Allow policy for `habibicraftsco@gmail.com` with **One-time PIN**. Use another email if that is the inbox you read.
 
+That Pages application is the lock. The only self-hosted application allowed on a `pages.dev` host is the webhook Bypass below, and only for the path `/api/webhook`.
+
 ## Let Stripe reach the webhook
 
-Stripe cannot pass the preview login. Add a separate Access application for `/api/webhook` with **Bypass**. Do not add that Bypass to the preview application. A Bypass on the preview application opens the whole preview.
+Stripe cannot pass the preview login. After **Enable access policy** exists, add a separate Access application for `/api/webhook` with **Bypass**. Do not add that Bypass to the Pages preview application. A Bypass on the preview application opens the whole preview.
 
 1. In **Zero Trust**, open **Access**, then **Applications**, then **Add an application**.
 2. Choose **Self-hosted**. Name it Habibi preview webhook.
-3. Set the public hostname to the preview host you are testing, and set the path to `/api/webhook` only.
+3. Set the public hostname to the one preview host you are testing, such as `<branch>.<project>.pages.dev`. Set the path to `/api/webhook` only. Do not choose the zone `pages.dev`, and do not leave the path empty. This is allowed only because Pages already created the preview application and this second application is the webhook path on that one host.
 4. Add one policy. Name it Stripe webhook. Action **Bypass**. Include **Everyone**.
 5. Save this application.
 
-Cloudflare uses the application with the more specific path for `/api/webhook`, so Stripe can post `checkout.session.completed`. Every other preview URL still asks for the shop email. The public site is not in this application. The unsigned webhook still fails closed: `POST /api/webhook` with no Stripe signature returns HTTP 400 and `missing_stripe_signature`.
+Cloudflare uses the application with the more specific path for `/api/webhook`, so Stripe can post `checkout.session.completed`. Every other preview URL still asks for the shop email. The public site is not in this application.
+
+If the domain menu refuses that hostname, do not invent a zone and do not force the Bypass application. Leave it uncreated. Forward Stripe test events with the Stripe CLI while `wrangler pages dev` is serving the functions, so the events never pass through Access:
+
+```sh
+stripe listen --forward-to http://localhost:8788/api/webhook
+```
+
+The dashboard webhook can wait until the Bypass application exists.
+
+The smoke script proves the bypass. An unsigned `POST /api/webhook` that returns HTTP 400 and `missing_stripe_signature` reached the function. HTTP 302 or 403 means Access still holds the path.
 
 ## Point Stripe at the preview
 
@@ -120,7 +132,18 @@ Authenticated, when a Cloudflare Access credential is in the environment:
 - `/api/health` reports checkout enabled.
 - `/cart.html` says Check out.
 
-Set `CF_ACCESS_CLIENT_ID` and `CF_ACCESS_CLIENT_SECRET` for a service token, or set `CF_AUTHORIZATION` to the `CF_Authorization` cookie. If neither is set, the script skips the authenticated checks and says so.
+If neither credential is set, the script prints `SKIPPED` and does not call `/api/health` or `/cart.html`.
+
+Create a service token for those two checks:
+
+1. In **Zero Trust**, open **Access**, then **Service credentials**, then **Service Tokens**.
+2. Select **Create Service Token**. Name it Habibi preview smoke.
+3. Copy the Client ID and the Client Secret. The secret is shown once. Do not commit either value.
+4. Open the Access application that Pages created for the preview. Do not add this policy to the webhook Bypass application.
+5. Add a policy. Name it Preview smoke. Action **Service Auth**. Include rule **Service Token**, and choose the token you just created. Leave the email Allow policy in place. Service Auth lets the script through. Everyone else still gets the one-time PIN.
+6. Export the two values as `CF_ACCESS_CLIENT_ID` and `CF_ACCESS_CLIENT_SECRET`, then run the smoke script again. Or set `CF_AUTHORIZATION` to a `CF_Authorization` cookie from a browser that already passed the PIN.
+
+A rejected token prints `Access rejected the service token or cookie` and exits 1. HTTP 400 `missing_stripe_signature` on the unsigned webhook is the proof that the Bypass path reached the function.
 
 The preview pages send `noindex` and `robots.txt` disallows the whole host.
 
