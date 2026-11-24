@@ -12,10 +12,10 @@ import urllib.request
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-BANNED = (
-    re.compile(r"not taking orders yet", re.I),
-    re.compile(r"Opening soon"),
-)
+sys.path.insert(0, str(ROOT / 'pipeline'))
+from chrome import SHOP_REPLACEMENTS  # noqa: E402
+
+CLOSED_PHRASES = tuple(old for old, _new in SHOP_REPLACEMENTS)
 
 
 def fail(items, message):
@@ -57,9 +57,9 @@ def check_copy(directory, items):
     for path in sorted(directory.rglob('*.html')):
         text = path.read_text(errors='replace')
         rel = path.relative_to(directory)
-        for pattern in BANNED:
-            if pattern.search(text):
-                fail(items, f'{rel} still contains {pattern.pattern!r}')
+        for phrase in CLOSED_PHRASES:
+            if phrase in text:
+                fail(items, f'{rel} still contains closed-shop copy: {phrase}')
 
 
 def check_config(directory, items):
@@ -72,11 +72,11 @@ def check_config(directory, items):
         fail(items, 'public-config.js has CHECKOUT_ENABLED false')
     key = config['key']
     if not key.startswith('pk_') or key.startswith('sk_'):
-        fail(items, 'public-config.js needs a publishable Stripe key (pk_)')
+        fail(items, 'requires a pk_ publishable key and an https CHECKOUT_API_BASE: publishable key is missing')
     base = config['base'].rstrip('/')
     local = base.startswith('http://127.0.0.1') or base.startswith('http://localhost')
     if not base.startswith('https://') and not local:
-        fail(items, 'public-config.js needs an https CHECKOUT_API_BASE')
+        fail(items, 'requires a pk_ publishable key and an https CHECKOUT_API_BASE: API base is missing')
     return base
 
 
@@ -102,6 +102,22 @@ def check_health(base, items):
         fail(items, f'API health {url} answered without a status field')
 
 
+def check_build_sale(directory, items):
+    catalog_path = directory / 'product-catalog.json'
+    if not catalog_path.is_file():
+        fail(items, 'product-catalog.json is missing from the build directory')
+        return
+    catalog = json.loads(catalog_path.read_text())
+    by_slug = {product.get('slug'): product for product in catalog}
+    for slug in read_slugs():
+        product = by_slug.get(slug)
+        if not product or product.get('purchasable') is not True:
+            fail(items, f'{slug} is not purchasable:true in the build catalog')
+        page = directory / f'product-{slug}.html'
+        if not page.is_file() or 'Add to bag' not in page.read_text(errors='replace'):
+            fail(items, f'{slug} PDP is missing Add to bag')
+
+
 def check_variants(items):
     catalog = json.loads((ROOT / 'api' / 'catalog.json').read_text())
     products = catalog.get('products') or {}
@@ -121,22 +137,31 @@ def check_variants(items):
 
 
 def main():
-    if len(sys.argv) != 2:
-        print('usage: scripts/golive-check <build-dir>', file=sys.stderr)
+    args = [arg for arg in sys.argv[1:] if arg != '--live']
+    live = '--live' in sys.argv[1:]
+    if len(args) != 1:
+        print('usage: scripts/golive-check <build-dir> [--live]', file=sys.stderr)
         return 2
-    directory = Path(sys.argv[1]).resolve()
+    directory = Path(args[0]).resolve()
     if not directory.is_dir():
         print(f'{directory} is not a directory', file=sys.stderr)
         return 2
     items = []
     check_copy(directory, items)
     base = check_config(directory, items)
-    check_health(base, items)
+    check_build_sale(directory, items)
     check_variants(items)
+    if live:
+        print(f'live: GET {base}/api/health hits the real API')
+        check_health(base, items)
+    else:
+        print('offline: not calling the API (pass --live to GET CHECKOUT_API_BASE/api/health)')
     if items:
+        print('requires a pk_ publishable key and an https CHECKOUT_API_BASE')
         for item in items:
             print(item)
         return 1
+    print('publishable key and API base are set')
     print('golive-check passed')
     return 0
 

@@ -2,7 +2,7 @@ import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import { saleOpen } from '../lib/catalog.js';
 import { execFile, execFileSync, spawnSync } from 'node:child_process';
-import { mkdtempSync, readFileSync, readdirSync } from 'node:fs';
+import { mkdtempSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { createServer } from 'node:http';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
@@ -282,8 +282,9 @@ print('ok')
     assert.match(script, /missing_stripe_signature/);
     assert.match(script, /SKIPPED authenticated checks/);
     assert.match(script, /Access rejected the service token or cookie/);
-    assert.match(script, /Access redirected \/api\/health \(HTTP 302\)/);
-    assert.match(script, /Access redirected \/cart\.html \(HTTP 302\)/);
+    assert.match(script, /301\|302/);
+    assert.match(script, /Access redirected \/api\/health/);
+    assert.match(script, /Access redirected \/cart\.html/);
     assert.match(script, /checkout_disabled/);
     assert.match(script, /expected 400 missing_stripe_signature/);
     assert.doesNotMatch(read(join(root, 'pipeline/prepare-preview.py')), /replace\('Opening soon', 'Try again'\)/);
@@ -443,5 +444,61 @@ for name in pages:
 print('ok')
 `], { cwd: root, encoding: 'utf8' });
     assert.match(out, /ok/);
+  });
+
+  it('a flag-off rebuild matches the main build after a go-live build into site/', () => {
+    const builders = ['build-shop.py', 'build-home.py', 'build-products.py', 'build-sitemap.py'];
+    const off = { ...process.env };
+    delete off.HABIBI_PREVIEW;
+    delete off.CHECKOUT_ENABLED;
+    delete off.CF_PAGES;
+    delete off.CF_PAGES_BRANCH;
+    function build(out) {
+      for (const name of builders) {
+        execFileSync('python3', [join('pipeline', name), '--out', out], { cwd: root, env: off });
+      }
+    }
+    function files(dir) {
+      const found = [];
+      function walk(current) {
+        for (const entry of readdirSync(current, { withFileTypes: true })) {
+          const path = join(current, entry.name);
+          if (entry.isDirectory()) walk(path);
+          else found.push(path.slice(dir.length + 1));
+        }
+      }
+      walk(dir);
+      return found.sort();
+    }
+    const baseline = mkdtempSync(join(tmpdir(), 'habibi-main-'));
+    const rollback = mkdtempSync(join(tmpdir(), 'habibi-rollback-'));
+    const snap = mkdtempSync(join(tmpdir(), 'habibi-site-snap-'));
+    execFileSync('cp', ['-a', join(root, 'site'), snap]);
+    const configPath = join(root, 'site/public-config.js');
+    const original = read(configPath);
+    build(baseline);
+    try {
+      writeFileSync(
+        configPath,
+        original
+          .replace('CHECKOUT_ENABLED: false', 'CHECKOUT_ENABLED: true')
+          .replace('HABIBI_CHECKOUT_ENABLED = false', 'HABIBI_CHECKOUT_ENABLED = true')
+      );
+      build(join(root, 'site'));
+      writeFileSync(configPath, original);
+      const parity = spawnSync('python3', ['pipeline/check-builder-parity.py'], { cwd: root, encoding: 'utf8', env: off });
+      assert.notEqual(parity.status, 0, parity.stdout);
+      build(rollback);
+      const names = files(baseline);
+      assert.deepEqual(files(rollback), names);
+      for (const name of names) {
+        const left = read(join(baseline, name)).replace(/\?v=\d+/g, '?v=');
+        const right = read(join(rollback, name)).replace(/\?v=\d+/g, '?v=');
+        assert.equal(left, right, name);
+      }
+    } finally {
+      execFileSync('rm', ['-rf', join(root, 'site')]);
+      execFileSync('cp', ['-a', join(snap, 'site'), root]);
+    }
   });
 });

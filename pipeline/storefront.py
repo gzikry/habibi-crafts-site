@@ -8,6 +8,7 @@ drops the retired tote backs.
 import json
 import os
 import re
+import subprocess
 from datetime import date
 
 from pfangles import order as order_angles
@@ -203,13 +204,39 @@ def checkout_enabled():
     )
 
 
+_committed_catalog_bytes = None
+
+
+def committed_catalog_bytes():
+    """The git catalog, not a catalog a previous build wrote into site/."""
+    global _committed_catalog_bytes
+    if _committed_catalog_bytes is None:
+        _committed_catalog_bytes = subprocess.check_output(
+            ['git', 'show', 'HEAD:site/product-catalog.json'],
+            cwd=ROOT,
+        )
+    return _committed_catalog_bytes
+
+
+def load_committed_catalog():
+    return json.loads(committed_catalog_bytes())
+
+
+def committed_purchasable():
+    return {
+        product['slug']: product.get('purchasable') is True
+        for product in load_committed_catalog()
+        if isinstance(product.get('slug'), str)
+    }
+
+
 def for_sale(product):
     slug = product.get('slug')
     if not isinstance(slug, str) or not slug.strip():
         return False
     if checkout_enabled():
         return slug in LAUNCH_SLUGS and slug not in HOLD_SLUGS
-    return product.get('purchasable') is True
+    return committed_purchasable().get(slug, False) is True
 
 
 def robots_content():
@@ -831,7 +858,7 @@ def product_ld(p, desc, filename, label, frames):
 def write_products(out_dir, manifest=None):
     if manifest is None:
         manifest = load_manifest()
-    catalog = json.load(open(SITE / 'product-catalog.json'))
+    catalog = load_committed_catalog()
     built = 0
     for p in catalog:
         kind = p['category']
@@ -928,8 +955,8 @@ def write_products(out_dir, manifest=None):
 
 
 def write_storefront_catalog(out_dir):
-    src = SITE / 'product-catalog.json'
-    catalog = json.loads(src.read_text())
+    raw = committed_catalog_bytes()
+    catalog = json.loads(raw)
     changed = False
     for product in catalog:
         sale = for_sale(product)
@@ -940,7 +967,7 @@ def write_storefront_catalog(out_dir):
     if changed:
         dest.write_text(json.dumps(catalog, indent=2) + '\n')
     else:
-        dest.write_bytes(src.read_bytes())
+        dest.write_bytes(raw)
 
 
 def write_open_pages(out_dir):

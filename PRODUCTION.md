@@ -29,13 +29,13 @@ Put these in **hosting secrets**, not in the repo. Template: `.env.example`.
 | `STRIPE_WEBHOOK_SECRET` | empty | `whsec_…` from the Stripe webhook endpoint |
 | `STRIPE_PUBLISHABLE_KEY` | empty | `pk_test_…` — public, but still do not commit it |
 | `PRINTFUL_API_TOKEN` | empty | Lives on George’s machine / host secrets |
-| `PRINTFUL_STORE_ID` | `18687336` | Store id, not a secret |
-| `PRINTFUL_CONFIRM_ORDERS` | `false` | `false` = Printful **draft** (no fulfillment charge) |
-| `ADSENSE_PUBLISHER_ID` | empty | Real `ca-pub-…` from Google only — do not invent one |
-| `ADSENSE_ENABLED` | `false` | Must stay false until AdSense is approved **and** George says ads are on |
-| `CHECKOUT_ENABLED` | `false` | UI and `/api/checkout` stay disabled |
+| `PRINTFUL_STORE_ID` | `18687336` | Not a secret. It lives in `wrangler.toml`, not in host secrets |
+| `PRINTFUL_CONFIRM_ORDERS` | `false` | Not a secret. `wrangler.toml`. `false` = Printful **draft** (no fulfillment charge) |
+| `ADSENSE_PUBLISHER_ID` | empty | Real `ca-pub-…` from Google only — do not invent one. Not a secret, but do not commit a guessed id |
+| `ADSENSE_ENABLED` | `false` | Not a secret. `wrangler.toml`. Must stay false until AdSense is approved **and** George says ads are on |
+| `CHECKOUT_ENABLED` | `false` | Not a secret. `wrangler.toml` and `site/public-config.js`. UI and `/api/checkout` stay disabled |
 | `window.HABIBI_CHECKOUT_ENABLED` | `false` | Browser alias in `site/public-config.js`; must stay false with `CHECKOUT_ENABLED` |
-| `APP_ORIGIN` | `https://habibicraftsco.com` | Stripe redirects + CORS |
+| `APP_ORIGIN` | `https://habibicraftsco.com` | Not a secret. `wrangler.toml`. Stripe redirects + CORS |
 
 Browser flags (not secrets) live in `site/public-config.js` and also default off. Flip that file **and** the host env together when going live.
 
@@ -45,7 +45,7 @@ GitHub Pages cannot run Stripe webhooks. Use **Cloudflare Pages** against this s
 
 1. In Cloudflare: Workers & Pages → Create → Pages → Connect to Git → `gzikry/habibi-crafts-site`.
 2. Build output directory: `site`. Functions come from `/functions` (`wrangler.toml`).
-3. Add the env vars from the table above (test-mode Stripe, Printful token, `CHECKOUT_ENABLED=false`, `ADSENSE_ENABLED=false`).
+3. Add only the secrets from the table above to the host: the Stripe keys and the Printful token. `CHECKOUT_ENABLED`, `ADSENSE_ENABLED`, `PRINTFUL_STORE_ID`, `PRINTFUL_CONFIRM_ORDERS`, and `APP_ORIGIN` are already non-secret values in `wrangler.toml`. Do not put those in the host secret list.
 4. After the first deploy, note the `*.pages.dev` URL.
 5. Optional: CNAME `api.habibicraftsco.com` to that Pages project (Porkbun DNS). Then set `site/public-config.js` → `CHECKOUT_API_BASE` to `https://api.habibicraftsco.com` when checkout is actually turned on.
 6. In Stripe (test mode): Developers → Webhooks → Add endpoint  
@@ -79,7 +79,7 @@ node scripts/printful-pull-variants.js
 
 ## Remaining manual steps
 
-1. **Stripe:** test-mode keys in Cloudflare secrets; webhook URL (step 6 above); later, live keys only when checkout is approved. In the Dashboard, open Settings, then Customer emails, and turn on Successful payments. That is the receipt email. When a checkout request includes `contact_email`, the API also sets `payment_intent_data[receipt_email]`. If the preview Access app cannot accept the pages.dev hostname for `/api/webhook`, leave that Bypass uncreated and forward test events with `stripe listen --forward-to http://localhost:8788/api/webhook` while `wrangler pages dev` is running. The steps are in `docs/CLOUDFLARE-SETUP.md`.
+1. **Stripe:** test-mode keys in Cloudflare secrets; webhook URL (step 6 above); later, live keys only when checkout is approved. In the Dashboard, open Settings, then Customer emails, and turn on Successful payments. That is the receipt email. When a checkout request includes `contact_email`, the API also sets `payment_intent_data[receipt_email]`. If the preview Access app cannot accept the pages.dev hostname for `/api/webhook`, leave that Bypass uncreated and forward test events with `stripe listen --forward-to http://localhost:8788/api/webhook` while `wrangler pages dev` is running. The CLI prints a `whsec_` signing secret. Put that value in `STRIPE_WEBHOOK_SECRET` in `.dev.vars` for local dev, and in the preview environment's `STRIPE_WEBHOOK_SECRET` for a hosted preview. Do not commit it or write it into the build directory. The steps are in `docs/CLOUDFLARE-SETUP.md`.
 2. **Printful:** paste the existing token into Cloudflare secrets. Run `printful-pull-variants.js` locally to fill `sync_variant_id` values, then set matching `external_variant_id`s on the ignored drafts if they are not set yet. Keep drafts ignored.
 3. **AdSense:** apply / wait for approval. Put the exact `ads.txt` line Google gives you into `site/ads.txt`. Set `ADSENSE_PUBLISHER_ID` and only then flip `ADSENSE_ENABLED` in host env **and** `site/public-config.js`.
-4. **Go-live (later, explicit):** build the checkout-on pages into a directory that is not `site/`, then run `scripts/golive-check` on that directory. It does not flip the flag or write files. It exits non-zero and prints one failure per line if that build still says "not taking orders yet" or "Opening soon", if `public-config.js` is missing a publishable Stripe key or an API base, if that API's `/api/health` does not answer, or if an on-sale product has no sync variant id. Only after it exits 0, set `CHECKOUT_ENABLED=true` in the host env and `site/public-config.js`, set `CHECKOUT_API_BASE`, and change the cart button copy. A later build with checkout off restores the closed-shop sentences, including the hand pages. Only `LAUNCH_SLUGS` that are not in `HOLD_SLUGS` (`api/lib/catalog.js`) become purchasable and `InStock`. The three dad hats stay in `HOLD_SLUGS` until their colorway and art are finished. Remove a hat from `HOLD_SLUGS` when that hat is ready. Set `PRINTFUL_CONFIRM_ORDERS=true` only when drafts look right. Preview builds keep `PRINTFUL_CONFIRM_ORDERS` false. The committed checkout-off pages keep "We're not taking orders yet."
+4. **Go-live (later, explicit):** build the checkout-on pages into a directory that is not `site/`, then run `scripts/golive-check` on that directory. It does not flip the flag or write files. It exits non-zero and prints one failure per line if that build still says "not taking orders yet" or "Opening soon", if `public-config.js` is missing a publishable Stripe key or an API base, if that API's `/api/health` does not answer, or if an on-sale product has no sync variant id. Only after it exits 0, set `CHECKOUT_ENABLED=true` in `wrangler.toml` and `site/public-config.js`, and set `CHECKOUT_API_BASE`. The go-live build rewrites `cart.html`, `checkout.html`, `faq.html`, `shipping.html`, `tracking.html`, every `product-*.html` page, and `product-catalog.json`. It does not need a separate cart-button copy edit. A later build with checkout off restores the closed-shop sentences and the committed purchasable flags. Only `LAUNCH_SLUGS` that are not in `HOLD_SLUGS` (`api/lib/catalog.js`) become purchasable and `InStock`. The three dad hats stay in `HOLD_SLUGS` until their colorway and art are finished. Remove a hat from `HOLD_SLUGS` when that hat is ready. Set `PRINTFUL_CONFIRM_ORDERS=true` only when drafts look right. Preview builds keep `PRINTFUL_CONFIRM_ORDERS` false. The committed checkout-off pages keep "We're not taking orders yet."

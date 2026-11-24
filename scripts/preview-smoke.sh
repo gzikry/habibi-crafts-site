@@ -29,7 +29,7 @@ if grep -q 'checkout_disabled' "$checkout_body"; then
 fi
 blocked=0
 case "$checkout_code" in
-  302|401|403) blocked=1 ;;
+  301|302|401|403) blocked=1 ;;
 esac
 if grep -Eq 'cloudflareaccess|Cloudflare Access' "$checkout_body"; then
   blocked=1
@@ -88,9 +88,9 @@ health_body=$(mktemp)
 health_code=$(auth_curl -sS -o "$health_body" -w '%{http_code}' "${base}/api/health" || true)
 echo "HTTP ${health_code}"
 case "$health_code" in
-  302)
+  301|302)
     rm -f "$health_body"
-    echo "Access redirected /api/health (HTTP 302). The service token or cookie did not pass." >&2
+    echo "Access redirected /api/health (HTTP ${health_code}). The service token or cookie did not pass." >&2
     exit 1
     ;;
   401|403) rm -f "$health_body"; reject_access /api/health "$health_code" ;;
@@ -109,9 +109,9 @@ cart_body=$(mktemp)
 cart_code=$(auth_curl -sS -o "$cart_body" -w '%{http_code}' "${base}/cart.html" || true)
 echo "HTTP ${cart_code}"
 case "$cart_code" in
-  302)
+  301|302)
     rm -f "$cart_body"
-    echo "Access redirected /cart.html (HTTP 302). The service token or cookie did not pass." >&2
+    echo "Access redirected /cart.html (HTTP ${cart_code}). The service token or cookie did not pass." >&2
     exit 1
     ;;
   401|403) rm -f "$cart_body"; reject_access /cart.html "$cart_code" ;;

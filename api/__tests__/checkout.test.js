@@ -79,14 +79,12 @@ describe('config flags', () => {
       readConfig({ CF_PAGES_URL: 'https://prod.pages.dev' }).appOrigin,
       'https://habibicraftsco.com'
     );
-    assert.throws(
-      () => readConfig({ HABIBI_PREVIEW: '1', CF_PAGES_URL: 'https://abc.pages.dev/' }),
-      /APP_ORIGIN is required/
-    );
-    assert.throws(
-      () => readConfig({ CF_PAGES_BRANCH: 'preview' }),
-      /APP_ORIGIN is required/
-    );
+    const missingPreview = readConfig({ HABIBI_PREVIEW: '1', CF_PAGES_URL: 'https://abc.pages.dev/' });
+    assert.equal(missingPreview.appOrigin, '');
+    assert.match(missingPreview.configError, /APP_ORIGIN is required/);
+    const missingBranch = readConfig({ CF_PAGES_BRANCH: 'preview' });
+    assert.equal(missingBranch.appOrigin, '');
+    assert.match(missingBranch.configError, /APP_ORIGIN is required/);
     assert.equal(
       readConfig({ HABIBI_PREVIEW: '1', CF_PAGES_BRANCH: 'main' }).appOrigin,
       'https://habibicraftsco.com'
@@ -214,6 +212,17 @@ describe('HTTP handlers', () => {
     const body = await response.json();
     assert.equal(body.checkout_enabled, false);
     assert.equal(body.adsense_enabled, false);
+  });
+
+  it('returns JSON 500 when a preview has no APP_ORIGIN', async () => {
+    const response = await handleHealth(
+      new Request('https://example.com/api/health', { method: 'GET' }),
+      { HABIBI_PREVIEW: '1', CF_PAGES_URL: 'https://abc.pages.dev' }
+    );
+    assert.equal(response.status, 500);
+    const body = await response.json();
+    assert.equal(body.error, 'app_origin_required');
+    assert.match(body.message, /APP_ORIGIN is required/);
   });
 
   it('rejects checkout while CHECKOUT_ENABLED is false', async () => {

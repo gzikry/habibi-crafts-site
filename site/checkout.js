@@ -187,6 +187,7 @@
       }
       clearCheckoutError(button);
       button.disabled = true;
+      button.setAttribute('aria-disabled', 'true');
       var controller = new AbortController();
       var timer = setTimeout(function () {
         controller.abort();

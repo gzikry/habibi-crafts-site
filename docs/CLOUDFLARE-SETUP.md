@@ -143,7 +143,7 @@ Create a service token for those two checks:
 5. Add a policy. Name it Preview smoke. Action **Service Auth**. Include rule **Service Token**, and choose the token you just created. Leave the email Allow policy in place. Service Auth lets the script through. Everyone else still gets the one-time PIN.
 6. Export the two values as `CF_ACCESS_CLIENT_ID` and `CF_ACCESS_CLIENT_SECRET`, then run the smoke script again. Or set `CF_AUTHORIZATION` to a `CF_Authorization` cookie from a browser that already passed the PIN.
 
-A rejected token prints `Access rejected the service token or cookie` and exits 1. HTTP 400 `missing_stripe_signature` on the unsigned webhook is the proof that the Bypass path reached the function.
+A rejected token prints `Access rejected the service token or cookie` and exits 1. A 301 or 302 prints `Access redirected` and `The service token or cookie did not pass.` HTTP 400 `missing_stripe_signature` on the unsigned webhook is the proof that the Bypass path reached the function. The Stripe CLI prints a `whsec_` signing secret. Put it in `STRIPE_WEBHOOK_SECRET` in `.dev.vars` for local `wrangler pages dev`, and in the preview environment's `STRIPE_WEBHOOK_SECRET` for a hosted preview. Do not commit it or write it into the build directory.
 
 The preview pages send `noindex` and `robots.txt` disallows the whole host.
 

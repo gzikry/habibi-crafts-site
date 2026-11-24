@@ -291,6 +291,7 @@ describe('checkout client', () => {
     assert.equal(page.store[BAG_KEY], STORED_BAG);
     assert.equal(page.fetched.length, 1);
     page.button.click();
+    assert.equal(page.fetched.length, 2);
     assert.equal(page.main.querySelector('[data-checkout-error]'), null);
   });
 
@@ -298,6 +299,7 @@ describe('checkout client', () => {
     const page = bootCheckout({ enabled: true, search: '', paymentStatus: 'checkout-hang' });
     page.button.click();
     assert.equal(page.button.disabled, true);
+    assert.equal(page.button.getAttribute('aria-disabled'), 'true');
     assert.equal(page.timers.length, 1);
     assert.equal(page.timers[0].delay, 9000);
     assert.equal(page.fetched[0].init.signal.aborted, false);
@@ -305,6 +307,7 @@ describe('checkout client', () => {
     await flush();
     assert.equal(page.fetched[0].init.signal.aborted, true);
     assert.equal(page.button.disabled, false);
+    assert.equal(page.button.getAttribute('aria-disabled'), null);
     assert.equal(page.button.textContent, 'Try again');
     assert.equal(page.main.querySelector('[data-checkout-error]').textContent, 'Something went wrong. Please try again.');
     assert.equal(page.store[BAG_KEY], STORED_BAG);

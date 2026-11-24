@@ -21,12 +21,23 @@ function envFrom(requestEnv) {
   return readConfig(requestEnv || process.env);
 }
 
+function misconfigured(config) {
+  if (!config.configError) return null;
+  return json(
+    { error: 'app_origin_required', message: config.configError },
+    500,
+    corsHeaders('https://habibicraftsco.com')
+  );
+}
+
 function originHeaders(config) {
   return corsHeaders(config.appOrigin);
 }
 
 export async function handleHealth(request, requestEnv) {
   const config = envFrom(requestEnv);
+  const blocked = misconfigured(config);
+  if (blocked) return blocked;
   if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: originHeaders(config) });
   if (request.method !== 'GET') return text('method not allowed', 405, originHeaders(config));
   return json(
@@ -43,6 +54,8 @@ export async function handleHealth(request, requestEnv) {
 
 export async function handleCheckout(request, requestEnv, fetchImpl = fetch) {
   const config = envFrom(requestEnv);
+  const blocked = misconfigured(config);
+  if (blocked) return blocked;
   const headers = originHeaders(config);
   if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers });
   if (request.method !== 'POST') return text('method not allowed', 405, headers);
@@ -99,6 +112,8 @@ export async function handleCheckout(request, requestEnv, fetchImpl = fetch) {
 
 export async function handleCheckoutSession(request, requestEnv, fetchImpl = fetch) {
   const config = envFrom(requestEnv);
+  const blocked = misconfigured(config);
+  if (blocked) return blocked;
   const headers = originHeaders(config);
   if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers });
   if (request.method !== 'GET') return text('method not allowed', 405, headers);
@@ -165,6 +180,8 @@ export async function fulfillPaidSession(session, config, fetchImpl = fetch) {
 
 export async function handleWebhook(request, requestEnv, fetchImpl = fetch) {
   const config = envFrom(requestEnv);
+  const blocked = misconfigured(config);
+  if (blocked) return blocked;
   if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: originHeaders(config) });
   if (request.method !== 'POST') return text('method not allowed', 405);
 
