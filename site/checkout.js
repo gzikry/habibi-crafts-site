@@ -3,10 +3,22 @@
   if (typeof window.HABIBI_CHECKOUT_ENABLED !== 'boolean') {
     window.HABIBI_CHECKOUT_ENABLED = cfg.CHECKOUT_ENABLED === true;
   }
+  function pageOrigin() {
+    if (window.location && window.location.origin) {
+      return String(window.location.origin).replace(/\/$/, '');
+    }
+    try {
+      return new URL(window.location.href).origin;
+    } catch (err) {
+      return '';
+    }
+  }
+
+  var apiBase = String(cfg.CHECKOUT_API_BASE || '').replace(/\/$/, '') || pageOrigin();
   var enabled =
     window.HABIBI_CHECKOUT_ENABLED === true &&
     cfg.CHECKOUT_ENABLED === true &&
-    Boolean(cfg.CHECKOUT_API_BASE);
+    Boolean(apiBase);
   var SUCCESS = 'Thank you, your order is in. Your receipt is on its way by email.';
   var CANCELLED = "Checkout cancelled. Your bag is saved for when you're ready.";
   var UNCONFIRMED = "We couldn't confirm your order yet. If your payment went through, your receipt will arrive by email. Your bag is still here.";
@@ -19,12 +31,23 @@
     button.textContent = 'Opening soon';
   }
 
+  function errorHost(button) {
+    return button.parentNode || document.querySelector('main');
+  }
+
+  function clearCheckoutError(button) {
+    var host = errorHost(button);
+    if (!host || !host.querySelector) return;
+    var note = host.querySelector('[data-checkout-error]');
+    if (note && note.parentNode) note.parentNode.removeChild(note);
+  }
+
   function fail(button) {
     button.disabled = false;
     button.removeAttribute('aria-disabled');
     button.classList.remove('browse-mode');
-    button.textContent = 'Check out';
-    var host = button.parentNode || document.querySelector('main');
+    button.textContent = 'Try again';
+    var host = errorHost(button);
     if (!host || !host.appendChild) return;
     var note = host.querySelector('[data-checkout-error]');
     if (!note) {
@@ -103,7 +126,7 @@
       stripCheckoutParams();
       return;
     }
-    var base = String(cfg.CHECKOUT_API_BASE).replace(/\/$/, '');
+    var base = apiBase;
     var controller = new AbortController();
     var timer = setTimeout(function () {
       controller.abort();
@@ -152,7 +175,7 @@
         if (!slug) return;
         items = [{ slug: slug, quantity: 1 }];
       }
-      if (!items.length || !cfg.CHECKOUT_API_BASE) return;
+      if (!items.length || !apiBase) return;
       var payload = {
         items: items,
         idempotency_key: 'ui-' + Date.now()
@@ -162,19 +185,29 @@
           return sum + item.price_cents * item.quantity;
         }, 0);
       }
+      clearCheckoutError(button);
       button.disabled = true;
-      fetch(String(cfg.CHECKOUT_API_BASE).replace(/\/$/, '') + '/api/checkout', {
+      button.setAttribute('aria-disabled', 'true');
+      var controller = new AbortController();
+      var timer = setTimeout(function () {
+        controller.abort();
+      }, 9000);
+      fetch(apiBase + '/api/checkout', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify(payload)
+        body: JSON.stringify(payload),
+        signal: controller.signal
       }).then(function (response) {
         return response.json().then(function (body) {
+          clearTimeout(timer);
           if (response.ok && body && body.checkout_url) window.location = body.checkout_url;
           else fail(button);
         }, function () {
+          clearTimeout(timer);
           fail(button);
         });
       }).catch(function () {
+        clearTimeout(timer);
         fail(button);
       });
     });

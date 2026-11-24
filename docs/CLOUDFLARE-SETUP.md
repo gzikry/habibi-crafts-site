@@ -96,7 +96,7 @@ stripe listen --forward-to http://localhost:8788/api/webhook
 
 The dashboard webhook can wait until the Bypass application exists.
 
-The smoke script proves the bypass. An unsigned `POST /api/webhook` that returns HTTP 400 and `missing_stripe_signature` reached the function. HTTP 302 or 403 means Access still holds the path.
+The smoke script proves the bypass. An unsigned `POST /api/webhook` that returns HTTP 400 and `missing_stripe_signature` reached the function. A 301 or 302 means Access still holds the path. HTTP 403 is separate: Access rejected the unsigned webhook.
 
 ## Point Stripe at the preview
 
@@ -138,12 +138,14 @@ Create a service token for those two checks:
 
 1. In **Zero Trust**, open **Access**, then **Service credentials**, then **Service Tokens**.
 2. Select **Create Service Token**. Name it Habibi preview smoke.
-3. Copy the Client ID and the Client Secret. The secret is shown once. Do not commit either value.
-4. Open the Access application that Pages created for the preview. Do not add this policy to the webhook Bypass application.
-5. Add a policy. Name it Preview smoke. Action **Service Auth**. Include rule **Service Token**, and choose the token you just created. Leave the email Allow policy in place. Service Auth lets the script through. Everyone else still gets the one-time PIN.
-6. Export the two values as `CF_ACCESS_CLIENT_ID` and `CF_ACCESS_CLIENT_SECRET`, then run the smoke script again. Or set `CF_AUTHORIZATION` to a `CF_Authorization` cookie from a browser that already passed the PIN.
+3. Set **Duration**.
+4. Select **Generate**.
+5. Copy the Client ID and the Client Secret. The secret is shown once. Do not commit either value.
+6. Open the Access application that Pages created for the preview. Do not add this policy to the webhook Bypass application.
+7. Add a policy. Name it Preview smoke. Action **Service Auth**. Include rule **Service Token**, and choose the token you just created. Leave the email Allow policy in place. Service Auth lets the script through. Everyone else still gets the one-time PIN.
+8. Export the two values as `CF_ACCESS_CLIENT_ID` and `CF_ACCESS_CLIENT_SECRET`, then run the smoke script again. Or set `CF_AUTHORIZATION` to a `CF_Authorization` cookie from a browser that already passed the PIN.
 
-A rejected token prints `Access rejected the service token or cookie` and exits 1. HTTP 400 `missing_stripe_signature` on the unsigned webhook is the proof that the Bypass path reached the function.
+A rejected token prints `Access rejected the service token or cookie` and exits 1. A 301 or 302 prints `Access redirected` and `The service token or cookie did not pass.` HTTP 400 `missing_stripe_signature` on the unsigned webhook is the proof that the Bypass path reached the function. The Stripe CLI prints a `whsec_` signing secret. Put it in `STRIPE_WEBHOOK_SECRET` in `.dev.vars` for local `wrangler pages dev`, and in the preview environment's `STRIPE_WEBHOOK_SECRET` for a hosted preview. Do not commit it or write it into the build directory.
 
 The preview pages send `noindex` and `robots.txt` disallows the whole host.
 

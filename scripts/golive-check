@@ -1,0 +1,183 @@
+#!/usr/bin/env python3
+"""Read-only check of a checkout-on build directory.
+
+Prints one failure per line and exits 1 when the build is not ready to
+flip checkout on. Does not write files, change flags, or call Printful.
+"""
+import json
+import re
+import sys
+import urllib.error
+import urllib.request
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / 'pipeline'))
+from chrome import SHOP_REPLACEMENTS  # noqa: E402
+
+CLOSED_PHRASES = tuple(old for old, _new in SHOP_REPLACEMENTS)
+
+
+def flattened(text):
+    return re.sub(r'\s+', ' ', text)
+
+
+def fail(items, message):
+    items.append(message)
+
+
+def read_slugs():
+    text = (ROOT / 'api' / 'lib' / 'catalog.js').read_text()
+
+    def grab(name):
+        found = re.search(rf'export const {name} = \[(.*?)\]', text, re.S)
+        if not found:
+            raise SystemExit(f'api/lib/catalog.js is missing {name}')
+        return re.findall(r"'([^']+)'", found.group(1))
+
+    launch = grab('LAUNCH_SLUGS')
+    hold = set(grab('HOLD_SLUGS'))
+    return [slug for slug in launch if slug not in hold]
+
+
+def public_config(text):
+    def field(name):
+        found = re.search(rf'{name}:\s*(\'[^\']*\'|"[^"]*"|true|false)', text)
+        if not found:
+            return None
+        raw = found.group(1)
+        if raw in {'true', 'false'}:
+            return raw == 'true'
+        return raw[1:-1]
+
+    return {
+        'enabled': field('CHECKOUT_ENABLED') is True,
+        'key': field('STRIPE_PUBLISHABLE_KEY') or '',
+        'base': field('CHECKOUT_API_BASE') or '',
+    }
+
+
+def check_copy(directory, items):
+    for path in sorted(directory.rglob('*.html')):
+        text = path.read_text(errors='replace')
+        flat = flattened(text)
+        rel = path.relative_to(directory)
+        for phrase in CLOSED_PHRASES:
+            if phrase in text or flattened(phrase) in flat:
+                fail(items, f'{rel} still contains closed-shop copy: {phrase}')
+        if "We're not taking orders yet." in flat:
+            fail(items, f"{rel} still contains closed-shop copy: We're not taking orders yet.")
+        if 'Opening soon' in flat:
+            fail(items, f'{rel} still contains closed-shop copy: Opening soon')
+
+
+def check_config(directory, items):
+    path = directory / 'public-config.js'
+    missing_key_or_base = False
+    if not path.is_file():
+        fail(items, 'public-config.js is missing')
+        return '', True
+    config = public_config(path.read_text())
+    if not config['enabled']:
+        fail(items, 'public-config.js has CHECKOUT_ENABLED false')
+    key = config['key']
+    if not key.startswith('pk_') or key.startswith('sk_'):
+        missing_key_or_base = True
+        fail(items, 'publishable key is missing')
+    base = config['base'].rstrip('/')
+    local = base.startswith('http://127.0.0.1') or base.startswith('http://localhost')
+    if not base.startswith('https://') and not local:
+        missing_key_or_base = True
+        fail(items, 'API base is missing')
+    return base, missing_key_or_base
+
+
+def check_health(base, items):
+    if not base:
+        fail(items, 'API health was not requested because CHECKOUT_API_BASE is empty')
+        return
+    url = base + '/api/health'
+    try:
+        with urllib.request.urlopen(url, timeout=10) as response:
+            status = response.status
+            body = response.read(4096).decode('utf-8', 'replace')
+    except urllib.error.HTTPError as exc:
+        fail(items, f'API health {url} answered HTTP {exc.code}')
+        return
+    except Exception as exc:
+        fail(items, f'API health {url} did not answer ({exc.__class__.__name__})')
+        return
+    if status != 200:
+        fail(items, f'API health {url} answered HTTP {status}')
+        return
+    if '"status"' not in body:
+        fail(items, f'API health {url} answered without a status field')
+
+
+def check_build_sale(directory, items):
+    catalog_path = directory / 'product-catalog.json'
+    if not catalog_path.is_file():
+        fail(items, 'product-catalog.json is missing from the build directory')
+        return
+    catalog = json.loads(catalog_path.read_text())
+    by_slug = {product.get('slug'): product for product in catalog}
+    for slug in read_slugs():
+        product = by_slug.get(slug)
+        if not product or product.get('purchasable') is not True:
+            fail(items, f'{slug} is not purchasable:true in the build catalog')
+        page = directory / f'product-{slug}.html'
+        if not page.is_file() or 'Add to bag' not in page.read_text(errors='replace'):
+            fail(items, f'{slug} PDP is missing Add to bag')
+
+
+def check_variants(items):
+    catalog = json.loads((ROOT / 'api' / 'catalog.json').read_text())
+    products = catalog.get('products') or {}
+    for slug in read_slugs():
+        product = products.get(slug)
+        if not product:
+            fail(items, f'{slug} is on sale and missing from api/catalog.json')
+            continue
+        variants = product.get('variants') or {}
+        if not variants:
+            fail(items, f'{slug} is on sale and has no variants')
+            continue
+        for name, variant in variants.items():
+            sync_id = variant.get('sync_variant_id')
+            if not isinstance(sync_id, int) or isinstance(sync_id, bool):
+                fail(items, f'{slug} {name} has no sync variant id')
+
+
+def main():
+    args = [arg for arg in sys.argv[1:] if arg != '--live']
+    live = '--live' in sys.argv[1:]
+    if len(args) != 1:
+        print('usage: scripts/golive-check <build-dir> [--live]', file=sys.stderr)
+        return 2
+    directory = Path(args[0]).resolve()
+    if not directory.is_dir():
+        print(f'{directory} is not a directory', file=sys.stderr)
+        return 2
+    items = []
+    check_copy(directory, items)
+    base, missing_key_or_base = check_config(directory, items)
+    check_build_sale(directory, items)
+    check_variants(items)
+    if live:
+        print(f'live: GET {base}/api/health hits the real API')
+        check_health(base, items)
+    else:
+        print('offline: not calling the API (pass --live to GET CHECKOUT_API_BASE/api/health)')
+    if missing_key_or_base:
+        print('requires a pk_ publishable key and an https CHECKOUT_API_BASE')
+    if items:
+        for item in items:
+            print(item)
+        return 1
+    print('publishable key and API base are set')
+    print('golive-check passed')
+    return 0
+
+
+if __name__ == '__main__':
+    sys.exit(main())

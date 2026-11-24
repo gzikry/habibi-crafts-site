@@ -15,11 +15,11 @@ function previewRuntime(source) {
 
 function appOrigin(source) {
   const set = env(source, 'APP_ORIGIN', '');
-  if (set) return set.replace(/\/$/, '');
+  if (set) return { origin: set.replace(/\/$/, ''), error: '' };
   if (previewRuntime(source)) {
-    throw new Error('APP_ORIGIN is required when the preview is on');
+    return { origin: '', error: 'APP_ORIGIN is required when the preview is on' };
   }
-  return 'https://habibicraftsco.com';
+  return { origin: 'https://habibicraftsco.com', error: '' };
 }
 
 function flag(source, key, defaultValue = false) {
@@ -32,6 +32,7 @@ function flag(source, key, defaultValue = false) {
 }
 
 export function readConfig(source = process.env) {
+  const origin = appOrigin(source);
   return {
     stripeSecretKey: env(source, 'STRIPE_SECRET_KEY'),
     stripeWebhookSecret: env(source, 'STRIPE_WEBHOOK_SECRET'),
@@ -42,7 +43,8 @@ export function readConfig(source = process.env) {
     checkoutEnabled: flag(source, 'CHECKOUT_ENABLED', false),
     adsenseEnabled: flag(source, 'ADSENSE_ENABLED', false),
     printfulConfirmOrders: flag(source, 'PRINTFUL_CONFIRM_ORDERS', false),
-    appOrigin: appOrigin(source)
+    appOrigin: origin.origin,
+    configError: origin.error
   };
 }
 

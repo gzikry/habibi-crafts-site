@@ -15,7 +15,7 @@ from root import angles_dir, cents_decimal, format_cents, repo_root, site_dir, w
 from chrome import (
     BASE, COMING_SOON, EMAIL_US, QUESTIONS_EMAIL, SHARE_IMAGE_ALT, SHIP_LINE, THIN_PAGES,
     WANT_ONE,
-    esc, filter_bars, icons, json_ld, open_shop_html, orders_copy, page_close, page_open,
+    close_shop_html, esc, filter_bars, icons, json_ld, open_shop_html, orders_copy, page_close, page_open,
     preview_requested, scripts, stylesheet,
 )
 
@@ -145,7 +145,10 @@ def poster_for(slug, frames):
 
 
 def mockup(slug):
-    return f"assets/mockups/{slug}.png?v={SNAPSHOT['mockups'][slug]}"
+    version = SNAPSHOT['mockups'].get(slug)
+    if version is None:
+        return f"assets/mockups/{slug}.png"
+    return f"assets/mockups/{slug}.png?v={version}"
 
 
 INDEX_ROBOTS = 'index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1'
@@ -203,13 +206,32 @@ def checkout_enabled():
     )
 
 
+def closed_sale(product):
+    """Stored closed-shop input. A missing flag stays closed. Builds do not write it."""
+    return product.get('closed_purchasable') is True
+
+
 def for_sale(product):
     slug = product.get('slug')
     if not isinstance(slug, str) or not slug.strip():
         return False
     if checkout_enabled():
         return slug in LAUNCH_SLUGS and slug not in HOLD_SLUGS
-    return product.get('purchasable') is True
+    return closed_sale(product)
+
+
+def load_working_catalog():
+    return json.loads((SITE / 'product-catalog.json').read_text())
+
+
+def catalog_for_output(catalog):
+    """Derived purchasable on a copy. closed_purchasable is copied through, never invented."""
+    rendered = []
+    for product in catalog:
+        item = dict(product)
+        item['purchasable'] = for_sale(product)
+        rendered.append(item)
+    return rendered
 
 
 def robots_content():
@@ -831,7 +853,7 @@ def product_ld(p, desc, filename, label, frames):
 def write_products(out_dir, manifest=None):
     if manifest is None:
         manifest = load_manifest()
-    catalog = json.load(open(SITE / 'product-catalog.json'))
+    catalog = load_working_catalog()
     built = 0
     for p in catalog:
         kind = p['category']
@@ -928,19 +950,9 @@ def write_products(out_dir, manifest=None):
 
 
 def write_storefront_catalog(out_dir):
-    src = SITE / 'product-catalog.json'
-    catalog = json.loads(src.read_text())
-    changed = False
-    for product in catalog:
-        sale = for_sale(product)
-        if product.get('purchasable') is not sale:
-            product['purchasable'] = sale
-            changed = True
-    dest = out_dir / 'product-catalog.json'
-    if changed:
-        dest.write_text(json.dumps(catalog, indent=2) + '\n')
-    else:
-        dest.write_bytes(src.read_bytes())
+    catalog = load_working_catalog()
+    text = json.dumps(catalog_for_output(catalog), indent=2) + '\n'
+    (out_dir / 'product-catalog.json').write_text(text)
 
 
 def write_open_pages(out_dir):
@@ -948,10 +960,15 @@ def write_open_pages(out_dir):
         src = SITE / name
         raw = src.read_bytes()
         dest = out_dir / name
-        if not checkout_enabled():
-            dest.write_bytes(raw)
+        text = raw.decode()
+        if checkout_enabled():
+            dest.write_text(open_shop_html(text, name))
         else:
-            dest.write_text(open_shop_html(raw.decode(), name))
+            closed = close_shop_html(text, name)
+            if closed == text:
+                dest.write_bytes(raw)
+            else:
+                dest.write_text(closed)
 
 
 # Curated groups. Every slug is a live catalog item.

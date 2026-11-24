@@ -2,7 +2,7 @@ import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import { saleOpen } from '../lib/catalog.js';
 import { execFile, execFileSync, spawnSync } from 'node:child_process';
-import { mkdtempSync, readFileSync, readdirSync } from 'node:fs';
+import { mkdtempSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { createServer } from 'node:http';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
@@ -134,8 +134,7 @@ describe('preview build', () => {
       /not taking orders/i,
       /does not collect payment/i,
       /when we start taking orders/i,
-      /nothing to look up today/i,
-      /Opening soon/
+      /nothing to look up today/i
     ];
     function walk(dir) {
       for (const entry of readdirSync(dir, { withFileTypes: true })) {
@@ -144,6 +143,7 @@ describe('preview build', () => {
         else if (/\.(html|js|json|txt|xml|css)$/i.test(entry.name)) {
           const text = read(path);
           for (const pattern of banned) assert.doesNotMatch(text, pattern, path);
+          if (entry.name.endsWith('.html')) assert.doesNotMatch(text, /Opening soon/, path);
         }
       }
     }
@@ -196,6 +196,8 @@ describe('preview build', () => {
     const outDir = mkdtempSync(join(tmpdir(), 'habibi-default-on-'));
     const env = { ...process.env, HABIBI_PREVIEW: '1' };
     delete env.CHECKOUT_ENABLED;
+    delete env.CHECKOUT_API_BASE;
+    delete env.CF_PAGES_URL;
     execFileSync('python3', ['pipeline/prepare-preview.py', '--out', outDir], {
       cwd: root,
       env
@@ -205,6 +207,8 @@ describe('preview build', () => {
     assert.doesNotMatch(cart, /Opening soon/);
     const config = read(join(outDir, 'public-config.js'));
     assert.match(config, /CHECKOUT_ENABLED:\s*true/);
+    assert.match(config, /CHECKOUT_API_BASE:\s*""/);
+    assert.match(read(join(outDir, 'checkout.js')), /Opening soon/);
     assert.match(read(join(root, 'site/public-config.js')), /CHECKOUT_ENABLED:\s*false/);
   });
 
@@ -278,6 +282,14 @@ print('ok')
     assert.match(script, /missing_stripe_signature/);
     assert.match(script, /SKIPPED authenticated checks/);
     assert.match(script, /Access rejected the service token or cookie/);
+    assert.match(script, /301\|302/);
+    assert.match(script, /Access redirected \/api\/health/);
+    assert.match(script, /Access redirected \/cart\.html/);
+    assert.match(script, /checkout_disabled/);
+    assert.match(script, /expected 400 missing_stripe_signature/);
+    assert.match(script, /A 301 or 302 means Access still holds \/api\/webhook/);
+    assert.match(script, /Access rejected the unsigned webhook/);
+    assert.doesNotMatch(read(join(root, 'pipeline/prepare-preview.py')), /replace\('Opening soon', 'Try again'\)/);
     assert.match(script, /CF_ACCESS_CLIENT_ID/);
     assert.match(script, /CF_AUTHORIZATION/);
     assert.doesNotMatch(script, /sk_live_|sk_test_|whsec_|PRINTFUL_API_TOKEN=/);
@@ -414,6 +426,143 @@ print('ok')
       assert.match(`${result.stdout}\n${result.stderr}`, /Access rejected the service token or cookie for \/api\/health \(HTTP 401\)/);
     } finally {
       await new Promise((resolve) => server.close(resolve));
+    }
+  });
+
+  it('gives a webhook 403 its own message', async () => {
+    const server = createServer((req, res) => {
+      req.resume();
+      res.writeHead(403, { 'content-type': 'text/plain' });
+      res.end('no');
+    });
+    await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
+    const port = server.address().port;
+    const env = { ...process.env };
+    delete env.CF_ACCESS_CLIENT_ID;
+    delete env.CF_ACCESS_CLIENT_SECRET;
+    delete env.CF_AUTHORIZATION;
+    try {
+      const result = await new Promise((resolve) => {
+        execFile('sh', ['scripts/preview-smoke.sh', `http://127.0.0.1:${port}`], {
+          cwd: root,
+          env
+        }, (error, stdout, stderr) => {
+          resolve({ status: error && error.code ? error.code : 0, stdout, stderr });
+        });
+      });
+      assert.equal(result.status, 1, `${result.stdout}\n${result.stderr}`);
+      assert.match(result.stderr, /Access rejected the unsigned webhook/);
+      assert.doesNotMatch(result.stderr, /301 or 302/);
+    } finally {
+      await new Promise((resolve) => server.close(resolve));
+    }
+  });
+
+  it('restores closed shop copy after an open build is rolled back', () => {
+    const out = execFileSync('python3', ['-c', `
+import pathlib, sys
+sys.path.insert(0, 'pipeline')
+from chrome import close_shop_html, open_shop_html
+pages = ('cart.html', 'checkout.html', 'faq.html', 'shipping.html', 'tracking.html')
+for name in pages:
+    original = pathlib.Path('site', name).read_text()
+    opened = open_shop_html(original, name)
+    restored = close_shop_html(opened, name)
+    if restored != original:
+        raise SystemExit(name)
+    if close_shop_html(original, name) != original:
+        raise SystemExit('closed ' + name)
+print('ok')
+`], { cwd: root, encoding: 'utf8' });
+    assert.match(out, /ok/);
+  });
+
+  it('a flag-off rebuild matches the main build after a go-live build into site/', () => {
+    const builders = ['build-shop.py', 'build-home.py', 'build-products.py', 'build-sitemap.py'];
+    const off = { ...process.env };
+    delete off.HABIBI_PREVIEW;
+    delete off.CHECKOUT_ENABLED;
+    delete off.CF_PAGES;
+    delete off.CF_PAGES_BRANCH;
+    function build(out) {
+      for (const name of builders) {
+        execFileSync('python3', [join('pipeline', name), '--out', out], { cwd: root, env: off });
+      }
+    }
+    function files(dir) {
+      const found = [];
+      function walk(current) {
+        for (const entry of readdirSync(current, { withFileTypes: true })) {
+          const path = join(current, entry.name);
+          if (entry.isDirectory()) walk(path);
+          else found.push(path.slice(dir.length + 1));
+        }
+      }
+      walk(dir);
+      return found.sort();
+    }
+    const baseline = mkdtempSync(join(tmpdir(), 'habibi-main-'));
+    const rollback = mkdtempSync(join(tmpdir(), 'habibi-rollback-'));
+    const snap = mkdtempSync(join(tmpdir(), 'habibi-site-snap-'));
+    execFileSync('cp', ['-a', join(root, 'site'), snap]);
+    const configPath = join(root, 'site/public-config.js');
+    const original = read(configPath);
+    build(baseline);
+    try {
+      writeFileSync(
+        configPath,
+        original
+          .replace('CHECKOUT_ENABLED: false', 'CHECKOUT_ENABLED: true')
+          .replace('HABIBI_CHECKOUT_ENABLED = false', 'HABIBI_CHECKOUT_ENABLED = true')
+      );
+      build(join(root, 'site'));
+      writeFileSync(configPath, original);
+      const parity = spawnSync('python3', ['pipeline/check-builder-parity.py'], { cwd: root, encoding: 'utf8', env: off });
+      assert.notEqual(parity.status, 0, parity.stdout);
+      build(rollback);
+      const names = files(baseline);
+      assert.deepEqual(files(rollback), names);
+      for (const name of names) {
+        const left = read(join(baseline, name)).replace(/\?v=\d+/g, '?v=');
+        const right = read(join(rollback, name)).replace(/\?v=\d+/g, '?v=');
+        assert.equal(left, right, name);
+      }
+    } finally {
+      execFileSync('rm', ['-rf', join(root, 'site')]);
+      execFileSync('cp', ['-a', join(snap, 'site'), root]);
+    }
+  });
+
+  it('keeps an uncommitted catalog edit and a new product through a build', () => {
+    const catalogPath = join(root, 'site/product-catalog.json');
+    const original = read(catalogPath);
+    const outDir = mkdtempSync(join(tmpdir(), 'habibi-catalog-edit-'));
+    const env = { ...process.env };
+    delete env.HABIBI_PREVIEW;
+    delete env.CHECKOUT_ENABLED;
+    delete env.CF_PAGES;
+    delete env.CF_PAGES_BRANCH;
+    try {
+      const edited = JSON.parse(original);
+      edited.find((product) => product.slug === 'halawa').description = 'QA uncommitted halawa description';
+      edited.push({
+        slug: 'qa-new-mug',
+        name: 'QA New Mug',
+        category: 'mugs',
+        price: 1499,
+        description: 'QA uncommitted new product',
+        purchasable: true,
+        closed_purchasable: true
+      });
+      writeFileSync(catalogPath, `${JSON.stringify(edited, null, 2)}\n`);
+      execFileSync('python3', ['pipeline/build-products.py', '--out', outDir], { cwd: root, env });
+      const built = JSON.parse(read(join(outDir, 'product-catalog.json')));
+      assert.equal(built.find((product) => product.slug === 'halawa').description, 'QA uncommitted halawa description');
+      assert.match(read(join(outDir, 'product-halawa.html')), /QA uncommitted halawa description/);
+      assert.equal(built.find((product) => product.slug === 'qa-new-mug').description, 'QA uncommitted new product');
+      assert.match(read(join(outDir, 'product-qa-new-mug.html')), /QA uncommitted new product/);
+    } finally {
+      writeFileSync(catalogPath, original);
     }
   });
 });

@@ -134,8 +134,16 @@ def main():
     write = '--write' in sys.argv
     catalog_path = SITE / 'product-catalog.json'
     existing = json.load(open(catalog_path)) if os.path.exists(catalog_path) else []
-    by_id = {e['printful_id']: e for e in existing}
-    by_slug = {e['slug']: e for e in existing}
+    by_id = {}
+    local_only = []
+    for entry in existing:
+        if 'printful_id' not in entry or entry.get('printful_id') is None:
+            slug = entry.get('slug') or '?'
+            print(f'warning: {slug} has no printful_id; left unchanged')
+            local_only.append(entry)
+            continue
+        by_id[entry['printful_id']] = entry
+    by_slug = {e['slug']: e for e in existing if e.get('slug')}
 
     listing = pf('/store/products?limit=100')
     if '__error' in listing:
@@ -206,8 +214,10 @@ def main():
         entry = {'slug': slug, 'name': name, 'category': category,
                  'price': cents_from_retail(variant['retail_price']), 'printful_id': pid}
         kept = prev or by_slug.get(slug) or {}
-        if 'purchasable' in kept:
-            entry['purchasable'] = kept['purchasable']
+        entry['purchasable'] = kept['purchasable'] if 'purchasable' in kept else False
+        entry['closed_purchasable'] = (
+            kept['closed_purchasable'] if 'closed_purchasable' in kept else False
+        )
         sub = kept.get('subtitle')
         if sub:
             entry['subtitle'] = sub
@@ -244,6 +254,7 @@ def main():
     spec_path = ROOT / 'printful-spec.json'
     json.dump(specs, open(spec_path, 'w'), indent=2)
 
+    entries.extend(local_only)
     order = {e['slug']: i for i, e in enumerate(existing)}
     entries.sort(key=lambda e: (order.get(e['slug'], len(order)), e['slug']))
     json.dump(entries, open(ROOT / 'printful-sync.json', 'w'), indent=2)
