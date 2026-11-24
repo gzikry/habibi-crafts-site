@@ -134,8 +134,7 @@ describe('preview build', () => {
       /not taking orders/i,
       /does not collect payment/i,
       /when we start taking orders/i,
-      /nothing to look up today/i,
-      /Opening soon/
+      /nothing to look up today/i
     ];
     function walk(dir) {
       for (const entry of readdirSync(dir, { withFileTypes: true })) {
@@ -144,6 +143,7 @@ describe('preview build', () => {
         else if (/\.(html|js|json|txt|xml|css)$/i.test(entry.name)) {
           const text = read(path);
           for (const pattern of banned) assert.doesNotMatch(text, pattern, path);
+          if (entry.name.endsWith('.html')) assert.doesNotMatch(text, /Opening soon/, path);
         }
       }
     }
@@ -196,6 +196,8 @@ describe('preview build', () => {
     const outDir = mkdtempSync(join(tmpdir(), 'habibi-default-on-'));
     const env = { ...process.env, HABIBI_PREVIEW: '1' };
     delete env.CHECKOUT_ENABLED;
+    delete env.CHECKOUT_API_BASE;
+    delete env.CF_PAGES_URL;
     execFileSync('python3', ['pipeline/prepare-preview.py', '--out', outDir], {
       cwd: root,
       env
@@ -205,6 +207,8 @@ describe('preview build', () => {
     assert.doesNotMatch(cart, /Opening soon/);
     const config = read(join(outDir, 'public-config.js'));
     assert.match(config, /CHECKOUT_ENABLED:\s*true/);
+    assert.match(config, /CHECKOUT_API_BASE:\s*""/);
+    assert.match(read(join(outDir, 'checkout.js')), /Opening soon/);
     assert.match(read(join(root, 'site/public-config.js')), /CHECKOUT_ENABLED:\s*false/);
   });
 
@@ -278,6 +282,11 @@ print('ok')
     assert.match(script, /missing_stripe_signature/);
     assert.match(script, /SKIPPED authenticated checks/);
     assert.match(script, /Access rejected the service token or cookie/);
+    assert.match(script, /Access redirected \/api\/health \(HTTP 302\)/);
+    assert.match(script, /Access redirected \/cart\.html \(HTTP 302\)/);
+    assert.match(script, /checkout_disabled/);
+    assert.match(script, /expected 400 missing_stripe_signature/);
+    assert.doesNotMatch(read(join(root, 'pipeline/prepare-preview.py')), /replace\('Opening soon', 'Try again'\)/);
     assert.match(script, /CF_ACCESS_CLIENT_ID/);
     assert.match(script, /CF_AUTHORIZATION/);
     assert.doesNotMatch(script, /sk_live_|sk_test_|whsec_|PRINTFUL_API_TOKEN=/);
@@ -415,5 +424,24 @@ print('ok')
     } finally {
       await new Promise((resolve) => server.close(resolve));
     }
+  });
+
+  it('restores closed shop copy after an open build is rolled back', () => {
+    const out = execFileSync('python3', ['-c', `
+import pathlib, sys
+sys.path.insert(0, 'pipeline')
+from chrome import close_shop_html, open_shop_html
+pages = ('cart.html', 'checkout.html', 'faq.html', 'shipping.html', 'tracking.html')
+for name in pages:
+    original = pathlib.Path('site', name).read_text()
+    opened = open_shop_html(original, name)
+    restored = close_shop_html(opened, name)
+    if restored != original:
+        raise SystemExit(name)
+    if close_shop_html(original, name) != original:
+        raise SystemExit('closed ' + name)
+print('ok')
+`], { cwd: root, encoding: 'utf8' });
+    assert.match(out, /ok/);
   });
 });

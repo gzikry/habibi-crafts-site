@@ -41,8 +41,9 @@ def env_on(name):
 
 
 def api_base():
-    raw = os.environ.get('CHECKOUT_API_BASE', '').strip() or os.environ.get('CF_PAGES_URL', '').strip()
-    return raw.rstrip('/')
+    # An empty base means the browser uses its own origin. CF_PAGES_URL is the
+    # deployment URL, not the alias the shopper is on, so it is not a fallback.
+    return os.environ.get('CHECKOUT_API_BASE', '').strip().rstrip('/')
 
 
 def public_config(enabled, base):
@@ -114,12 +115,6 @@ def main():
     (out / 'public-config.js').write_text(public_config(enabled, api_base()))
     patch_html(out, enabled)
     patch_catalog(out)
-    if enabled:
-        script = out / 'checkout.js'
-        closed = script.read_text()
-        if 'Opening soon' not in closed:
-            raise SystemExit('checkout.js closed label missing')
-        script.write_text(closed.replace('Opening soon', 'Try again'))
     (out / 'robots.txt').write_text('User-agent: *\nDisallow: /\n')
     (out / '_headers').write_text('/*\n  X-Robots-Tag: noindex, nofollow\n')
     print(f'preview build wrote {out}')

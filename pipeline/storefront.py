@@ -15,7 +15,7 @@ from root import angles_dir, cents_decimal, format_cents, repo_root, site_dir, w
 from chrome import (
     BASE, COMING_SOON, EMAIL_US, QUESTIONS_EMAIL, SHARE_IMAGE_ALT, SHIP_LINE, THIN_PAGES,
     WANT_ONE,
-    esc, filter_bars, icons, json_ld, open_shop_html, orders_copy, page_close, page_open,
+    close_shop_html, esc, filter_bars, icons, json_ld, open_shop_html, orders_copy, page_close, page_open,
     preview_requested, scripts, stylesheet,
 )
 
@@ -948,10 +948,15 @@ def write_open_pages(out_dir):
         src = SITE / name
         raw = src.read_bytes()
         dest = out_dir / name
-        if not checkout_enabled():
-            dest.write_bytes(raw)
+        text = raw.decode()
+        if checkout_enabled():
+            dest.write_text(open_shop_html(text, name))
         else:
-            dest.write_text(open_shop_html(raw.decode(), name))
+            closed = close_shop_html(text, name)
+            if closed == text:
+                dest.write_bytes(raw)
+            else:
+                dest.write_text(closed)
 
 
 # Curated groups. Every slug is a live catalog item.

@@ -107,7 +107,7 @@ function queryAll(root, selector) {
   return found;
 }
 
-function bootCheckout({ enabled, search, path = '/cart.html', buttonDisabled = true, paymentStatus = 'paid' }) {
+function bootCheckout({ enabled, search, path = '/cart.html', buttonDisabled = true, paymentStatus = 'paid', apiBase }) {
   const store = { [BAG_KEY]: STORED_BAG };
   const localStorage = {
     getItem(key) {
@@ -153,7 +153,7 @@ function bootCheckout({ enabled, search, path = '/cart.html', buttonDisabled = t
   const window = {
     HABIBI_PUBLIC_CONFIG: {
       CHECKOUT_ENABLED: enabled,
-      CHECKOUT_API_BASE: enabled ? 'https://habibicraftsco.com' : ''
+      CHECKOUT_API_BASE: apiBase !== undefined ? apiBase : (enabled ? 'https://habibicraftsco.com' : '')
     },
     HABIBI_CHECKOUT_ENABLED: enabled,
     HabibiBag: {
@@ -197,6 +197,15 @@ function bootCheckout({ enabled, search, path = '/cart.html', buttonDisabled = t
     },
     fetch(url, init) {
       fetched.push({ url: String(url), init });
+      if (paymentStatus === 'checkout-hang' && String(url).endsWith('/api/checkout')) {
+        return new Promise((_resolve, reject) => {
+          const signal = init && init.signal;
+          const fail = () => reject(Object.assign(new Error('aborted'), { name: 'AbortError' }));
+          if (!signal) return;
+          if (signal.aborted) fail();
+          else signal.addEventListener('abort', fail);
+        });
+      }
       if (paymentStatus === 'http500' && String(url).endsWith('/api/checkout')) {
         return Promise.resolve({
           ok: false,
@@ -274,13 +283,39 @@ describe('checkout client', () => {
     page.button.click();
     await flush();
     assert.equal(page.button.disabled, false);
-    assert.equal(page.button.textContent, 'Check out');
+    assert.equal(page.button.textContent, 'Try again');
     assert.equal(page.button.getAttribute('aria-disabled'), null);
     const note = page.main.querySelector('[data-checkout-error]');
     assert.equal(note.textContent, 'Something went wrong. Please try again.');
     assert.equal(note.getAttribute('role'), 'status');
     assert.equal(page.store[BAG_KEY], STORED_BAG);
     assert.equal(page.fetched.length, 1);
+    page.button.click();
+    assert.equal(page.main.querySelector('[data-checkout-error]'), null);
+  });
+
+  it('aborts a stuck checkout after 9 seconds and keeps Try again enabled', async () => {
+    const page = bootCheckout({ enabled: true, search: '', paymentStatus: 'checkout-hang' });
+    page.button.click();
+    assert.equal(page.button.disabled, true);
+    assert.equal(page.timers.length, 1);
+    assert.equal(page.timers[0].delay, 9000);
+    assert.equal(page.fetched[0].init.signal.aborted, false);
+    page.timers[0].fn();
+    await flush();
+    assert.equal(page.fetched[0].init.signal.aborted, true);
+    assert.equal(page.button.disabled, false);
+    assert.equal(page.button.textContent, 'Try again');
+    assert.equal(page.main.querySelector('[data-checkout-error]').textContent, 'Something went wrong. Please try again.');
+    assert.equal(page.store[BAG_KEY], STORED_BAG);
+  });
+
+  it('uses the page origin when the checkout API base is empty', async () => {
+    const page = bootCheckout({ enabled: true, search: '', apiBase: '' });
+    page.button.click();
+    await flush();
+    const post = page.fetched.find((call) => String(call.url).endsWith('/api/checkout'));
+    assert.equal(post.url, 'https://habibicraftsco.com/api/checkout');
   });
 
   it('omits contact_email so Stripe Checkout collects it', async () => {
