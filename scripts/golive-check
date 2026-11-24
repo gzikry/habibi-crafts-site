@@ -16,10 +16,10 @@ sys.path.insert(0, str(ROOT / 'pipeline'))
 from chrome import SHOP_REPLACEMENTS  # noqa: E402
 
 CLOSED_PHRASES = tuple(old for old, _new in SHOP_REPLACEMENTS)
-GENERIC_CLOSED = (
-    re.compile(r"We're not taking orders yet\."),
-    re.compile(r'Opening soon'),
-)
+
+
+def flattened(text):
+    return re.sub(r'\s+', ' ', text)
 
 
 def fail(items, message):
@@ -60,13 +60,15 @@ def public_config(text):
 def check_copy(directory, items):
     for path in sorted(directory.rglob('*.html')):
         text = path.read_text(errors='replace')
+        flat = flattened(text)
         rel = path.relative_to(directory)
         for phrase in CLOSED_PHRASES:
-            if phrase in text:
+            if phrase in text or flattened(phrase) in flat:
                 fail(items, f'{rel} still contains closed-shop copy: {phrase}')
-        for pattern in GENERIC_CLOSED:
-            if pattern.search(text):
-                fail(items, f'{rel} still contains closed-shop copy: {pattern.pattern}')
+        if "We're not taking orders yet." in flat:
+            fail(items, f"{rel} still contains closed-shop copy: We're not taking orders yet.")
+        if 'Opening soon' in flat:
+            fail(items, f'{rel} still contains closed-shop copy: Opening soon')
 
 
 def check_config(directory, items):

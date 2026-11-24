@@ -96,7 +96,7 @@ stripe listen --forward-to http://localhost:8788/api/webhook
 
 The dashboard webhook can wait until the Bypass application exists.
 
-The smoke script proves the bypass. An unsigned `POST /api/webhook` that returns HTTP 400 and `missing_stripe_signature` reached the function. HTTP 302 or 403 means Access still holds the path.
+The smoke script proves the bypass. An unsigned `POST /api/webhook` that returns HTTP 400 and `missing_stripe_signature` reached the function. A 301 or 302 means Access still holds the path. HTTP 403 is separate: Access rejected the unsigned webhook.
 
 ## Point Stripe at the preview
 

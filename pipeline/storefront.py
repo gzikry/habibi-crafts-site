@@ -207,10 +207,8 @@ def checkout_enabled():
 
 
 def closed_sale(product):
-    """Baseline that a go-live build must not write. Output purchasable is derived."""
-    if 'closed_purchasable' in product:
-        return product.get('closed_purchasable') is True
-    return product.get('purchasable') is True
+    """Stored closed-shop input. A missing flag stays closed. Builds do not write it."""
+    return product.get('closed_purchasable') is True
 
 
 def for_sale(product):
@@ -226,27 +224,14 @@ def load_working_catalog():
     return json.loads((SITE / 'product-catalog.json').read_text())
 
 
-def catalog_output_bytes(raw, catalog):
-    """Keep working-file bytes unless the derived purchasable flag has to change."""
-    text = raw.decode()
-    desired = [for_sale(product) for product in catalog]
-    if all((product.get('purchasable') is True) == sale for product, sale in zip(catalog, desired)):
-        return raw
-    pattern = re.compile(r'((?<!_)purchasable"\s*:\s*)(true|false)')
-    index = 0
-
-    def replace(match):
-        nonlocal index
-        if index >= len(desired):
-            return match.group(0)
-        value = 'true' if desired[index] else 'false'
-        index += 1
-        return match.group(1) + value
-
-    updated = pattern.sub(replace, text)
-    if index != len(desired):
-        raise RuntimeError('product catalog purchasable flags could not be updated in place')
-    return updated.encode()
+def catalog_for_output(catalog):
+    """Derived purchasable on a copy. closed_purchasable is copied through, never invented."""
+    rendered = []
+    for product in catalog:
+        item = dict(product)
+        item['purchasable'] = for_sale(product)
+        rendered.append(item)
+    return rendered
 
 
 def robots_content():
@@ -965,10 +950,9 @@ def write_products(out_dir, manifest=None):
 
 
 def write_storefront_catalog(out_dir):
-    src = SITE / 'product-catalog.json'
-    raw = src.read_bytes()
-    catalog = json.loads(raw)
-    (out_dir / 'product-catalog.json').write_bytes(catalog_output_bytes(raw, catalog))
+    catalog = load_working_catalog()
+    text = json.dumps(catalog_for_output(catalog), indent=2) + '\n'
+    (out_dir / 'product-catalog.json').write_text(text)
 
 
 def write_open_pages(out_dir):

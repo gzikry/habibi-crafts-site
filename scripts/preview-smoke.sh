@@ -45,6 +45,11 @@ webhook_body=$(mktemp)
 webhook_code=$(curl -sS -o "$webhook_body" -w '%{http_code}' -X POST -H 'content-type: application/json' -d '{"type":"checkout.session.completed"}' "${base}/api/webhook")
 echo "HTTP ${webhook_code}"
 printf '%s\n' "$(cat "$webhook_body")"
+if [ "$webhook_code" = "403" ]; then
+  echo "unsigned POST /api/webhook returned HTTP 403. Access rejected the unsigned webhook." >&2
+  rm -f "$webhook_body"
+  exit 1
+fi
 if [ "$webhook_code" != "400" ]; then
   echo "unsigned POST /api/webhook returned HTTP ${webhook_code}, expected 400 missing_stripe_signature. A 301 or 302 means Access still holds /api/webhook." >&2
   rm -f "$webhook_body"

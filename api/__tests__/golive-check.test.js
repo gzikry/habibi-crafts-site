@@ -62,10 +62,12 @@ describe('golive check', () => {
     const dir = readyDir();
     writeFileSync(join(dir, 'faq.html'), '<p>We\'re not taking orders yet.</p>');
     writeFileSync(join(dir, 'cart.html'), '<button class="button browse-mode" disabled>Opening soon</button>');
+    writeFileSync(join(dir, 'shipping.html'), '<p>Opening\nsoon</p>');
     const result = run(dir);
     assert.equal(result.status, 1);
     assert.match(result.stdout, /We're not taking orders yet/);
     assert.match(result.stdout, /Opening soon/);
+    assert.match(result.stdout, /shipping\.html/);
   });
 
   it('prints the key reminder only when the key or base is missing', () => {

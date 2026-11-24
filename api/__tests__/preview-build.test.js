@@ -287,6 +287,8 @@ print('ok')
     assert.match(script, /Access redirected \/cart\.html/);
     assert.match(script, /checkout_disabled/);
     assert.match(script, /expected 400 missing_stripe_signature/);
+    assert.match(script, /A 301 or 302 means Access still holds \/api\/webhook/);
+    assert.match(script, /Access rejected the unsigned webhook/);
     assert.doesNotMatch(read(join(root, 'pipeline/prepare-preview.py')), /replace\('Opening soon', 'Try again'\)/);
     assert.match(script, /CF_ACCESS_CLIENT_ID/);
     assert.match(script, /CF_AUTHORIZATION/);
@@ -422,6 +424,35 @@ print('ok')
       });
       assert.equal(result.status, 1, `${result.stdout}\n${result.stderr}`);
       assert.match(`${result.stdout}\n${result.stderr}`, /Access rejected the service token or cookie for \/api\/health \(HTTP 401\)/);
+    } finally {
+      await new Promise((resolve) => server.close(resolve));
+    }
+  });
+
+  it('gives a webhook 403 its own message', async () => {
+    const server = createServer((req, res) => {
+      req.resume();
+      res.writeHead(403, { 'content-type': 'text/plain' });
+      res.end('no');
+    });
+    await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
+    const port = server.address().port;
+    const env = { ...process.env };
+    delete env.CF_ACCESS_CLIENT_ID;
+    delete env.CF_ACCESS_CLIENT_SECRET;
+    delete env.CF_AUTHORIZATION;
+    try {
+      const result = await new Promise((resolve) => {
+        execFile('sh', ['scripts/preview-smoke.sh', `http://127.0.0.1:${port}`], {
+          cwd: root,
+          env
+        }, (error, stdout, stderr) => {
+          resolve({ status: error && error.code ? error.code : 0, stdout, stderr });
+        });
+      });
+      assert.equal(result.status, 1, `${result.stdout}\n${result.stderr}`);
+      assert.match(result.stderr, /Access rejected the unsigned webhook/);
+      assert.doesNotMatch(result.stderr, /301 or 302/);
     } finally {
       await new Promise((resolve) => server.close(resolve));
     }
