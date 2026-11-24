@@ -55,7 +55,33 @@ describe('golive check', () => {
     assert.equal(result.status, 1);
     assert.match(result.stdout, /When we start taking orders/);
     assert.match(result.stdout, /offline: not calling the API/);
+    assert.doesNotMatch(result.stdout, /requires a pk_ publishable key/);
+  });
+
+  it('fails on a bare FAQ answer and an Opening soon button in other markup', () => {
+    const dir = readyDir();
+    writeFileSync(join(dir, 'faq.html'), '<p>We\'re not taking orders yet.</p>');
+    writeFileSync(join(dir, 'cart.html'), '<button class="button browse-mode" disabled>Opening soon</button>');
+    const result = run(dir);
+    assert.equal(result.status, 1);
+    assert.match(result.stdout, /We're not taking orders yet/);
+    assert.match(result.stdout, /Opening soon/);
+  });
+
+  it('prints the key reminder only when the key or base is missing', () => {
+    const dir = readyDir();
+    writeFileSync(join(dir, 'public-config.js'), [
+      'window.HABIBI_PUBLIC_CONFIG = {',
+      '  CHECKOUT_ENABLED: true,',
+      "  STRIPE_PUBLISHABLE_KEY: '',",
+      "  CHECKOUT_API_BASE: ''",
+      '};'
+    ].join('\n'));
+    const result = run(dir);
+    assert.equal(result.status, 1);
     assert.match(result.stdout, /requires a pk_ publishable key and an https CHECKOUT_API_BASE/);
+    assert.match(result.stdout, /publishable key is missing/);
+    assert.match(result.stdout, /API base is missing/);
   });
 
   it('fails when halawa is not purchasable in the build catalog', () => {

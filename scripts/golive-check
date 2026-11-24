@@ -16,6 +16,10 @@ sys.path.insert(0, str(ROOT / 'pipeline'))
 from chrome import SHOP_REPLACEMENTS  # noqa: E402
 
 CLOSED_PHRASES = tuple(old for old, _new in SHOP_REPLACEMENTS)
+GENERIC_CLOSED = (
+    re.compile(r"We're not taking orders yet\."),
+    re.compile(r'Opening soon'),
+)
 
 
 def fail(items, message):
@@ -60,24 +64,30 @@ def check_copy(directory, items):
         for phrase in CLOSED_PHRASES:
             if phrase in text:
                 fail(items, f'{rel} still contains closed-shop copy: {phrase}')
+        for pattern in GENERIC_CLOSED:
+            if pattern.search(text):
+                fail(items, f'{rel} still contains closed-shop copy: {pattern.pattern}')
 
 
 def check_config(directory, items):
     path = directory / 'public-config.js'
+    missing_key_or_base = False
     if not path.is_file():
         fail(items, 'public-config.js is missing')
-        return ''
+        return '', True
     config = public_config(path.read_text())
     if not config['enabled']:
         fail(items, 'public-config.js has CHECKOUT_ENABLED false')
     key = config['key']
     if not key.startswith('pk_') or key.startswith('sk_'):
-        fail(items, 'requires a pk_ publishable key and an https CHECKOUT_API_BASE: publishable key is missing')
+        missing_key_or_base = True
+        fail(items, 'publishable key is missing')
     base = config['base'].rstrip('/')
     local = base.startswith('http://127.0.0.1') or base.startswith('http://localhost')
     if not base.startswith('https://') and not local:
-        fail(items, 'requires a pk_ publishable key and an https CHECKOUT_API_BASE: API base is missing')
-    return base
+        missing_key_or_base = True
+        fail(items, 'API base is missing')
+    return base, missing_key_or_base
 
 
 def check_health(base, items):
@@ -148,7 +158,7 @@ def main():
         return 2
     items = []
     check_copy(directory, items)
-    base = check_config(directory, items)
+    base, missing_key_or_base = check_config(directory, items)
     check_build_sale(directory, items)
     check_variants(items)
     if live:
@@ -156,8 +166,9 @@ def main():
         check_health(base, items)
     else:
         print('offline: not calling the API (pass --live to GET CHECKOUT_API_BASE/api/health)')
-    if items:
+    if missing_key_or_base:
         print('requires a pk_ publishable key and an https CHECKOUT_API_BASE')
+    if items:
         for item in items:
             print(item)
         return 1

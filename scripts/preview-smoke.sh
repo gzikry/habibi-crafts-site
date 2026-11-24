@@ -46,7 +46,7 @@ webhook_code=$(curl -sS -o "$webhook_body" -w '%{http_code}' -X POST -H 'content
 echo "HTTP ${webhook_code}"
 printf '%s\n' "$(cat "$webhook_body")"
 if [ "$webhook_code" != "400" ]; then
-  echo "unsigned POST /api/webhook returned HTTP ${webhook_code}, expected 400 missing_stripe_signature. A 302 or 403 means Access still holds /api/webhook." >&2
+  echo "unsigned POST /api/webhook returned HTTP ${webhook_code}, expected 400 missing_stripe_signature. A 301 or 302 means Access still holds /api/webhook." >&2
   rm -f "$webhook_body"
   exit 1
 fi

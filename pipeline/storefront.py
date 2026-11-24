@@ -8,7 +8,6 @@ drops the retired tote backs.
 import json
 import os
 import re
-import subprocess
 from datetime import date
 
 from pfangles import order as order_angles
@@ -146,7 +145,10 @@ def poster_for(slug, frames):
 
 
 def mockup(slug):
-    return f"assets/mockups/{slug}.png?v={SNAPSHOT['mockups'][slug]}"
+    version = SNAPSHOT['mockups'].get(slug)
+    if version is None:
+        return f"assets/mockups/{slug}.png"
+    return f"assets/mockups/{slug}.png?v={version}"
 
 
 INDEX_ROBOTS = 'index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1'
@@ -204,30 +206,11 @@ def checkout_enabled():
     )
 
 
-_committed_catalog_bytes = None
-
-
-def committed_catalog_bytes():
-    """The git catalog, not a catalog a previous build wrote into site/."""
-    global _committed_catalog_bytes
-    if _committed_catalog_bytes is None:
-        _committed_catalog_bytes = subprocess.check_output(
-            ['git', 'show', 'HEAD:site/product-catalog.json'],
-            cwd=ROOT,
-        )
-    return _committed_catalog_bytes
-
-
-def load_committed_catalog():
-    return json.loads(committed_catalog_bytes())
-
-
-def committed_purchasable():
-    return {
-        product['slug']: product.get('purchasable') is True
-        for product in load_committed_catalog()
-        if isinstance(product.get('slug'), str)
-    }
+def closed_sale(product):
+    """Baseline that a go-live build must not write. Output purchasable is derived."""
+    if 'closed_purchasable' in product:
+        return product.get('closed_purchasable') is True
+    return product.get('purchasable') is True
 
 
 def for_sale(product):
@@ -236,7 +219,34 @@ def for_sale(product):
         return False
     if checkout_enabled():
         return slug in LAUNCH_SLUGS and slug not in HOLD_SLUGS
-    return committed_purchasable().get(slug, False) is True
+    return closed_sale(product)
+
+
+def load_working_catalog():
+    return json.loads((SITE / 'product-catalog.json').read_text())
+
+
+def catalog_output_bytes(raw, catalog):
+    """Keep working-file bytes unless the derived purchasable flag has to change."""
+    text = raw.decode()
+    desired = [for_sale(product) for product in catalog]
+    if all((product.get('purchasable') is True) == sale for product, sale in zip(catalog, desired)):
+        return raw
+    pattern = re.compile(r'((?<!_)purchasable"\s*:\s*)(true|false)')
+    index = 0
+
+    def replace(match):
+        nonlocal index
+        if index >= len(desired):
+            return match.group(0)
+        value = 'true' if desired[index] else 'false'
+        index += 1
+        return match.group(1) + value
+
+    updated = pattern.sub(replace, text)
+    if index != len(desired):
+        raise RuntimeError('product catalog purchasable flags could not be updated in place')
+    return updated.encode()
 
 
 def robots_content():
@@ -858,7 +868,7 @@ def product_ld(p, desc, filename, label, frames):
 def write_products(out_dir, manifest=None):
     if manifest is None:
         manifest = load_manifest()
-    catalog = load_committed_catalog()
+    catalog = load_working_catalog()
     built = 0
     for p in catalog:
         kind = p['category']
@@ -955,19 +965,10 @@ def write_products(out_dir, manifest=None):
 
 
 def write_storefront_catalog(out_dir):
-    raw = committed_catalog_bytes()
+    src = SITE / 'product-catalog.json'
+    raw = src.read_bytes()
     catalog = json.loads(raw)
-    changed = False
-    for product in catalog:
-        sale = for_sale(product)
-        if product.get('purchasable') is not sale:
-            product['purchasable'] = sale
-            changed = True
-    dest = out_dir / 'product-catalog.json'
-    if changed:
-        dest.write_text(json.dumps(catalog, indent=2) + '\n')
-    else:
-        dest.write_bytes(raw)
+    (out_dir / 'product-catalog.json').write_bytes(catalog_output_bytes(raw, catalog))
 
 
 def write_open_pages(out_dir):

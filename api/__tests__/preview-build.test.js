@@ -501,4 +501,37 @@ print('ok')
       execFileSync('cp', ['-a', join(snap, 'site'), root]);
     }
   });
+
+  it('keeps an uncommitted catalog edit and a new product through a build', () => {
+    const catalogPath = join(root, 'site/product-catalog.json');
+    const original = read(catalogPath);
+    const outDir = mkdtempSync(join(tmpdir(), 'habibi-catalog-edit-'));
+    const env = { ...process.env };
+    delete env.HABIBI_PREVIEW;
+    delete env.CHECKOUT_ENABLED;
+    delete env.CF_PAGES;
+    delete env.CF_PAGES_BRANCH;
+    try {
+      const edited = JSON.parse(original);
+      edited.find((product) => product.slug === 'halawa').description = 'QA uncommitted halawa description';
+      edited.push({
+        slug: 'qa-new-mug',
+        name: 'QA New Mug',
+        category: 'mugs',
+        price: 1499,
+        description: 'QA uncommitted new product',
+        purchasable: true,
+        closed_purchasable: true
+      });
+      writeFileSync(catalogPath, `${JSON.stringify(edited, null, 2)}\n`);
+      execFileSync('python3', ['pipeline/build-products.py', '--out', outDir], { cwd: root, env });
+      const built = JSON.parse(read(join(outDir, 'product-catalog.json')));
+      assert.equal(built.find((product) => product.slug === 'halawa').description, 'QA uncommitted halawa description');
+      assert.match(read(join(outDir, 'product-halawa.html')), /QA uncommitted halawa description/);
+      assert.equal(built.find((product) => product.slug === 'qa-new-mug').description, 'QA uncommitted new product');
+      assert.match(read(join(outDir, 'product-qa-new-mug.html')), /QA uncommitted new product/);
+    } finally {
+      writeFileSync(catalogPath, original);
+    }
+  });
 });
